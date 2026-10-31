@@ -8,55 +8,69 @@
  */
 import { Image } from 'astro:assets';
 import render from '../assets/render-interior.jpg';
-import { buildPlan } from '../lib/plan';
+import plantaColor from '../assets/planos/planta1-color.jpg';
+import plantaLinea from '../assets/planos/planta1-linea.jpg';
+import corte from '../assets/planos/corte.jpg';
+import fachada from '../assets/planos/fachada.jpg';
+import modelo3d from '../assets/planos/modelo-3d.jpg';
 import Plomada from './Plomada.astro';
 import Trazos from './Trazos.astro';
 
-const p = buildPlan();
 const items = [
   {
     id: 'planos',
     short: 'Planos',
     name: ['Planos', 'completos'],
     lead: 'Todo lo que tu maestro de obra necesita para construir sin adivinar.',
-    list: ['Plantas, fachadas y cortes', 'Despiece de muebles y cuadro de puertas y ventanas', 'Planos de detalle constructivo'],
+    list: ['Plantas, fachadas, cortes y detalles constructivos', 'Modelo BIM de arquitectura en Revit', 'Despiece de muebles y cuadro de puertas y ventanas'],
     meta: 'AutoCAD · Revit · PDF',
   },
   {
     id: 'renders',
     short: 'Renders',
     name: ['Renders', 'realistas'],
-    lead: 'Ves tu casa terminada antes de gastar un peso en obra.',
-    list: ['Imágenes de tu casa terminada', 'Con materiales, luz y mobiliario', 'Para decidir acabados con calma'],
+    lead: 'Ves tu proyecto terminado antes de gastar un peso en obra.',
+    list: ['Imágenes de tu proyecto terminado', 'Con materiales, luz y mobiliario', 'Para decidir acabados con calma'],
     meta: 'Imagen de un proyecto de Galezo Studio',
   },
   {
     id: 'recorrido',
     short: 'Recorrido',
     name: ['Recorrido', 'en video'],
-    lead: 'Caminas tu casa de la entrada a la piscina, como si ya vivieras ahí.',
-    list: ['Un video de toda la casa', 'Cada espacio a escala real', 'Para mostrársela a tu familia'],
-    meta: 'Video de toda la casa',
+    lead: 'Recorres tu proyecto de la entrada al último rincón, como si ya estuviera construido.',
+    list: ['Un video de todo el proyecto', 'Cada espacio a escala real', 'Para mostrarlo antes de construir'],
+    meta: 'Video de todo el proyecto',
   },
   {
     id: 'cantidades',
     short: 'Cantidades',
     name: ['Cantidades', 'de obra'],
-    lead: 'Sabes cuánto material lleva tu casa, para cotizar bien y que no se te vaya la plata.',
+    lead: 'Sabes cuánto material lleva tu proyecto, para cotizar bien y que no se te vaya la plata.',
     list: ['Memoria de cantidades por ítem', 'Cotizaciones comparables entre proveedores', 'Control de lo que se compra'],
     meta: 'Memoria de cantidades',
   },
 ];
 
-// Etiquetas de cantidades (casa de ejemplo): en la franja libre de arriba y abajo de la planta, nunca en los bordes
-const top = p.at(0, -8)[1] - 70;
-const bot = p.at(0, 8.5)[1] + 62;
+// Plano real de Ulises (planta del primer nivel, sin cajetín). Las capas encima usan el mismo sistema que la imagen:
+// 1100 × 538 (la mitad de los píxeles del recorte). Áreas tomadas del propio plano.
+const RW = 1100;
+const RH = 538;
+const tour = 'M150 250 C 250 250, 360 262, 440 282 S 455 170, 470 158 S 600 330, 700 318 S 840 190, 880 210 S 1000 330, 965 410 S 820 430, 760 410';
 const q = [
-  { k: 'Muros', v: '186,4 m²', a: p.at(-10.9, -6), t: [p.at(-9.5, 0)[0], top] },
-  { k: 'Piso', v: '147,2 m²', a: p.at(-5.5, -2.8), t: [p.at(-1.2, 0)[0], top] },
-  { k: 'Cubierta', v: '274,6 m²', a: p.at(10.4, -7.6), t: [p.at(7.6, 0)[0], top] },
-  { k: 'Piscina', v: '31,0 m²', a: p.at(6.5, 6.2), t: [p.at(6.5, 0)[0], bot] },
-].map((it) => ({ ...it, w: 52 + (it.k.length + it.v.length) * 17.5 }));
+  { k: 'Sala', v: '73,05 m²', a: [860, 230], t: [860, 120] },
+  { k: 'Garaje', v: '32,38 m²', a: [205, 400], t: [205, 300] },
+  { k: 'Comedor', v: '25,74 m²', a: [960, 430], t: [960, 330] },
+  { k: 'Estar', v: '25,00 m²', a: [470, 175], t: [450, 80] },
+  { k: 'Cocina', v: '13,55 m²', a: [760, 440], t: [700, 500] },
+].map((it) => ({ ...it, w: 26 + (it.k.length + it.v.length) * 8.6 }));
+const sizesPlan = '(min-width: 1024px) 760px, 92vw';
+// Lámina "Planos": un mini juego que pasa solo (planta → corte → fachada → modelo 3D) y se puede elegir
+const laminas = [
+  { k: 'Planta', note: 'planta general' },
+  { k: 'Corte', note: 'corte', src: corte },
+  { k: 'Fachada', note: 'fachada', src: fachada },
+  { k: 'Modelo 3D', note: 'modelo 3D' },
+];
 ---
 
 <section class="en" id="entregable" data-nav-label="Lo que recibes" data-en aria-labelledby="en-title">
@@ -66,7 +80,7 @@ const q = [
     <div class="en-in">
       <Plomada n="02" label="Lo que recibes" />
       <header class="en-top">
-        <h2 id="en-title" class="en-h2 rv">Una casa, <span class="accent">cuatro formas de verla</span> antes de construirla</h2>
+        <h2 id="en-title" class="en-h2 rv">Un proyecto, <span class="accent">cuatro formas de verlo</span> antes de construirlo</h2>
         <p class="count rv" aria-hidden="true">
           <span class="count-n">{items.map((it, i) => <span class:list={['count-d', { 'is-on': i === 0 }]} data-count={i}>0{i + 1}</span>)}</span>
           <span class="count-of">/ 04</span>
@@ -83,25 +97,28 @@ const q = [
               <div class="page-face">
                 <span class="paper-frame" aria-hidden="true"></span>
                 <div class="page-art">
-                  <svg class="plan" viewBox={`0 0 ${p.w} ${p.h}`} aria-hidden="true">
-                    <g class="base">
-                      {p.trees.map((t) => <circle class="b-tree" cx={t.x} cy={t.y} r={t.r} />)}
-                      <path class="b-thin" pathLength="1" d={p.thin} />
-                      <path class="b-water" d={p.water} />
-                      <path class="b-hidden" d={p.hidden} />
-                      <path class="b-glass" d={p.glass} />
-                      <path class="b-walls" d={p.walls} />
-                      <g class="b-labels">{p.labels.slice(2).map((l) => <text x={l.x} y={l.y} text-anchor={l.a}>{l.t}</text>)}</g>
-                    </g>
-                    <g class="m-dims">
-                      <path pathLength="1" d={p.dims} />
-                      {p.labels.slice(0, 2).map((l) => (
-                        <text x={l.x} y={l.y} text-anchor={l.a} transform={l.r ? `rotate(${l.r} ${l.x} ${l.y})` : undefined}>{l.t}</text>
-                      ))}
-                    </g>
-                  </svg>
+                  <div class="rp rp-set" data-rp-set>
+                    <div class="rp-sl is-on" data-sl="0">
+                      <div class="rp-in">
+                        <Image src={plantaLinea} alt="Planta arquitectónica real de una casa diseñada por Galezo Studio" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-img rp-line" loading="lazy" />
+                        <Image src={plantaColor} alt="" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-img rp-color" loading="lazy" />
+                        <span class="rp-pen" aria-hidden="true"></span>
+                      </div>
+                    </div>
+                    <div class="rp-sl" data-sl="1"><Image src={corte} alt="Corte arquitectónico" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-full" loading="lazy" /></div>
+                    <div class="rp-sl" data-sl="2"><Image src={fachada} alt="Fachada" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-full" loading="lazy" /></div>
+                    <div class="rp-sl" data-sl="3"><Image src={modelo3d} alt="Modelo 3D BIM en Revit" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-full" loading="lazy" /></div>
+                  </div>
+                  <div class="rp-chips" role="group" aria-label="Láminas del juego de planos">
+                    {laminas.map((l, i) => (
+                      <button type="button" class:list={['rp-chip', { 'is-on': i === 0 }]} data-chip={i} data-note={l.note} aria-pressed={i === 0 ? 'true' : 'false'}>
+                        {l.k}
+                        <i aria-hidden="true" />
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                  <p class="stage-note">planta general · casa de ejemplo</p>
+                  <p class="stage-note"><span data-rp-note>planta general</span> · proyecto de ejemplo</p>
                 <span class="page-shade" aria-hidden="true"></span>
                 <span class="page-crease" aria-hidden="true"></span>
               </div>
@@ -120,30 +137,26 @@ const q = [
               <div class="page-face">
                 <span class="paper-frame" aria-hidden="true"></span>
                 <div class="page-art">
-                  <svg class="plan" viewBox={`0 0 ${p.w} ${p.h}`} aria-hidden="true">
-                    <g class="base">
-                      {p.trees.map((t) => <circle class="b-tree" cx={t.x} cy={t.y} r={t.r} />)}
-                      <path class="b-thin" d={p.thin} />
-                      <path class="b-water" d={p.water} />
-                      <path class="b-hidden" d={p.hidden} />
-                      <path class="b-glass" d={p.glass} />
-                      <path class="b-walls" d={p.walls} />
-                      <g class="b-labels">{p.labels.slice(2).map((l) => <text x={l.x} y={l.y} text-anchor={l.a}>{l.t}</text>)}</g>
-                    </g>
-                    <g class="m-tour">
-                      <path id="en-path" class="t-path" pathLength="1" d={p.path} />
-                      <g class="t-cam">
-                        <path class="t-cone" d="M0 0 L210 -90 A228 228 0 0 1 210 90 Z" />
-                        <circle class="t-halo" r="34" />
-                        <circle class="t-dot" r="17" />
-                        <animateMotion dur="9s" repeatCount="indefinite" rotate="auto" keyPoints="0;1;0" keyTimes="0;0.5;1" calcMode="linear">
-                          <mpath href="#en-path" />
-                        </animateMotion>
-                      </g>
-                    </g>
-                  </svg>
+                  <div class="rp">
+                    <div class="rp-in">
+                      <Image src={plantaColor} alt="" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-img rp-soft" loading="lazy" />
+                      <svg class="rp-ov" viewBox={`0 0 ${RW} ${RH}`} aria-hidden="true">
+                        <path id="en-path" class="t-path" pathLength="1" d={tour} />
+                        <g class="t-cam">
+                          <g transform="scale(0.34)">
+                            <path class="t-cone" d="M0 0 L210 -90 A228 228 0 0 1 210 90 Z" />
+                            <circle class="t-halo" r="34" />
+                            <circle class="t-dot" r="17" />
+                          </g>
+                          <animateMotion dur="9s" repeatCount="indefinite" rotate="auto" keyPoints="0;1;0" keyTimes="0;0.5;1" calcMode="linear">
+                            <mpath href="#en-path" />
+                          </animateMotion>
+                        </g>
+                      </svg>
+                    </div>
+                  </div>
                 </div>
-                  <p class="stage-note">recorrido · casa de ejemplo</p>
+                  <p class="stage-note">recorrido · proyecto de ejemplo</p>
                 <span class="page-shade" aria-hidden="true"></span>
                 <span class="page-crease" aria-hidden="true"></span>
               </div>
@@ -152,32 +165,23 @@ const q = [
               <div class="page-face">
                 <span class="paper-frame" aria-hidden="true"></span>
                 <div class="page-art">
-                  <svg class="plan" viewBox={`0 0 ${p.w} ${p.h}`} aria-hidden="true">
-                    <g class="m-qty-fill">
-                      <path class="z-roof" d={p.hidden} />
-                      <path class="z-floor" d={p.floor} />
-                      <path class="z-pool" d={p.pool} />
-                    </g>
-                    <g class="base">
-                      {p.trees.map((t) => <circle class="b-tree" cx={t.x} cy={t.y} r={t.r} />)}
-                      <path class="b-thin" d={p.thin} />
-                      <path class="b-water" d={p.water} />
-                      <path class="b-glass" d={p.glass} />
-                    </g>
-                    <g class="m-qty">
-                      <path class="q-walls" d={p.walls} />
-                      {q.map((it, i) => (
-                        <g class="q-tag" style={`--i:${i}`}>
-                          <path class="q-lead" d={`M${it.a[0]} ${it.a[1]} L${it.t[0]} ${it.t[1]}`} />
-                          <circle class="q-pin" cx={it.a[0]} cy={it.a[1]} r="9" />
-                          <rect class="q-box" x={it.t[0] - it.w / 2} y={it.t[1] - 32} width={it.w} height="64" />
-                          <text class="q-k" x={it.t[0]} y={it.t[1] + 12} text-anchor="middle">{it.k} <tspan class="q-v">{it.v}</tspan></text>
-                        </g>
-                      ))}
-                    </g>
-                  </svg>
+                  <div class="rp">
+                    <div class="rp-in">
+                      <Image src={plantaLinea} alt="" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-img" loading="lazy" />
+                      <svg class="rp-ov" viewBox={`0 0 ${RW} ${RH}`} aria-hidden="true">
+                        {q.map((it, i) => (
+                          <g class="q-tag" style={`--i:${i}`}>
+                            <path class="q-lead" d={`M${it.a[0]} ${it.a[1]} L${it.t[0]} ${it.t[1]}`} />
+                            <circle class="q-pin" cx={it.a[0]} cy={it.a[1]} r="5" />
+                            <rect class="q-box" x={it.t[0] - it.w / 2} y={it.t[1] - 17} width={it.w} height="34" rx="2" />
+                            <text class="q-k" x={it.t[0]} y={it.t[1] + 6} text-anchor="middle">{it.k} <tspan class="q-v">{it.v}</tspan></text>
+                          </g>
+                        ))}
+                      </svg>
+                    </div>
+                  </div>
                 </div>
-                  <p class="stage-note">cantidades · casa de ejemplo</p>
+                  <p class="stage-note">cantidades · proyecto de ejemplo</p>
                 <span class="page-shade" aria-hidden="true"></span>
                 <span class="page-crease" aria-hidden="true"></span>
               </div>
@@ -315,7 +319,33 @@ const q = [
   .page[data-mode='renders'] .page-art :global(.r-img) { width: 100%; height: 100%; object-fit: cover; display: block; }
   .page[data-mode='renders'] .paper-frame { display: none; }
   .paper-frame { position: absolute; inset: 2.2%; border: 1px solid rgb(35 38 43 / 0.18); outline: 1px solid rgb(35 38 43 / 0.08); outline-offset: 4px; pointer-events: none; z-index: 1; }
-  .plan { position: absolute; left: 4%; top: 5%; width: 92%; height: 87%; overflow: visible; }
+  /* Plano real: la imagen y sus capas comparten el mismo marco (proporción del recorte) */
+  .rp { position: absolute; left: 4%; right: 4%; top: 6%; bottom: 12%; display: grid; place-items: center; container-type: size; }
+  /* cabe entero por ancho o por alto, lo que limite primero */
+  .rp-in { position: relative; width: min(100cqw, 100cqh * 1100 / 538); aspect-ratio: 1100 / 538; }
+  .rp-in :global(.rp-img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; }
+  .rp-in :global(.rp-soft) { opacity: 0.5; filter: saturate(0.6); }
+  /* Mini juego de láminas dentro de "Planos" */
+  .rp-set { top: 13%; bottom: 13.5%; }
+  .rp-sl { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; visibility: hidden; transition: opacity 0.5s, visibility 0s 0.5s; }
+  .rp-sl.is-on { opacity: 1; visibility: inherit; transition: opacity 0.5s; } /* inherit: si la hoja entera se esconde al pasarla, esta también */
+  .rp-sl :global(.rp-full) { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .rp-sl.is-on :global(.rp-full) { animation: rp-wipe 1.1s cubic-bezier(0.5, 0, 0.2, 1) both; }
+  .rp-chips { position: absolute; z-index: 4; top: 4.6%; left: 4.4%; right: 4.4%; display: flex; flex-wrap: wrap; gap: 6px; }
+  .rp-chip { position: relative; overflow: hidden; height: 28px; padding: 0 11px; font-size: 12.5px; font-weight: 600; color: var(--color-ink-soft); background: rgb(255 255 255 / 0.9); border: 1px solid rgb(11 13 16 / 0.12); border-radius: 999px; cursor: pointer; transition: color 0.3s, border-color 0.3s, background-color 0.3s; }
+  .rp-chip:hover { border-color: var(--color-brand); color: var(--color-brand-ink); }
+  .rp-chip.is-on { color: #fff; background: var(--color-brand-ink); border-color: var(--color-brand-ink); }
+  /* barra de tiempo de la lámina activa */
+  .rp-chip i { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: rgb(255 255 255 / 0.85); transform: scaleX(0); transform-origin: 0 50%; }
+  .rp-set.is-auto ~ .rp-chips .rp-chip.is-on i { animation: rp-bar var(--rp-t, 4.5s) linear both; }
+  @keyframes rp-bar { to { transform: scaleX(1); } }
+  @media (max-width: 639px) {
+    .rp-chips { gap: 4px; top: 4%; }
+    .rp-chip { height: 24px; padding: 0 8px; font-size: 11px; }
+  }
+  .rp-ov { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  /* El lápiz que va dibujando: una línea vertical azul que recorre el plano */
+  .rp-pen { position: absolute; top: -3%; bottom: -3%; left: 0; width: 2px; background: var(--color-brand); box-shadow: 0 0 12px rgb(0 128 193 / 0.6); opacity: 0; }
   .stage-note {
     position: absolute;
     left: 4.4%;
@@ -326,38 +356,26 @@ const q = [
     color: #8a8f97;
   }
 
-  /* Planta base */
-  .b-thin { fill: none; stroke: #4a5059; stroke-width: 1.2; }
-  .b-hidden { fill: none; stroke: #4a5059; stroke-width: 1.3; stroke-dasharray: 10 8; }
-  .b-glass { fill: none; stroke: #23262b; stroke-width: 1.4; }
-  .b-water { fill: none; stroke: var(--color-brand); stroke-width: 1.2; opacity: 0.6; }
-  .b-walls { fill: #23262b; }
-  .b-tree { fill: none; stroke: #9aa0a8; stroke-width: 1.2; stroke-dasharray: 3 4; }
-  .b-labels text { fill: #6b7280; font-size: 24px; font-family: var(--font-sans); font-weight: 500; }
-  .m-dims path { fill: none; stroke: var(--color-brand); stroke-width: 1.8; stroke-dasharray: 1; stroke-dashoffset: 0; }
-  .m-dims text { fill: var(--color-brand); font-size: 32px; font-family: var(--font-sans); font-weight: 600; }
-  .page[data-mode='recorrido'] .base { opacity: 0.55; }
-  .t-path { fill: none; stroke: var(--color-brand); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+  .t-path { fill: none; stroke: var(--color-brand); stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
   .t-cone { fill: rgb(0 128 193 / 0.14); stroke: rgb(0 128 193 / 0.4); stroke-width: 1.5; }
   .t-halo { fill: rgb(0 128 193 / 0.18); }
   .t-dot { fill: var(--color-brand); stroke: #fff; stroke-width: 4; }
-  .z-roof { fill: rgb(0 128 193 / 0.06); stroke: var(--color-brand); stroke-width: 2.5; stroke-dasharray: 12 8; }
-  .z-floor { fill: rgb(196 168 120 / 0.28); }
-  .z-pool { fill: rgb(0 128 193 / 0.22); }
   .q-walls { fill: var(--color-brand); }
-  .q-lead { stroke: var(--color-ink); stroke-width: 2; }
-  .q-pin { fill: #fff; stroke: var(--color-ink); stroke-width: 3; }
+  .q-lead { stroke: var(--color-ink); stroke-width: 1.2; }
+  .q-pin { fill: #fff; stroke: var(--color-ink); stroke-width: 2; }
   .q-box { fill: var(--color-ink); }
-  .q-k { fill: #fff; font-size: 32px; font-family: var(--font-sans); font-weight: 500; }
+  .q-k { fill: #fff; font-size: 15px; font-family: var(--font-sans); font-weight: 500; }
   .q-v { font-weight: 700; fill: #9fd3f2; }
 
   /* Cada lámina anima su contenido cuando queda a la vista (is-live) */
-  .page.is-live[data-mode='planos'] .b-thin { stroke-dasharray: 1; animation: draw 1.6s cubic-bezier(0.5, 0, 0.2, 1) both; }
-  .page.is-live[data-mode='planos'] .m-dims path { animation: draw 1.2s 0.5s cubic-bezier(0.5, 0, 0.2, 1) both; }
-  .page.is-live[data-mode='planos'] .m-dims text { animation: en-ink 0.6s 1.2s both; }
+  /* Planos: primero se dibuja en línea (de izquierda a derecha, con el lápiz azul), luego entra el color */
+  .page.is-live[data-mode='planos'] .rp-sl.is-on :global(.rp-line) { animation: rp-wipe 1.6s cubic-bezier(0.5, 0, 0.2, 1) both; }
+  .page.is-live[data-mode='planos'] .rp-sl.is-on .rp-pen { animation: rp-pen 1.6s cubic-bezier(0.5, 0, 0.2, 1) both; }
+  .page.is-live[data-mode='planos'] .rp-sl.is-on :global(.rp-color) { animation: rp-wipe 1.3s 1.5s cubic-bezier(0.5, 0, 0.2, 1) both; }
+  @keyframes rp-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+  @keyframes rp-pen { 0% { opacity: 1; left: 0; } 92% { opacity: 1; } 100% { opacity: 0; left: 100%; } }
   .page.is-live[data-mode='renders'] :global(.r-img) { animation: settle 1.8s var(--ease-out-expo) both; }
   .page.is-live[data-mode='recorrido'] .t-path { animation: draw 1.6s 0.1s cubic-bezier(0.5, 0, 0.2, 1) both; }
-  .page.is-live[data-mode='cantidades'] .m-qty-fill, .page.is-live[data-mode='cantidades'] .q-walls { animation: en-ink 0.7s both; }
   .page.is-live[data-mode='cantidades'] .q-tag { animation: en-ink 0.5s both; animation-delay: calc(0.3s + var(--i) * 0.12s); }
   @keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
   @keyframes en-ink { from { opacity: 0; } }
@@ -529,6 +547,48 @@ const q = [
   const N = pages.length;
   const reduced = document.documentElement.classList.contains('rm');
   const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+
+  // Lámina "Planos": planta → corte → fachada → modelo 3D, pasan solas mientras la lámina está a la vista
+  const rpSet = sec.querySelector<HTMLElement>('[data-rp-set]');
+  if (rpSet) {
+    const slides = [...rpSet.querySelectorAll<HTMLElement>('[data-sl]')];
+    const chips = [...sec.querySelectorAll<HTMLButtonElement>('[data-chip]')];
+    const note = sec.querySelector<HTMLElement>('[data-rp-note]');
+    const host = pages[0];
+    let cur = 0;
+    let timer = 0;
+    const dur = (i: number) => (i === 0 ? 6200 : 4500);
+    const show = (i: number) => {
+      cur = i;
+      slides.forEach((el, j) => {
+        if (j === i) {
+          el.classList.remove('is-on');
+          void el.offsetWidth; // reinicia la animación de entrada
+          el.classList.add('is-on');
+        } else el.classList.remove('is-on');
+      });
+      chips.forEach((c, j) => {
+        c.classList.toggle('is-on', j === i);
+        c.setAttribute('aria-pressed', j === i ? 'true' : 'false');
+        const bar = c.querySelector('i');
+        if (bar && j === i) { bar.style.animation = 'none'; void bar.offsetWidth; bar.style.animation = ''; }
+      });
+      if (note) note.textContent = chips[i].dataset.note || '';
+      rpSet.style.setProperty('--rp-t', `${dur(i)}ms`);
+    };
+    const run = () => {
+      clearTimeout(timer);
+      if (reduced || !host.classList.contains('is-live')) { rpSet.classList.remove('is-auto'); return; }
+      rpSet.classList.add('is-auto');
+      timer = window.setTimeout(() => { show((cur + 1) % slides.length); run(); }, dur(cur));
+    };
+    chips.forEach((c, j) => c.addEventListener('click', () => { show(j); run(); }));
+    new MutationObserver(() => {
+      if (host.classList.contains('is-live')) run();
+      else { clearTimeout(timer); rpSet.classList.remove('is-auto'); if (cur !== 0) show(0); }
+    }).observe(host, { attributes: true, attributeFilter: ['class'] });
+    if (host.classList.contains('is-live')) run();
+  }
 
   // ----- Bloque azul: abraza la lámina y termina en la mitad del espacio entre lámina y ficha (nunca toca el texto) -----
   {

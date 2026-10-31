@@ -295,6 +295,40 @@ export function comercial(): Model {
   return m.build(400, 300);
 }
 
+export function institucional(): Model {
+  // Colegio en claustro: tres alas alrededor de un patio con cancha, la del fondo de dos pisos
+  const m = new Iso();
+  m.box(0, 0, 0, 18, 0.25, 14, 'soft', 0, 0) // lote
+    .box(0.8, 0.25, 0.8, 16.4, 3, 3.4, 'paper', 1, 0.12) // ala del fondo, primer piso
+    .box(0.6, 3.25, 0.6, 16.8, 0.22, 3.8, 'paper', 2, 0.3) // entrepiso
+    .box(0.8, 3.47, 0.8, 16.4, 2.8, 3.4, 'paper', 2, 0.42) // segundo piso
+    .box(0.6, 6.27, 0.6, 16.8, 0.25, 3.8, 'paper', 3, 0.56) // cubierta
+    .box(0.8, 0.25, 4.2, 3.4, 3, 8.4, 'paper', 1, 0.2) // ala izquierda
+    .box(0.6, 3.25, 4.2, 3.8, 0.25, 8.6, 'paper', 2, 0.48) // su cubierta
+    .box(13.8, 0.25, 4.2, 3.4, 3, 8.4, 'paper', 1, 0.24) // ala derecha
+    .box(13.6, 3.25, 4.2, 3.8, 0.25, 8.6, 'paper', 2, 0.52) // su cubierta
+    .box(5.4, 0.27, 5.6, 7.2, 0.06, 5.6, 'new', 0, 0.36) // cancha del patio
+    .tree(4.9, 12.8, 0.8, 1.2, 0.7)
+    .tree(13.2, 12.9, 0.7, 1.1, 0.78)
+    .person(9, 0.33, 8.4);
+  return m.build(400, 300);
+}
+
+export function ejecutivo(): Model {
+  // Proyecto ejecutivo: el edificio "abierto" para ver su estructura (columnas y losas en azul) y parte ya cerrada
+  const m = new Iso();
+  m.box(0, 0, 0, 14, 0.25, 10, 'soft', 0, 0); // lote
+  const cols: [number, number][] = [[1, 1], [6.5, 1], [12, 1], [1, 8], [6.5, 8], [12, 8]];
+  for (const [lvl, y] of [[1, 0.25], [2, 3.5]] as const) {
+    for (const [x, z] of cols) m.box(x, y, z, 0.5, 3, 0.5, 'new', lvl, 0.1 + lvl * 0.2 + x * 0.005);
+    m.box(0.6, y + 3, 0.6, 12.4, 0.25, 8.4, 'new', lvl + 1, 0.25 + lvl * 0.2); // losa
+  }
+  m.box(1, 0.25, 1, 5.5, 3, 7.5, 'paper', 1, 0.2) // primer piso cerrado (arquitectura)
+    .tree(13.4, 9.4, 0.7, 1.1, 0.8)
+    .person(9.5, 0.25, 9.2);
+  return m.build(400, 300);
+}
+
 /* ---------- 404: dos cuatros construidos y, en medio, el lote del cero por construir ---------- */
 
 export function cuatroCeroCuatro(): Model {

@@ -1,7 +1,7 @@
 ---
 /**
- * Sección 4 · "Obras construidas": del dibujo a la obra, en pantalla grande.
- * Cada obra entra como dibujo a tinta (sacado de su propia foto) y una línea de obra con luz la recorre:
+ * Sección 4 · "Proyectos": del dibujo a la obra, en pantalla grande.
+ * Cada obra entra como dibujo a lápiz (sacado de su propia foto: trazo, achurado y grano de papel) y una línea de obra con luz la recorre:
  * lo que queda atrás ya es la foto real, con un acercamiento lento de cine. La línea se puede arrastrar.
  * La ficha va sobre la imagen; el selector es una tira de obras con barra de avance (como historias).
  */
@@ -20,19 +20,17 @@ import elbanco from '../assets/clientes/alcaldia-el-banco.png';
 import corpocesar from '../assets/clientes/corpocesar.png';
 
 import instpecam from '../assets/obras/ln/instpecam.jpg';
-import instpecamL from '../assets/obras/ln/instpecam-linea.jpg';
+import instpecamL from '../assets/obras/ln/instpecam-dibujo.jpg';
 import mirador from '../assets/obras/ln/mirador.jpg';
-import miradorL from '../assets/obras/ln/mirador-linea.jpg';
+import miradorL from '../assets/obras/ln/mirador-dibujo.jpg';
 import casd from '../assets/obras/ln/casd.jpg';
-import casdL from '../assets/obras/ln/casd-linea.jpg';
+import casdL from '../assets/obras/ln/casd-dibujo.jpg';
 import alfonso from '../assets/obras/ln/alfonso-lopez.jpg';
-import alfonsoL from '../assets/obras/ln/alfonso-lopez-linea.jpg';
+import alfonsoL from '../assets/obras/ln/alfonso-lopez-dibujo.jpg';
 import jose from '../assets/obras/ln/jose-eugenio.jpg';
-import joseL from '../assets/obras/ln/jose-eugenio-linea.jpg';
+import joseL from '../assets/obras/ln/jose-eugenio-dibujo.jpg';
 import coliseo from '../assets/obras/ln/coliseo.jpg';
-import coliseoL from '../assets/obras/ln/coliseo-linea.jpg';
-import rio from '../assets/obras/ln/rio-de-oro.jpg';
-import rioL from '../assets/obras/ln/rio-de-oro-linea.jpg';
+import coliseoL from '../assets/obras/ln/coliseo-dibujo.jpg';
 
 type Estado = 'c' | 'o' | 'd';
 const estados: Record<Estado, string> = { c: 'Construido', o: 'En construcción', d: 'Diseñado' };
@@ -45,7 +43,6 @@ const obras: { id: string; name: string; short: string; city: string; year: numb
   { id: 'alfonso', name: 'I.E. Alfonso López Pumarejo', short: 'Alfonso López Pumarejo', city: 'Valledupar', year: 2022, m2: '15.097', st: 'c', what: colegio, photo: alfonso, line: alfonsoL },
   { id: 'jose', name: 'I.E. José Eugenio Martínez', short: 'José Eugenio Martínez', city: 'Valledupar', year: 2024, m2: '15.097', st: 'o', what: colegio, photo: jose, line: joseL },
   { id: 'coliseo', name: 'Coliseo de Tenis de Mesa', short: 'Coliseo de tenis de mesa', city: 'Valledupar', year: 2025, m2: '8.959', st: 'o', render: true, what: 'Una caja de cristal para entrenar y competir con las reglas nacionales e internacionales.', photo: coliseo, line: coliseoL },
-  { id: 'rio', name: 'I.E. Alfonso López Pumarejo', short: 'Alfonso López', city: 'Río de Oro', year: 2026, m2: '8.464', st: 'd', render: true, what: colegio, photo: rio, line: rioL },
 ];
 const built = obras.filter((o) => o.st === 'c').length;
 const inWork = obras.filter((o) => o.st === 'o').length;
@@ -74,10 +71,10 @@ const pics = await Promise.all(
 );
 ---
 
-<section class="ob" id="proyectos" data-nav-label="Obras construidas" aria-labelledby="ob-title" data-ob>
+<section class="ob" id="proyectos" data-nav-label="Proyectos" aria-labelledby="ob-title" data-ob>
   <Trazos left="ejes" right="cota" />
   <div class="ob-in">
-    <Plomada n="04" label="Obras construidas" variant="obra" />
+    <Plomada n="04" label="Proyectos" variant="obra" />
     <header class="ob-head ob-rv">
       <h2 id="ob-title" class="ob-h2">Lo que dibujamos <span class="accent">se construye</span></h2>
       <p class="ob-sub">{words[obras.length][0].toUpperCase() + words[obras.length].slice(1)} proyectos de obra pública en el Cesar: {words[built]} construidos y {words[inWork]} en obra.</p>
@@ -166,7 +163,7 @@ const pics = await Promise.all(
             Cotiza tu diseño
             <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
           </a>
-          <p class="ob-note">El mismo rigor de una obra pública, para tu casa.</p>
+          <p class="ob-note">El mismo rigor de una obra pública, para tu proyecto.</p>
         </div>
       </div>
     </div>

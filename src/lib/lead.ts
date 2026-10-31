@@ -1,9 +1,9 @@
 /**
  * Lógica del chat calificador (sin DOM, probada en tests/lead.test.ts).
  * Pasos: servicio (si el botón no lo trae) → etapa → tamaño → ubicación → cuándo (solo si encaja) → detalle opcional.
- * No encaja: "solo estoy averiguando", o una casa nueva de menos de 60 m² (difícil llegar al valor mínimo del diseño).
+ * No encaja: "solo estoy averiguando", o una obra nueva de menos de 60 m² (difícil llegar al valor mínimo del diseño).
  */
-export type ServiceId = 'campestre' | 'urbana' | 'remodelacion' | 'interiores' | 'comercial';
+export type ServiceId = 'vivienda' | 'remodelacion' | 'comercial' | 'ejecutivo';
 export type Stage = 'lote' | 'buscando' | 'existente' | 'averiguando';
 export type Size = 'xs' | 's' | 'm' | 'l';
 export type Place = 'cesar' | 'colombia' | 'exterior';
@@ -19,23 +19,27 @@ export interface Answers {
 }
 
 export const SERVICES: { id: ServiceId; label: string; noun: string }[] = [
-  { id: 'campestre', label: 'Casa campestre', noun: 'una casa campestre' },
-  { id: 'urbana', label: 'Casa urbana', noun: 'una casa urbana' },
-  { id: 'remodelacion', label: 'Remodelación o ampliación', noun: 'la remodelación o ampliación de mi casa' },
-  { id: 'interiores', label: 'Diseño de interiores', noun: 'el diseño interior de mi espacio' },
-  { id: 'comercial', label: 'Local comercial', noun: 'un local comercial' },
+  { id: 'vivienda', label: 'Vivienda (casa campestre o urbana)', noun: 'una vivienda' },
+  { id: 'remodelacion', label: 'Remodelación o interiores', noun: 'una remodelación o el diseño interior de mi espacio' },
+  { id: 'comercial', label: 'Comercial o institucional', noun: 'un proyecto comercial o institucional' },
+  { id: 'ejecutivo', label: 'Proyecto ejecutivo (arquitectura e ingeniería)', noun: 'un proyecto ejecutivo con arquitectura e ingeniería' },
 ];
 
 export const STAGES: { id: Stage; label: string; text: string }[] = [
   { id: 'lote', label: 'Ya tengo el lote', text: 'ya tengo el lote' },
-  { id: 'existente', label: 'Mi casa o local ya existe', text: 'el espacio ya existe' },
+  { id: 'existente', label: 'Ya está construido', text: 'el espacio ya existe' },
   { id: 'buscando', label: 'Estoy buscando lote', text: 'estoy buscando lote' },
   { id: 'averiguando', label: 'Solo estoy averiguando', text: 'por ahora estoy averiguando' },
 ];
 
 /** Etapas que tienen sentido para cada servicio. */
 export function stagesFor(s?: ServiceId) {
-  const ids: Stage[] = s === 'remodelacion' || s === 'interiores' ? ['existente', 'averiguando'] : ['lote', 'buscando', 'averiguando'];
+  const ids: Stage[] =
+    s === 'remodelacion'
+      ? ['existente', 'averiguando']
+      : s === 'comercial' || s === 'ejecutivo'
+        ? ['lote', 'existente', 'averiguando']
+        : ['lote', 'buscando', 'averiguando'];
   return STAGES.filter((x) => ids.includes(x.id));
 }
 
@@ -59,7 +63,7 @@ export const TIMINGS: { id: Timing; label: string; text: string }[] = [
 ];
 
 /** Obra nueva: el tamaño filtra. En remodelación e interiores el área intervenida suele ser pequeña: no filtra. */
-const isNewBuild = (s?: ServiceId) => s === 'campestre' || s === 'urbana' || s === 'comercial';
+const isNewBuild = (s?: ServiceId) => s === 'vivienda' || s === 'comercial' || s === 'ejecutivo';
 
 export function fits(a: Answers): { ok: boolean; reason?: 'exploring' | 'too_small' } {
   if (a.stage === 'averiguando') return { ok: false, reason: 'exploring' };

@@ -10,15 +10,17 @@ import Plomada from './Plomada.astro';
 import Trazos from './Trazos.astro';
 import { buildProceso } from '../lib/proceso';
 import render from '../assets/render-interior.jpg';
+import plantaColor from '../assets/planos/planta1-color.jpg';
+import plantaLinea from '../assets/planos/planta1-linea.jpg';
+import fachada from '../assets/planos/fachada.jpg';
 
 const P = buildProceso();
-const pl = P.plan;
 const pasos = [
   { t: 'Tu espacio', a: 'Nos cuentas de tu espacio y de cómo vives. Con el anticipo, arrancamos.', tag: 'Anticipo' },
-  { t: 'La idea', a: 'Organizamos la casa sobre el terreno: dónde va lo social, lo privado, la luz y la brisa.' },
+  { t: 'La idea', a: 'Organizamos el proyecto sobre el terreno: dónde va lo social, lo privado, la luz y la brisa.' },
   { t: 'El plano', a: 'Distribuimos cada espacio y lo ajustamos contigo hasta que te convenza.' },
-  { t: 'La fachada', a: 'Volumen, materiales y renders: así se verá tu casa, por dentro y por fuera.' },
-  { t: 'Para construir', a: 'Planos técnicos, recorrido virtual y cantidades de obra, listos para tu constructor.', tag: 'Entrega' },
+  { t: 'La fachada', a: 'Volumen, materiales y renders: así se verá tu proyecto, por dentro y por fuera.' },
+  { t: 'Para construir', a: 'Planos técnicos, modelo BIM en Revit, recorrido virtual y cantidades de obra, listos para tu constructor.', tag: 'Entrega' },
 ];
 const cantidades = [
   ['Concreto', 0.82],
@@ -36,13 +38,13 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
   <div class="pr-in">
     <Plomada n="05" label="Cómo trabajamos" variant="sello" />
     <header class="pr-head pr-rv">
-      <h2 id="pr-title" class="pr-h2">Tu casa, <span class="accent">etapa por etapa</span></h2>
+      <h2 id="pr-title" class="pr-h2">Tu proyecto, <span class="accent">etapa por etapa</span></h2>
       <p class="pr-sub">Arrancamos con un anticipo y avanzamos por etapas: cada una la revisas y la apruebas antes de seguir.</p>
     </header>
 
     <div class="pr-body">
       <!-- La lámina: la misma casa en cada etapa -->
-      <figure class="lam pr-rv" data-step="1" data-lam aria-label="La casa en cada etapa del diseño">
+      <figure class="lam pr-rv" data-step="1" data-lam aria-label="El proyecto en cada etapa del diseño">
         <!-- Cada etapa es una capa propia: los cambios solo mueven opacidad y transform (compuestos, sin repintar) -->
         <!-- 1. Lote -->
         <svg class="ly g g-lote" viewBox={`0 0 ${P.w} ${P.h}`} aria-hidden="true" focusable="false">
@@ -90,74 +92,20 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
           </g>
         </svg>
 
-        <!-- 3 y 5. Plano (entra completo; nada se traza línea a línea: son cientos de trazos) -->
-        <svg class="ly g g-plano" viewBox={`0 0 ${P.w} ${P.h}`} aria-hidden="true" focusable="false">
-          <g transform="translate(750 520) scale(0.7) translate(-750 -500)">
-            <path class="pl-thin" d={pl.thin}></path>
-            <path class="pl-water" d={pl.water}></path>
-            <path class="pl-hidden" d={pl.hidden}></path>
-            <path class="pl-glass" d={pl.glass}></path>
-            <path class="pl-walls" d={pl.walls}></path>
-            <g class="pl-labels">
-              {
-                pl.labels.slice(2).map((l) => (
-                  <text x={l.x} y={l.y} text-anchor={l.a}>
-                    {l.t}
-                  </text>
-                ))
-              }
-            </g>
-          </g>
-        </svg>
+        <!-- 3 y 5. Plano real de Ulises (planta del primer nivel), en línea -->
+        <div class="ly g g-plano real" aria-hidden="true">
+          <Image src={plantaLinea} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" loading="lazy" />
+        </div>
 
-        <!-- 5. Para construir: cotas y áreas sobre el plano -->
-        <svg class="ly g g-tecnico" viewBox={`0 0 ${P.w} ${P.h}`} aria-hidden="true" focusable="false">
-          <defs>
-            <pattern id="pr-hatch" patternUnits="userSpaceOnUse" width="14" height="14" patternTransform="rotate(45)">
-              <path d="M0 0V14" stroke="#0080c1" stroke-width="2" opacity="0.5"></path>
-            </pattern>
-          </defs>
-          <g transform="translate(750 520) scale(0.7) translate(-750 -500)">
-            <path class="pl-floor" d={pl.floor}></path>
-            <path class="pl-pool" d={pl.pool}></path>
-            <g class="pl-dims">
-              <path d={pl.dims}></path>
-              {
-                pl.labels.slice(0, 2).map((l) => (
-                  <text x={l.x} y={l.y} text-anchor={l.a} transform={l.r ? `rotate(${l.r} ${l.x} ${l.y})` : undefined}>
-                    {l.t}
-                  </text>
-                ))
-              }
-            </g>
-          </g>
-        </svg>
+        <!-- 5. Para construir: el mismo plano, ya completo a color con cotas y áreas -->
+        <div class="ly g g-tecnico real" aria-hidden="true">
+          <Image src={plantaColor} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" loading="lazy" />
+        </div>
 
-        <!-- 4. Fachada -->
-        <svg class="ly g g-fachada" viewBox={`0 0 ${P.w} ${P.h}`} aria-hidden="true" focusable="false">
-          <g transform="translate(750 560) scale(1.12) translate(-750 -560)">
-            <path class="e-ground" d={P.ground}></path>
-            {
-              P.elevTrees.map((t) => (
-                <g class="e-tree">
-                  <path d={t.trunk} />
-                  <circle cx={t.x} cy={t.y} r={t.r} />
-                </g>
-              ))
-            }
-            {P.elev.map((e) => <path class={e.cls} d={e.d} />)}
-            {
-              P.elevNotes.map((n) => (
-                <g class="e-note">
-                  <path d={`M${n.to[0]} ${n.to[1] + (n.to[1] < n.at[1] ? 12 : -30)}Q${(n.to[0] + n.at[0]) / 2 + 30} ${(n.to[1] + n.at[1]) / 2} ${n.at[0]} ${n.at[1]}`} pathLength="1" class="dr" />
-                  <text class="hand" x={n.to[0]} y={n.to[1]} text-anchor="middle">
-                    {n.t}
-                  </text>
-                </g>
-              ))
-            }
-          </g>
-        </svg>
+        <!-- 4. Fachada real (fachada norte, sobre la ladera) -->
+        <div class="ly g g-fachada real" aria-hidden="true">
+          <Image src={fachada} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" loading="lazy" />
+        </div>
 
         <!-- 4. Render real, sujeto a la lámina -->
         <div class="lam-render" aria-hidden="true">
@@ -286,6 +234,10 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
   .lam::before { left: 0; top: 0; background: linear-gradient(135deg, var(--color-bone) 50%, transparent 50.5%); }
   .lam::after { right: 0; bottom: 0; background: linear-gradient(-45deg, var(--color-bone) 50%, transparent 50.5%); }
   .ly { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; will-change: opacity, transform; transform: translateZ(0); }
+  /* Láminas reales: el dibujo completo dentro de la lámina, sin recortar */
+  .ly.real { display: grid; place-items: center; padding: 7% 5% 9%; }
+  .ly.real :global(img) { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .g-fachada.real { padding: 4% 4% 6%; }
 
   .g { opacity: 0; transition: opacity 0.6s cubic-bezier(0.37, 0, 0.63, 1), transform 0.8s var(--ease-out-expo); }
   .dr { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.3s cubic-bezier(0.55, 0, 0.25, 1); }
@@ -345,14 +297,14 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
   /* lote: se traza una vez y luego queda de fondo */
   .lam[data-step='1'] .g-lote { opacity: 1; }
   .lam[data-step='2'] .g-lote { opacity: 0.55; }
-  .lam:is([data-step='3'], [data-step='5']) .g-lote { opacity: 0.28; }
+  .lam:is([data-step='3'], [data-step='5']) .g-lote { opacity: 0; }
   .lam:not([data-step='0']) .g-lote .dr { stroke-dashoffset: 0; }
   .g-lote .hand.big { transition: opacity 0.4s; }
   .lam:not([data-step='1']) .g-lote .hand.big { opacity: 0; }
 
   /* zonas: las burbujas crecen; en el plano quedan de fondo */
   .lam[data-step='2'] .g-zonas { opacity: 1; }
-  .lam[data-step='3'] .g-zonas { opacity: 0.2; }
+  .lam[data-step='3'] .g-zonas { opacity: 0; }
   .lam:is([data-step='2'], [data-step='3']) .g-zonas .dr { stroke-dashoffset: 0; transition-delay: 0.4s; }
   .lam:is([data-step='2'], [data-step='3']) .bub { transform: none; opacity: 1; }
   .z-x { transition: opacity 0.4s; }

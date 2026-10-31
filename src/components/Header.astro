@@ -2,8 +2,8 @@
 import Logo from './Logo.astro';
 import { servicios } from '../lib/servicios';
 import Maqueta from './Maqueta.astro';
-import { campestre, urbana, ampliacion, interiores, comercial } from '../lib/iso';
-const modelos = [campestre(), urbana(), ampliacion(), interiores(), comercial()];
+import { campestre, ampliacion, institucional, ejecutivo } from '../lib/iso';
+const modelos = [campestre(), ampliacion(), institucional(), ejecutivo()];
 
 // Servicios despliega la lista de páginas de cada servicio; Blog va directo
 const links = [{ href: '/blog', label: 'Blog' }];
@@ -397,7 +397,7 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
     .hd-dd-panel :is(.dd-all, .dd-card)::after { display: none; }
     .dd-all svg, .dd-go { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.4s var(--ease-out-expo); }
     .dd-all:hover svg { transform: translateX(3px); }
-    .hd-nav .dd-cards { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+    .hd-nav .dd-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
     .hd-dd-panel .dd-card {
       --c: 10px;
       position: relative;

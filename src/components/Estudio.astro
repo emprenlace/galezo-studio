@@ -13,7 +13,7 @@ import mono from '../assets/brand/monogram-d.txt?raw';
 
 // de arriba hacia abajo (el corte se lee como un edificio): lo que respalda el diseño de tu casa, sin hoja de vida
 const pisos = [
-  { y: 'N +12,00', t: 'Planos que se construyen', d: 'Con renders y cantidades de obra' },
+  { y: 'N +12,00', t: 'Planos que se construyen', d: 'Con modelo BIM, renders y cantidades de obra' },
   { y: 'N +9,00', t: 'Obra pública construida', d: 'Colegios y espacios públicos en el Cesar' },
   { y: 'N +6,00', t: 'Vivienda urbana y campestre', d: 'Casas y condominios' },
   { y: 'N +3,00', t: '6 años de experiencia', d: 'En el sector público y privado' },
@@ -38,7 +38,7 @@ const total = pisos.length + 2;
         <div class="pf-tx">
           <p class="pf-name">Ulises Galezo Cifuentes</p>
           <p class="pf-role">Arquitecto · Fundador de Galezo Studio</p>
-          <p class="pf-years">Lidera el diseño de cada casa, junto a su equipo, de la primera idea a los planos para construir.</p>
+          <p class="pf-years">Lidera el diseño de cada proyecto, junto a su equipo, de la primera idea a los planos para construir.</p>
         </div>
         <blockquote class="pf-quote">
           <p>Mi compromiso está con las personas: mejorar su calidad de vida con la arquitectura.</p>
@@ -49,7 +49,7 @@ const total = pisos.length + 2;
             Cotiza tu diseño
             <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
           </a>
-          <p class="es-note">Hablas directo con el equipo que diseña tu casa.</p>
+          <p class="es-note">Hablas directo con el equipo que diseña tu proyecto.</p>
         </div>
       </div>
 
@@ -61,8 +61,8 @@ const total = pisos.length + 2;
               <svg viewBox="0 0 1647 1914"><path transform="matrix(1 0 0 -1 0 1914)" d={mono.trim()}></path></svg>
             </span>
             <span class="ct-y">Cubierta</span>
-            <span class="ct-t">Tu casa</span>
-            <span class="ct-d">Diseñada y firmada por Ulises</span>
+            <span class="ct-t">Tu proyecto</span>
+            <span class="ct-d">Diseñado y firmado por Ulises</span>
           </li>
           {
             pisos.map((p, i) => (
@@ -212,6 +212,14 @@ const total = pisos.length + 2;
     /* sin escalera (a este tamaño ensucia); cada piso: nivel + título y su descripción debajo */
     .ct-stair { display: none; }
     .corte { height: clamp(222px, calc(100svh - 432px), 400px); }
+    /* más limpio: sin símbolos de fondo, el corte en línea fina y sin vanos ni terreno achurado */
+    .es > :global(.trz) { display: none; }
+    .corte { --wall: 1.5px; --slab: 1px; }
+    .ct li { border-bottom-color: var(--color-line); box-shadow: -1.5px 0 0 rgb(11 13 16 / 0.18), 1.5px 0 0 rgb(11 13 16 / 0.18); }
+    .ct li::before, .ct li::after { display: none; }
+    .ct-roof { border-top: 3px solid var(--color-brand); margin: 0 -1.5px; padding-left: 12px; }
+    .corte::after { display: none; }
+    .ct-base { border-bottom: 1px solid rgb(11 13 16 / 0.18) !important; }
     .ct li { grid-template-columns: 76px 1fr; padding: 0 12px 0 10px; }
     .ct-y { font-size: 11px; }
     .ct-t { font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

@@ -10,17 +10,17 @@ export const estudio = {
   '@type': 'ProfessionalService',
   '@id': org,
   name: 'Galezo Studio',
-  description: 'Estudio de diseño arquitectónico: casas campestres y urbanas, remodelación y ampliación, interiores y locales comerciales. Planos, renders, recorrido virtual y cantidades de obra.',
+  description: 'Estudio de diseño arquitectónico: vivienda campestre y urbana, remodelación e interiores, proyectos comerciales e institucionales y proyectos ejecutivos con arquitectura e ingeniería. Planos, modelo BIM en Revit, renders, recorrido virtual y cantidades de obra.',
   url: SITE,
   logo: `${SITE}/icon-512.png`,
-  image: `${SITE}/og/galezo-studio.jpg`,
+  image: `${SITE}/og/galezo-proyecto.jpg`,
   telephone: PHONE,
   email: 'arquitectoulisesgalezo@gmail.com',
   address: { '@type': 'PostalAddress', addressLocality: 'Valledupar', addressRegion: 'Cesar', addressCountry: 'CO' },
   areaServed: { '@type': 'Country', name: 'Colombia' },
   founder: { '@type': 'Person', name: 'Ulises Galezo Cifuentes', jobTitle: 'Arquitecto', alumniOf: 'Universidad del Atlántico' },
   sameAs: ['https://www.instagram.com/galezostudio'],
-  knowsAbout: ['Diseño arquitectónico', 'Casas campestres', 'Vivienda urbana', 'Remodelación', 'Diseño de interiores', 'Renders', 'Cantidades de obra'],
+  knowsAbout: ['Diseño arquitectónico', 'Casas campestres', 'Vivienda urbana', 'Remodelación', 'Diseño de interiores', 'Locales comerciales', 'Arquitectura institucional', 'Obra pública', 'Proyectos ejecutivos', 'Modelado BIM', 'Revit', 'Renders', 'Cantidades de obra'],
 };
 
 export const website = {

@@ -193,7 +193,7 @@ Registro de lo aprobado en cada sección, para no repetir recursos y mantener el
 
 ## Fase 4–5 · SEO técnico, medición y chat calificador (2026-10-31)
 - Limpieza: recursos de las pruebas del héroe, `scripts/maqueta.ts` y `Plan.astro` a `archive/sin-uso/`; fuera Three.js y paquetes de letras sin uso.
-- SEO: Open Graph/Twitter con imagen propia 1200×630 (`public/og/galezo-studio.jpg`, `PUBLIC_URL` para el dominio de hoy), canonical solo en indexables, `noindex` + `PUBLIC_PREVIEW`, JSON-LD `ProfessionalService` + `WebSite` + `FAQPage` (preguntas en `lib/faq.ts`, compartidas con la sección 7), `robots.txt`, `sitemap-index.xml` → `sitemap-paginas.xml` (solo indexables), 404 real ("Este plano no existe").
+- SEO: Open Graph/Twitter con imagen propia 1200×630 (`public/og/galezo-proyecto.jpg`, `PUBLIC_URL` para el dominio de hoy), canonical solo en indexables, `noindex` + `PUBLIC_PREVIEW`, JSON-LD `ProfessionalService` + `WebSite` + `FAQPage` (preguntas en `lib/faq.ts`, compartidas con la sección 7), `robots.txt`, `sitemap-index.xml` → `sitemap-paginas.xml` (solo indexables), 404 real ("Este plano no existe").
 - Chat calificador (`Chat.astro`, `lib/lead.ts`, `lib/track.ts`): ver `docs/medicion.md`. Pruebas `npm test` (filtro, prioridad, mensaje, privacidad).
 - Consent Mode v2 + aviso de cookies.
 - Medición: Lighthouse móvil 98 / 100 / 100 / 100 (una corrida dio 94 por variación; la siguiente 98, TBT 0).
@@ -214,3 +214,33 @@ Registro de lo aprobado en cada sección, para no repetir recursos y mantener el
 - Logos de Gobernación del Cesar y Alcaldía de Valledupar (INDER) recortados a PNG transparente (src/assets/clientes). Se quitó solo el blanco conectado al borde; los blancos internos de los escudos se conservan.
 - Van en color. Celular: junto al botón "Cotiza tu diseño", en lugar de la nota (no suman alto a la sección de una pantalla). Tableta y escritorio: bajo el subtítulo.
 - Subtítulo pasa de "proyectos con la Gobernación del Cesar" a "proyectos de obra pública en el Cesar", porque ya son dos entidades.
+
+## 2026-10-31 · De "casa" a "proyecto" y nuevo servicio
+- El estudio recibe proyectos de todo tipo: los textos hablan de "tu proyecto" en vez de "tu casa". Se quedan los nombres de servicio "Casa campestre" y "Casa urbana" (es lo que busca la gente) y el dato de experiencia "Casas y condominios".
+- Nuevo servicio: "Obra pública e institucional" (colegios, escenarios deportivos, edificios públicos). Menú (6 maquetas, la nueva es un colegio en claustro), página /servicios/obra-publica-e-institucional, cotizador (etapas: lote, ya construido, averiguando; obra nueva <60 m² no encaja) y SEO.
+- La sección 3 (mesa de maquetas) sigue con los 4 casos de vivienda; su subtítulo ahora dice "de la vivienda a la obra pública".
+- Hero en celulares bajitos (iPhone SE): el título de tres líneas baja a 1,72rem y el bloque se alinea arriba.
+
+## 2026-10-31 · Ajustes después de presentar la web
+- Se quita el proyecto I.E. Alfonso López Pumarejo (Río de Oro); sus imágenes pasan a archive/obras. Quedan 6 proyectos.
+- Sección 04 pasa a llamarse "Proyectos".
+- Dibujos de las obras rehechos como boceto a lápiz (docs/lapiz.py): la foto se simplifica con medianas para quitar texturas, las aristas fuertes se dibujan como línea de grafito y las sombras con achurado sobre papel. Archivos *-boceto.jpg (nombre nuevo para que el navegador no use los viejos). Requiere numpy, scipy y pillow.
+- Sección 03: "También diseñamos" deja de ser una línea suelta; ahora son dos tarjetas con maqueta (locales comerciales y obra pública e institucional) que enlazan a sus páginas.
+- Sección 06 en celular: sin símbolos de fondo y el corte en línea fina (sin muros negros, vanos ni terreno achurado).
+- Modelo BIM de arquitectura en Revit: en el entregable de planos, el corte de Estudio, el proceso, las preguntas, el hero y el SEO.
+- Imagen para compartir rehecha ("Ve tu proyecto terminado") con nombre nuevo (og/galezo-proyecto.jpg) para que WhatsApp no use la vieja de su caché.
+
+## 2026-10-31 · Planos reales de Ulises en las secciones 02 y 05
+- Fuente: PLANOS ARQUITECTONICOS - CASA JAVIER BAQUERO.pdf (Revit, 10 láminas). Se usan la planta del primer nivel (lámina 1) y la fachada norte (lámina 5), recortadas sin cajetín: no aparece el nombre ni el logo del cliente.
+- src/assets/planos: planta-color.jpg, planta-linea.jpg (misma planta solo en línea, sacada de la de color) y fachada.jpg.
+- 02: Planos = la planta se dibuja en línea de izquierda a derecha con un lápiz azul y luego entra el color. Recorrido = la planta suave con la línea y la cámara recorriendo garaje, estar, sala, comedor y cocina. Cantidades = etiquetas con las áreas reales del plano (sala 73,05; garaje 32,38; comedor 25,74; estar 25,00; cocina 13,55 m²). Sin cambios de texto.
+- 05: lote, zonas e idea siguen siendo el dibujo animado; el plano (03), la fachada (04) y "para construir" (05, planta a color + cuadro de cantidades) son las láminas reales. El lote dibujado se oculta en 03 y 05 para que no se cruce con la planta real.
+- Las capas sobre la planta usan el mismo sistema que la imagen (1100 × 538) y el marco se ajusta con container queries para que la planta quepa entera en celular.
+- (ajuste) Dibujos con más profundidad y definición: contorno grueso en aristas principales y fino en detalles, contraste local para separar planos, achurado en tres direcciones según la sombra y aguada de grafito. Archivos *-dibujo.jpg.
+- (ajuste) Se quita el inodoro que aparecía en la sala de la planta (planta1-*.jpg). La pestaña Planos de la 02 es ahora un mini juego de láminas reales que pasan solas (planta 6,2 s; las demás 4,5 s) y se pueden elegir con chips: Planta → Corte (lámina 3) → Fachada (lámina 5) → Modelo 3D (perspectiva sur-oeste, lámina 7). La nota del pie cambia con la lámina. Pedido del cliente: "corte, fachada y modelo 3D".
+
+## 2026-10-31 · Servicios: de 6 a 4
+- Diseño de vivienda (campestre y urbana) · Remodelación e interiores · Comercial e institucional (locales y obra pública) · Proyectos ejecutivos ("toda la ingeniería y la arquitectura del proyecto", palabras del cliente; solo como servicio, sin pregunta extra en el formulario).
+- ids: vivienda, remodelacion, comercial, ejecutivo (service_id en dataLayer y hoja). Slugs nuevos y redirecciones 301 en vercel.json desde los 6 anteriores.
+- Mesa de maquetas (sección 03) = los 4 servicios; se quita el bloque "También diseñamos". Maqueta nueva ejecutivo(): estructura a la vista (columnas y losas en azul).
+- Pendiente confirmar con Ulises qué ingenierías incluye el proyecto ejecutivo antes de escribir su página.

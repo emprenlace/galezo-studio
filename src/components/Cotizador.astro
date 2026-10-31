@@ -241,11 +241,11 @@ const leadsUrl = import.meta.env.PUBLIC_LEADS_URL || '';
   let opener: HTMLElement | null = null;
   const base = () => ({ cta_id: cta, service_id: a.service });
   const esc = (s: string) => s.replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]!);
-  const isNew = () => a.service === 'campestre' || a.service === 'urbana' || a.service === 'comercial';
+  const isNew = () => a.service === 'vivienda' || a.service === 'comercial' || a.service === 'ejecutivo';
 
   // ---------- La maqueta: se clona del menú de servicios y se arma con el avance ----------
   const setModel = () => {
-    const i = Math.max(0, SERVICES.findIndex((s) => s.id === (a.service || 'campestre')));
+    const i = Math.max(0, SERVICES.findIndex((s) => s.id === (a.service || 'vivienda')));
     const src = document.querySelectorAll<SVGElement>('.dd-card .mq')[i];
     mqEl.innerHTML = '';
     if (src) mqEl.appendChild(src.cloneNode(true));
@@ -273,8 +273,8 @@ const leadsUrl = import.meta.env.PUBLIC_LEADS_URL || '';
   // ---------- Pasos ----------
   const Q: Record<Exclude<StepId, 'contact'>, () => { q: string; sub?: string; list: { id: string; label: string }[]; two?: boolean }> = {
     service: () => ({ q: '¿Qué quieres diseñar?', sub: 'Elige una opción; te tomará menos de un minuto.', list: SERVICES }),
-    stage: () => ({ q: a.service === 'remodelacion' || a.service === 'interiores' ? '¿Cómo está tu espacio hoy?' : '¿En qué etapa estás?', list: stagesFor(a.service) }),
-    size: () => ({ q: isNew() ? (a.service === 'comercial' ? '¿De qué tamaño sería el local?' : '¿De qué tamaño sería tu casa?') : '¿Qué área vamos a intervenir?', sub: 'Un aproximado está bien.', list: SIZES, two: true }),
+    stage: () => ({ q: a.service === 'remodelacion' ? '¿Cómo está tu espacio hoy?' : '¿En qué etapa estás?', list: stagesFor(a.service) }),
+    size: () => ({ q: isNew() ? '¿De qué tamaño sería tu proyecto?' : '¿Qué área vamos a intervenir?', sub: 'Un aproximado está bien.', list: SIZES, two: true }),
     location: () => ({ q: '¿Dónde será la obra?', sub: 'Diseñamos en todo Colombia.', list: PLACES }),
     timing: () => ({ q: '¿Cuándo te gustaría empezar?', list: TIMINGS }),
   };

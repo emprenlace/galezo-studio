@@ -1,5 +1,37 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/servicios/casa-campestre",
+      "destination": "/servicios/diseno-de-vivienda",
+      "permanent": true
+    },
+    {
+      "source": "/servicios/casa-urbana",
+      "destination": "/servicios/diseno-de-vivienda",
+      "permanent": true
+    },
+    {
+      "source": "/servicios/remodelacion-y-ampliacion",
+      "destination": "/servicios/remodelacion-e-interiores",
+      "permanent": true
+    },
+    {
+      "source": "/servicios/diseno-de-interiores",
+      "destination": "/servicios/remodelacion-e-interiores",
+      "permanent": true
+    },
+    {
+      "source": "/servicios/locales-comerciales",
+      "destination": "/servicios/comercial-e-institucional",
+      "permanent": true
+    },
+    {
+      "source": "/servicios/obra-publica-e-institucional",
+      "destination": "/servicios/comercial-e-institucional",
+      "permanent": true
+    }
+  ]
 }

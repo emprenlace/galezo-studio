@@ -7,9 +7,8 @@ export interface Servicio {
   line: string;
 }
 export const servicios: Servicio[] = [
-  { slug: 'casa-campestre', id: 'campestre', title: 'Casa campestre', short: 'Campestre', line: 'Para tu lote fuera de la ciudad o en un condominio' },
-  { slug: 'casa-urbana', id: 'urbana', title: 'Casa urbana', short: 'Urbana', line: 'Para tu lote en la ciudad o en un conjunto' },
-  { slug: 'remodelacion-y-ampliacion', id: 'remodelacion', title: 'Remodelación y ampliación', short: 'Remodelación', line: 'Tu casa crece o cambia sin empezar de cero' },
-  { slug: 'diseno-de-interiores', id: 'interiores', title: 'Diseño de interiores', short: 'Interiores', line: 'Distribución, muebles y acabados' },
-  { slug: 'locales-comerciales', id: 'comercial', title: 'Locales comerciales', short: 'Comercial', line: 'Locales y proyectos comerciales' },
+  { slug: 'diseno-de-vivienda', id: 'vivienda', title: 'Diseño de vivienda', short: 'Vivienda', line: 'Casas campestres y urbanas' },
+  { slug: 'remodelacion-e-interiores', id: 'remodelacion', title: 'Remodelación e interiores', short: 'Remodelación', line: 'Ampliaciones, remodelaciones y diseño interior' },
+  { slug: 'comercial-e-institucional', id: 'comercial', title: 'Comercial e institucional', short: 'Comercial', line: 'Locales, colegios, escenarios deportivos y edificios públicos' },
+  { slug: 'proyectos-ejecutivos', id: 'ejecutivo', title: 'Proyectos ejecutivos', short: 'Ejecutivos', line: 'Toda la ingeniería y la arquitectura del proyecto' },
 ];

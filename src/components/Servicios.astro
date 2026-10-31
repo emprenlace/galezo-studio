@@ -9,13 +9,13 @@
 import Maqueta from './Maqueta.astro';
 import Plomada from './Plomada.astro';
 import Trazos from './Trazos.astro';
-import { campestre, urbana, ampliacion, interiores } from '../lib/iso';
+import { campestre, ampliacion, institucional, ejecutivo } from '../lib/iso';
 
 const casos = [
-  { id: 'campestre', short: 'Campestre', ideal: 'ya tienes un lote fuera de la ciudad o en un condominio campestre', title: 'Casa campestre', lead: 'Para tu lote en el campo: pensada para el calor, con sombra, ventilación y vista al paisaje.', model: campestre() },
-  { id: 'urbana', short: 'Urbana', ideal: 'tienes un lote en la ciudad o en un conjunto', title: 'Casa urbana', lead: 'Para tu lote en la ciudad: de uno o varios pisos, aprovechando cada metro.', model: urbana() },
-  { id: 'remodelacion', short: 'Remodelación', ideal: 'tu casa ya existe y quieres que crezca o cambie', title: 'Remodelación y ampliación', lead: 'Tu casa crece o se renueva sin empezar de cero: lo nuevo, diseñado sobre lo que ya tienes.', model: ampliacion() },
-  { id: 'interiores', short: 'Interiores', ideal: 'la obra está lista o vas a renovar tus espacios', title: 'Diseño de interiores', lead: 'Distribución, muebles y acabados, con dos renders por espacio y un video.', model: interiores() },
+  { id: 'vivienda', short: 'Vivienda', ideal: 'tienes un lote en el campo, en la ciudad o en un condominio', title: 'Diseño de vivienda', lead: 'Casas campestres y urbanas, de uno o varios pisos, pensadas para el clima, la luz y cómo vives.', model: campestre() },
+  { id: 'remodelacion', short: 'Remodelación', ideal: 'tu espacio ya existe y quieres que crezca, cambie o se renueve por dentro', title: 'Remodelación e interiores', lead: 'Ampliamos o renovamos lo que ya tienes y diseñamos la distribución, los muebles y los acabados.', model: ampliacion() },
+  { id: 'comercial', short: 'Comercial', ideal: 'vas a construir un local, un negocio o un proyecto público', title: 'Comercial e institucional', lead: 'Locales, oficinas, colegios y escenarios deportivos, con la experiencia de la obra pública que ya construimos.', model: institucional() },
+  { id: 'ejecutivo', short: 'Ejecutivos', ideal: 'necesitas el proyecto completo para tramitar y construir', title: 'Proyectos ejecutivos', lead: 'Toda la ingeniería y la arquitectura del proyecto en un solo paquete.', model: ejecutivo() },
 ];
 ---
 
@@ -25,7 +25,7 @@ const casos = [
     <Plomada n="03" label="Qué diseñamos" variant="grua" />
     <header class="sv-head sv-rv">
       <h2 id="sv-title" class="sv-h2">¿Qué vas <span class="accent">a construir?</span></h2>
-      <p class="sv-sub"><span class="sub-pick">Diseñamos vivienda de principio a fin. Elige tu caso.</span><span class="sub-tap">Vivienda de principio a fin. Toca tu caso.</span></p>
+      <p class="sv-sub"><span class="sub-pick">Diseñamos de principio a fin, de la vivienda a la obra pública. Elige tu caso.</span><span class="sub-tap">De la vivienda a la obra pública. Toca tu caso.</span></p>
     </header>
 
     <!-- La mesa -->
@@ -72,7 +72,6 @@ const casos = [
           Cotiza tu diseño
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
         </a>
-        <p class="sv-com">También diseñamos <strong>locales y proyectos comerciales</strong>.</p>
       </div>
     </div>
   </div>
@@ -196,9 +195,6 @@ const casos = [
   .btn-primary { background: var(--color-brand-ink); color: #fff; transition: background-color 0.3s var(--ease-out-expo); }
   .btn-primary:hover { background: var(--color-ink); }
   .btn-primary:hover svg { transform: translateX(3px); }
-  .sv-com { font-size: 13px; color: var(--color-ink-mute); }
-  .sv-com strong { font-weight: 600; color: var(--color-ink-soft); }
-
   /* Entradas */
   :global(html.js) .sv-rv { opacity: 0; transform: translateY(18px); transition: opacity 0.9s var(--ease-out-expo), transform 1s var(--ease-out-expo); }
   :global(html.js) .sv-rv.is-in { opacity: 1; transform: none; }
@@ -245,7 +241,6 @@ const casos = [
     .cap-l { margin-top: 3px; font-size: 0.95rem; line-height: 1.42; }
     .cap-i { display: none; }
     .sv-foot { gap: 12px; }
-    .sv-com { display: none; }
   }
   /* Celulares angostos (320–360): maquetas un poco más planas */
   @media (max-width: 360px) {
@@ -256,7 +251,6 @@ const casos = [
   /* Celulares con más alto (Pro Max): vuelve la línea "Ideal si…" */
   @media (max-width: 639px) and (min-height: 780px) {
     .cap-i { display: block; }
-    .sv-com { display: block; }
     .mq-stage { aspect-ratio: 4 / 2.5; }
   }
   @media (min-width: 640px) {
@@ -277,7 +271,6 @@ const casos = [
     .cap-t { font-size: 1.5rem; }
     .cap-l { font-size: 1.05rem; }
     .cap-i { display: block; }
-    .sv-com { display: block; }
   }
   @media (min-width: 640px) and (orientation: landscape), (min-width: 1024px) {
     /* Tableta horizontal y escritorio: las cuatro en la mesa, sin deslizar */
