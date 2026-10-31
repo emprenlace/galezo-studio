@@ -1,0 +1,395 @@
+---
+/**
+ * Sección 3 · "Qué diseñamos": la mesa de maquetas.
+ * Las cuatro maquetas (axonométricas, generadas al compilar) se apoyan juntas sobre una sola mesa de estudio,
+ * cada una con su ficha de cartón. Al pasar el mouse (o al deslizar en celular) una se levanta y se abre
+ * en vista explotada, las otras se atenúan, y debajo aparece su descripción. Un solo botón para cotizar,
+ * que lleva al chat con el caso elegido.
+ */
+import Maqueta from './Maqueta.astro';
+import Plomada from './Plomada.astro';
+import Trazos from './Trazos.astro';
+import { campestre, urbana, ampliacion, interiores } from '../lib/iso';
+
+const casos = [
+  { id: 'campestre', short: 'Campestre', ideal: 'ya tienes un lote fuera de la ciudad o en un condominio campestre', title: 'Casa campestre', lead: 'Para tu lote en el campo: pensada para el calor, con sombra, ventilación y vista al paisaje.', model: campestre() },
+  { id: 'urbana', short: 'Urbana', ideal: 'tienes un lote en la ciudad o en un conjunto', title: 'Casa urbana', lead: 'Para tu lote en la ciudad: de uno o varios pisos, aprovechando cada metro.', model: urbana() },
+  { id: 'remodelacion', short: 'Remodelación', ideal: 'tu casa ya existe y quieres que crezca o cambie', title: 'Remodelación y ampliación', lead: 'Tu casa crece o se renueva sin empezar de cero: lo nuevo, diseñado sobre lo que ya tienes.', model: ampliacion() },
+  { id: 'interiores', short: 'Interiores', ideal: 'la obra está lista o vas a renovar tus espacios', title: 'Diseño de interiores', lead: 'Distribución, muebles y acabados, con dos renders por espacio y un video.', model: interiores() },
+];
+---
+
+<section class="sv" id="servicios" data-nav-label="Qué diseñamos" aria-labelledby="sv-title" data-sv>
+  <Trazos left="nivel" right="corte" contours />
+  <div class="sv-in">
+    <Plomada n="03" label="Qué diseñamos" variant="grua" />
+    <header class="sv-head sv-rv">
+      <h2 id="sv-title" class="sv-h2">¿Qué vas <span class="accent">a construir?</span></h2>
+      <p class="sv-sub"><span class="sub-pick">Diseñamos vivienda de principio a fin. Elige tu caso.</span><span class="sub-tap">Vivienda de principio a fin. Toca tu caso.</span></p>
+    </header>
+
+    <!-- La mesa -->
+    <div class="mesa sv-rv" data-table>
+      <ul class="row" role="list" data-row>
+        {
+          casos.map((c, i) => (
+            <li class:list={['mq-item', { 'is-active': i === 0 }]} data-item={i} data-service={c.id}>
+              <span class="slab" aria-hidden="true" />
+              <button type="button" class="mq-btn" aria-pressed={i === 0 ? 'true' : 'false'} aria-label={c.title} data-pick={i}>
+                <span class="mq-stage">
+                  <span class="mq-shadow" aria-hidden="true" />
+                  <Maqueta model={c.model} />
+                </span>
+                <span class="tag" aria-hidden="true">
+                  <span class="tag-n">0{i + 1}</span>
+                  <span class="tag-t"><span class="t-full">{c.title}</span><span class="t-short">{c.short}</span></span>
+                  <span class="tag-bar"><i /></span>
+                </span>
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- Descripción del caso elegido + un solo botón -->
+    <div class="sv-foot sv-rv">
+      <div class="caption" aria-live="polite">
+        {
+          casos.map((c, i) => (
+            <div class:list={['cap', { 'is-on': i === 0 }]} data-cap={i} aria-hidden={i === 0 ? 'false' : 'true'}>
+              <p class="cap-t">
+                <span class="cap-n">0{i + 1}</span> {c.title}
+              </p>
+              <p class="cap-l">{c.lead}</p>
+              <p class="cap-i"><span>Ideal si</span> {c.ideal}.</p>
+            </div>
+          ))
+        }
+      </div>
+      <div class="sv-actions">
+        <a href="#cotizar" class="btn btn-primary chamfer" data-open-chat data-cta="servicios" data-service={casos[0].id} data-cta-main>
+          Cotiza tu diseño
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
+        </a>
+        <p class="sv-com">También diseñamos <strong>locales y proyectos comerciales</strong>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sv {
+    --hdr: 76px;
+    --pad: 20px;
+    position: relative;
+    background: var(--color-bone);
+    padding: calc(var(--hdr) + clamp(14px, 3svh, 36px)) var(--pad) clamp(24px, 4svh, 48px);
+    min-height: 100svh;
+    display: flex;
+    overflow: hidden;
+  }
+  .sv-in { position: relative; z-index: 1; width: 100%; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(12px, 2.6svh, 30px); }
+  .sv-in > * { flex-shrink: 0; }
+  .sv-head { margin-top: auto; }
+  .sv-foot { margin-bottom: auto; }
+
+  .sv-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 32px; }
+  .sv-h2 { font-size: clamp(1.9rem, min(1.3rem + 2.6vw, 6svh), 3.6rem); line-height: 1.02; font-weight: 560; letter-spacing: -0.038em; }
+  .sv-h2 .accent { color: var(--color-brand); font-size: 1.08em; letter-spacing: -0.012em; }
+  .sv-sub { font-size: clamp(0.98rem, 0.92rem + 0.3vw, 1.12rem); line-height: 1.45; color: var(--color-ink-soft); }
+
+  /* ---------- La mesa ---------- */
+  .mesa { position: relative; margin: clamp(8px, 2svh, 24px) calc(var(--pad) * -1) 0; }
+  .row {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding: 0 var(--pad);
+    scroll-padding: 0 var(--pad);
+  }
+  .row::-webkit-scrollbar { display: none; }
+  .mq-item { position: relative; flex: none; width: 78vw; scroll-snap-align: center; }
+  .mq-btn { position: relative; z-index: 1; display: block; width: 100%; cursor: pointer; text-align: left; border-radius: 4px; padding-bottom: 14px; }
+  .mq-stage { position: relative; display: block; aspect-ratio: 4 / 3; transition: transform 0.7s var(--ease-out-expo), opacity 0.5s; }
+  .mq-stage :global(.mq) { position: relative; z-index: 1; }
+  /* Sombra de la maqueta sobre la mesa: crece cuando se levanta */
+  .mq-shadow {
+    position: absolute;
+    left: 14%;
+    right: 14%;
+    bottom: 4%;
+    height: 16%;
+    background: radial-gradient(closest-side, rgb(40 34 26 / 0.22), rgb(40 34 26 / 0));
+    transition: transform 0.7s var(--ease-out-expo), opacity 0.5s;
+  }
+  /* Tablero de la mesa: cada maqueta aporta su tramo, juntos forman una sola mesa */
+  /* Tablero (superficie + canto) en un solo fondo, sin sombras propias: los tramos se unen sin costuras */
+  .slab {
+    position: absolute;
+    left: -1px;
+    right: -1px;
+    bottom: 20px;
+    height: calc(36% + 14px);
+    background: linear-gradient(180deg, #ece5d8 0, #e2d9c8 calc(100% - 14px), #cdc1ad calc(100% - 14px), #c6b9a3 100%);
+  }
+  .mq-item:first-child .slab { left: 0; clip-path: polygon(26px 0, 100% 0, 100% 100%, 0 100%, 0 26px); }
+  .mq-item:last-child .slab { right: 0; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 26px), calc(100% - 26px) 100%, 0 100%); }
+  /* Sombra de toda la mesa sobre el piso */
+  .row { position: relative; filter: drop-shadow(0 22px 18px rgb(40 34 26 / 0.16)); }
+  /* Ficha de cartón con el nombre, apoyada en el borde de la mesa */
+  .tag {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 7px;
+    margin: -6px 0 0 10%;
+    padding: 7px 11px 8px;
+    background: #fffdf9;
+    box-shadow: 0 6px 12px -8px rgb(40 34 26 / 0.45), 0 0 0 1px rgb(40 34 26 / 0.08);
+    rotate: -1.5deg;
+    transition: background-color 0.35s, rotate 0.5s var(--ease-out-expo);
+  }
+  .mq-item:nth-child(even) .tag { rotate: 1.2deg; }
+  /* Avance del recorrido automático, dentro de la ficha elegida */
+  .tag-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; overflow: hidden; }
+  .tag-bar i { display: block; height: 100%; background: rgb(255 255 255 / 0.85); transform-origin: 0 50%; transform: scaleX(0); }
+  .row.is-auto .mq-item.is-active .tag-bar i { animation: tag-fill var(--auto, 4s) linear forwards; }
+  @keyframes tag-fill { to { transform: scaleX(1); } }
+  .tag-n { font-size: 11px; font-weight: 600; color: var(--color-brand-ink); font-variant-numeric: tabular-nums; }
+  .tag-t { font-size: 14px; font-weight: 600; letter-spacing: -0.015em; color: var(--color-ink); white-space: nowrap; }
+
+  /* Estado elegido: la maqueta se levanta y se abre; las otras se atenúan */
+  .mq-item.is-active .mq-stage { transform: translateY(-14px); }
+  .mq-item.is-active .mq-shadow { transform: scale(1.12) translateY(12px); opacity: 0.75; }
+  .row.has-active .mq-item:not(.is-active) .mq-stage { opacity: 0.42; }
+  .mq-item.is-active .tag { background: var(--color-brand-ink); rotate: 0deg; }
+  .mq-item.is-active .tag-n { color: rgb(255 255 255 / 0.8); }
+  .mq-item.is-active .tag-t { color: #fff; }
+  .mq-btn:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 4px; }
+
+  /* ---------- Descripción + botón ---------- */
+  .sv-foot { display: grid; gap: 16px; }
+  .caption { display: grid; }
+  .cap { grid-area: 1 / 1; opacity: 0; transform: translateY(8px); transition: opacity 0.35s, transform 0.5s var(--ease-out-expo); pointer-events: none; }
+  .cap.is-on { opacity: 1; transform: none; transition-delay: 0.08s; }
+  .cap-t { font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.8rem); font-weight: 600; letter-spacing: -0.03em; line-height: 1.15; }
+  .cap-n { font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--color-brand); margin-right: 4px; }
+  .cap-l { margin-top: 6px; max-width: 34rem; font-size: clamp(0.98rem, 0.94rem + 0.2vw, 1.08rem); line-height: 1.45; color: var(--color-ink-soft); text-wrap: pretty; }
+  .cap-i { margin-top: 8px; font-size: 13.5px; line-height: 1.4; color: var(--color-ink-soft); }
+  .cap-i span { font-family: 'Architects Daughter', var(--font-sans); font-size: 15px; color: var(--color-brand-ink); margin-right: 2px; }
+  .sv-actions { display: grid; justify-items: start; gap: 10px; }
+  .btn {
+    --cut: 9px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 50px;
+    padding: 0 24px;
+    font-size: 15px;
+    font-weight: 560;
+    white-space: nowrap;
+  }
+  .btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.45s var(--ease-out-expo); }
+  .btn-primary { background: var(--color-brand-ink); color: #fff; transition: background-color 0.3s var(--ease-out-expo); }
+  .btn-primary:hover { background: var(--color-ink); }
+  .btn-primary:hover svg { transform: translateX(3px); }
+  .sv-com { font-size: 13px; color: var(--color-ink-mute); }
+  .sv-com strong { font-weight: 600; color: var(--color-ink-soft); }
+
+  /* Entradas */
+  :global(html.js) .sv-rv { opacity: 0; transform: translateY(18px); transition: opacity 0.9s var(--ease-out-expo), transform 1s var(--ease-out-expo); }
+  :global(html.js) .sv-rv.is-in { opacity: 1; transform: none; }
+  :global(html.js) .mesa.sv-rv { transition-delay: 0.1s; }
+  :global(html.js) .sv-foot.sv-rv { transition-delay: 0.2s; }
+  :global(html.rm) .sv-rv { opacity: 1 !important; transform: none !important; }
+
+  .t-short, .sub-tap { display: none; }
+
+  /* ---------- Celular: las cuatro maquetas a la vista sobre una sola mesa (2 × 2), nada se desliza ni se corta ---------- */
+  @media (max-width: 639px), (max-width: 1023px) and (orientation: portrait) {
+    .sv { padding-top: calc(var(--hdr) + 6px); padding-bottom: 4px; }
+    .sv-in { gap: 12px; }
+    .sv-head { justify-content: center; text-align: center; gap: 4px; }
+    .sv-sub { width: 100%; font-size: 0.95rem; text-wrap: balance; }
+    .sub-tap { display: inline; }
+    .sub-pick { display: none; }
+    .mesa { margin: 0; padding: 8px 6px 18px; }
+    /* Tablero: superficie + canto al frente, cortes a 45° como el resto de la marca */
+    .mesa::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, #efe9de 0, #e2d9c8 calc(100% - 12px), #cdc1ad calc(100% - 12px), #c6b9a3 100%);
+      clip-path: polygon(22px 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%, 0 22px);
+    }
+    .mesa { filter: drop-shadow(0 16px 14px rgb(40 34 26 / 0.14)); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 6px; overflow: visible; padding: 0; scroll-snap-type: none; filter: none; }
+    .mq-item { width: auto; }
+    .slab { display: none; }
+    .mq-btn { padding-bottom: 2px; text-align: center; }
+    .mq-stage { aspect-ratio: 4 / 2.2; min-height: 0; margin: 0 -2%; }
+    .mq-stage :global(.mq) { position: absolute; inset: 0; }
+    .mq-shadow { bottom: 2%; }
+    .tag { margin: -14px auto 0; padding: 6px 10px 7px; }
+    .mq-item:nth-child(even) .tag { rotate: 1.2deg; }
+    .tag-t { font-size: 13px; }
+    .t-full { display: none; }
+    .t-short { display: inline; }
+    .mq-item.is-active .mq-stage { transform: translateY(-8px); }
+    .row.has-active .mq-item:not(.is-active) .mq-stage { opacity: 0.5; }
+    .cap-t .cap-n { display: none; }
+    .cap-t { font-size: 1.15rem; }
+    .cap-l { margin-top: 3px; font-size: 0.95rem; line-height: 1.42; }
+    .cap-i { display: none; }
+    .sv-foot { gap: 12px; }
+    .sv-com { display: none; }
+  }
+  /* Celulares angostos (320–360): maquetas un poco más planas */
+  @media (max-width: 360px) {
+    .mq-stage { aspect-ratio: 4 / 2.15; }
+    .sv-sub { font-size: 0.9rem; }
+    .cap-l { font-size: 0.9rem; }
+  }
+  /* Celulares con más alto (Pro Max): vuelve la línea "Ideal si…" */
+  @media (max-width: 639px) and (min-height: 780px) {
+    .cap-i { display: block; }
+    .sv-com { display: block; }
+    .mq-stage { aspect-ratio: 4 / 2.5; }
+  }
+  @media (min-width: 640px) {
+    .sv { --pad: 28px; }
+  }
+  /* Tableta vertical: la misma mesa 2 × 2, más grande y con todos los textos */
+  @media (min-width: 640px) and (max-width: 1023px) and (orientation: portrait) {
+    .sv { padding-bottom: 12px; }
+    .sv-in { gap: clamp(14px, 2.4svh, 26px); }
+    .mesa { padding: 16px 14px 28px; }
+    .mq-stage { aspect-ratio: 4 / 2.25; }
+    .tag { padding: 8px 13px 9px; }
+    .tag-t { font-size: 15px; }
+    .t-full { display: inline; }
+    .t-short { display: none; }
+    .sub-tap { display: none; }
+    .sub-pick { display: inline; }
+    .cap-t { font-size: 1.5rem; }
+    .cap-l { font-size: 1.05rem; }
+    .cap-i { display: block; }
+    .sv-com { display: block; }
+  }
+  @media (min-width: 640px) and (orientation: landscape), (min-width: 1024px) {
+    /* Tableta horizontal y escritorio: las cuatro en la mesa, sin deslizar */
+    .mesa { margin: 0; }
+    .row { overflow: visible; padding: 0; }
+    .mq-item { width: 25%; }
+    .mq-stage { margin: 0 -6%; }
+  }
+  @media (min-width: 640px) and (max-width: 1023px) and (orientation: landscape) {
+    .tag { margin-left: 4%; padding: 6px 9px 7px; }
+    .tag-t { font-size: 12.5px; }
+    .t-full { display: none; }
+    .t-short { display: inline; }
+  }
+  @media (min-width: 1024px) {
+    .sv { --pad: max(40px, calc((100% - 1200px) / 2)); --hdr: 84px; }
+    .sv-foot { grid-template-columns: 1fr auto; align-items: end; gap: 32px; }
+    .sv-actions { justify-items: end; text-align: right; }
+  }
+  @media (min-width: 1024px) and (max-height: 760px) {
+    .mq-stage { aspect-ratio: 4 / 2.7; }
+  }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-sv]')!;
+  const row = sec.querySelector<HTMLElement>('[data-row]')!;
+  const items = [...sec.querySelectorAll<HTMLElement>('[data-item]')];
+  const btns = [...sec.querySelectorAll<HTMLButtonElement>('[data-pick]')];
+  const caps = [...sec.querySelectorAll<HTMLElement>('[data-cap]')];
+  const cta = sec.querySelector<HTMLAnchorElement>('[data-cta-main]')!;
+  const desktop = () => innerWidth >= 1024;
+
+  let cur = 0;
+  let ready = false;
+  const set = (i: number) => {
+    cur = i;
+    if (!ready) return;
+    items.forEach((it, j) => {
+      const on = j === i;
+      it.classList.toggle('is-active', on);
+      it.classList.toggle('is-exploded', on);
+      btns[j].setAttribute('aria-pressed', String(on));
+    });
+    caps.forEach((c, j) => {
+      c.classList.toggle('is-on', j === i);
+      c.setAttribute('aria-hidden', String(j !== i));
+    });
+    cta.dataset.service = items[i].dataset.service;
+  };
+
+  // Entradas y armado de las maquetas (una tras otra); luego se activa la primera
+  const io = new IntersectionObserver(
+    (es) => {
+      for (const e of es) {
+        if (!e.isIntersecting) continue;
+        e.target.classList.add('is-in');
+        if (e.target.matches('[data-table]')) {
+          items.forEach((it, j) => setTimeout(() => it.classList.add('is-built'), 120 + j * 160));
+          setTimeout(() => {
+            ready = true;
+            row.classList.add('has-active');
+            set(cur);
+            schedule();
+          }, 1900);
+        }
+        io.unobserve(e.target);
+      }
+    },
+    { threshold: 0.15 },
+  );
+  sec.querySelectorAll('.sv-rv').forEach((el) => io.observe(el));
+
+  // Recorrido automático (todos los tamaños): cada 4 s se levanta la siguiente, hasta que la persona interactúa
+  const AUTO = 4000;
+  row.style.setProperty('--auto', `${AUTO}ms`);
+  let auto = !document.documentElement.classList.contains('rm');
+  let timer = 0;
+  const schedule = () => {
+    clearTimeout(timer);
+    if (!auto) return;
+    row.classList.remove('is-auto');
+    void row.offsetWidth;
+    row.classList.add('is-auto');
+    timer = window.setTimeout(() => {
+      set((cur + 1) % items.length);
+      schedule();
+    }, AUTO);
+  };
+  const stop = () => {
+    auto = false;
+    clearTimeout(timer);
+    row.classList.remove('is-auto');
+  };
+  new IntersectionObserver(([e]) => (e.isIntersecting && ready ? schedule() : (clearTimeout(timer), row.classList.remove('is-auto'))), { threshold: 0.5 }).observe(row);
+
+  // Escritorio: elegir pasando el mouse; en todos: tocar o enfocar
+  const fine = matchMedia('(pointer: fine)').matches;
+  btns.forEach((b, i) => {
+    b.addEventListener('click', () => {
+      stop();
+      ready = true;
+      row.classList.add('has-active');
+      set(i);
+    });
+    b.addEventListener('focus', () => set(i));
+    if (fine)
+      b.addEventListener('pointerenter', () => {
+        if (!desktop()) return;
+        stop();
+        set(i);
+      });
+  });
+
+</script>

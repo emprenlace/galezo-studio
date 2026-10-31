@@ -1,0 +1,93 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url('/fonts/instrument-sans.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400;
+  src: url('/fonts/instrument-serif-italic.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@theme {
+  /* Marca: azul del monograma (#0080C1). brand-ink para texto pequeño (AA 5,2:1 sobre blanco). */
+  --color-brand: #0080c1;
+  --color-brand-ink: #0071ab;
+  --color-brand-soft: #e3f1f9;
+
+  /* Tinta y neutros */
+  --color-ink: #0b0d10;
+  --color-ink-soft: #464c55;
+  --color-ink-mute: #646a73;
+  --color-bone: #f4f2ee;
+  --color-paper: #ffffff;
+  --color-line: rgb(11 13 16 / 0.1);
+
+  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: auto;
+  }
+  body {
+    background: #fff;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: 'ss01', 'cv11';
+  }
+  ::selection {
+    background: var(--color-brand);
+    color: #fff;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+  }
+}
+
+/* Lenguaje de formas: el corte a 45° del bloque del monograma.
+   --cut controla el tamaño del chaflán (esquina superior izquierda e inferior derecha). */
+@utility chamfer {
+  clip-path: polygon(
+    var(--cut, 10px) 0,
+    100% 0,
+    100% calc(100% - var(--cut, 10px)),
+    calc(100% - var(--cut, 10px)) 100%,
+    0 100%,
+    0 var(--cut, 10px)
+  );
+}
+
+/* Acento editorial: palabra en itálica serif dentro de un título sans. */
+@utility accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+@font-face {
+  font-family: 'Architects Daughter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url('/fonts/architects-daughter.woff2') format('woff2');
+}

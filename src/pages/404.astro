@@ -1,0 +1,271 @@
+---
+/**
+ * 404 · "Aquí todavía no hemos construido nada".
+ * El error se cuenta como una maqueta: los dos cuatros ya están construidos y en medio queda el lote del cero,
+ * con sus estacas, sus hilos de replanteo y el cero solo dibujado. La plomada cuelga sobre el lote.
+ * Al tocar el lote, el cero se construye pieza por pieza (del dibujo a la obra, como en el hero) y el cajetín
+ * cambia a "Construido". La salida: volver al inicio, cotizar o ir a lo que sí está en pie (los servicios).
+ */
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import { cuatroCeroCuatro } from '../lib/iso';
+import { servicios } from '../lib/servicios';
+import mono from '../assets/brand/monogram-d.txt?raw';
+
+const model = cuatroCeroCuatro();
+const k = model.marks;
+const pct = (p: [number, number]) => `left:${((p[0] / model.w) * 100).toFixed(2)}%;top:${((p[1] / model.h) * 100).toFixed(2)}%`;
+const hilos = `M${k.s1}L${k.s2}L${k.s3}L${k.s4}Z`.replace(/,/g, ' ');
+---
+
+<Base title="Página no encontrada · Galezo Studio" description="Esta página no existe." noindex pageType="404">
+  <Header />
+  <main class="nf" data-nav-label="Página no encontrada" data-nf>
+    <div class="nf-stage" data-nf-stage>
+      <div class="nf-tilt" data-nf-tilt>
+        <svg class="nf-mq" viewBox={`0 0 ${model.w} ${model.h}`} aria-hidden="true" focusable="false">
+          <path class="nf-hilo" d={hilos} pathLength="1"></path>
+          {
+            model.pieces.map((p) =>
+              p.group === 'zero' ? (
+                <g class="pc pc-zero" style={`--d:${p.at.toFixed(2)}`}>
+                  <path class="pc-ghost" d={p.edges} />
+                  <g class="pc-solid">
+                    {p.faces.map((f) => (
+                      <path class={f.cls} d={f.d} />
+                    ))}
+                    <path class="pc-e" d={p.edges} />
+                  </g>
+                </g>
+              ) : (
+                <g class={`pc pc-${p.kind}${p.group ? ' pc-' + p.group : ''}`} style={`--d:${p.at.toFixed(2)}`}>
+                  {p.faces.map((f) => (
+                    <path class={f.cls} d={f.d} />
+                  ))}
+                  <path class="pc-e" d={p.edges} />
+                </g>
+              ),
+            )
+          }
+        </svg>
+
+        <!-- La plomada sobre el lote -->
+        <span class="nf-plom" style={pct(k.top)} aria-hidden="true">
+          <span class="nf-swing">
+            <span class="nf-thread"></span>
+            <svg viewBox="0 0 1647 1914"><path transform="matrix(1 0 0 -1 0 1914)" d={mono.trim()}></path></svg>
+          </span>
+        </span>
+
+        <button type="button" class="nf-build" style={pct(k.lot)} data-nf-build aria-label="Construir el cero"></button>
+        <p class="nf-hint" aria-live="polite" data-nf-hint>
+          <span class="h-tap">Toca el lote y constrúyelo</span>
+          <span class="h-click">Haz clic en el lote y constrúyelo</span>
+          <span class="h-done">Así trabajamos: del dibujo a la obra</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="nf-copy">
+      <h1 class="nf-h1">Aquí todavía <span class="accent">no hemos construido</span> nada</h1>
+      <p class="nf-sub">La página que buscas no existe o cambió de lugar.</p>
+      <div class="nf-act">
+        <a href="/" class="btn chamfer" data-cta="404_inicio">
+          Volver al inicio
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
+        </a>
+        <a href="#cotizar" class="nf-link" data-open-chat data-cta="404" data-nf-cta>Construyamos lo tuyo</a>
+      </div>
+      <nav class="nf-pie" aria-label="Servicios">
+        <p class="nf-pie-l">Lo que sí está en pie</p>
+        <ul>
+          {
+            servicios.map((s) => (
+              <li>
+                <a href={`/servicios/${s.slug}`}>{s.title}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Cajetín de la lámina perdida -->
+    <dl class="nf-cj" aria-hidden="true">
+      <div class="cj-path"><dt>Lámina</dt><dd data-nf-path>/</dd></div>
+      <div><dt>Escala</dt><dd>1 : 404</dd></div>
+      <div><dt>Estado</dt><dd><span class="st-0">Sin construir</span><span class="st-1">Construido</span></dd></div>
+    </dl>
+  </main>
+</Base>
+
+<style>
+  .nf {
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    align-content: center;
+    gap: 6px 48px;
+    padding: 84px 20px 28px;
+    background:
+      radial-gradient(60% 42% at 50% 30%, rgb(0 128 193 / 0.09), transparent 70%),
+      var(--color-bone);
+    overflow: hidden;
+  }
+
+  /* ---------- Escenario ---------- */
+  .nf-stage { position: relative; width: min(100%, 560px); justify-self: center; perspective: 1400px; }
+  .nf-tilt { position: relative; transform-style: preserve-3d; transition: transform 0.6s var(--ease-out-expo); will-change: transform; }
+  .nf-mq { display: block; width: 100%; height: auto; overflow: visible; }
+
+  .pc-e { fill: none; stroke: #2b2f36; stroke-width: 1; stroke-linejoin: round; stroke-linecap: round; }
+  /* La cara que se lee (el frente de cada número) es la más clara */
+  .t-paper.f-top { fill: #efebe4; }
+  .t-paper.f-left { fill: #fffefb; }
+  .t-paper.f-right { fill: #d6cfc3; }
+  .t-soft.f-top { fill: #e9e5de; }
+  .t-soft.f-left { fill: #e6e1d9; }
+  .t-soft.f-right { fill: #d8d2c8; }
+  .t-wood.f-top { fill: #d9bf9c; }
+  .t-wood.f-left { fill: #c6a782; }
+  .t-wood.f-right { fill: #b5946e; }
+  .tree-crown { fill: rgb(255 253 249 / 0.92); }
+  .tree-shadow { fill: rgb(30 40 50 / 0.08); }
+
+  /* El cero dibujado: aristas en azul, a trazos */
+  .pc-ghost { fill: none; stroke: var(--color-brand); stroke-width: 1.2; stroke-dasharray: 5 4; stroke-linejoin: round; transition: opacity 0.5s; }
+  .pc-zero .pc-e { stroke: #2b2f36; }
+  .nf-hilo { fill: none; stroke: var(--color-brand); stroke-width: 0.9; stroke-dasharray: 0.012 0.008; opacity: 0.8; transition: opacity 0.5s; }
+
+  /* Armado inicial: la plataforma, los cuatros y las estacas bajan a su sitio */
+  :global(html.js) .pc:not(.pc-zero) { opacity: 0; transform: translateY(-30px); }
+  :global(html.js .is-in) .pc:not(.pc-zero) { opacity: 1; transform: none; transition: opacity 0.5s, transform 0.9s var(--ease-out-expo); transition-delay: calc(var(--d) * 1.6s); }
+  :global(html.js) .pc-ghost { opacity: 0; }
+  :global(html.js .is-in) .pc-ghost { opacity: 1; transition-delay: calc(0.9s + var(--d) * 0.4s); }
+  :global(html.js) .nf-hilo { opacity: 0; }
+  :global(html.js .is-in) .nf-hilo { opacity: 0.8; transition-delay: 1.1s; }
+
+  /* El cero sólido espera arriba, invisible, hasta que se construye */
+  .pc-solid { opacity: 0; transform: translateY(-70px); }
+  .is-built .pc-solid { opacity: 1; transform: none; transition: opacity 0.35s, transform 0.85s cubic-bezier(0.34, 1.4, 0.5, 1); transition-delay: calc(var(--d) * 1.5s); }
+  .is-built .pc-ghost, .is-built .nf-hilo { opacity: 0 !important; transition-delay: 0.6s; }
+  .is-built .pc-stake { opacity: 0 !important; transform: translateY(-14px) !important; transition: opacity 0.4s 0.7s, transform 0.4s 0.7s; }
+
+  /* ---------- Plomada ---------- */
+  .nf-plom { position: absolute; width: 0; height: 0; z-index: 2; pointer-events: none; }
+  .nf-swing { position: absolute; left: 0; bottom: 0; display: grid; justify-items: center; transform-origin: 50% 0; translate: -50% 0; animation: nf-swing 3.6s ease-in-out infinite alternate; transition: transform 0.9s var(--ease-out-expo), opacity 0.6s; }
+  .nf-thread { width: 1px; height: 100vh; background: linear-gradient(transparent, rgb(43 47 54 / 0.55) 70%); }
+  .nf-swing svg { display: block; width: 20px; fill: var(--color-brand); }
+  @keyframes nf-swing { from { rotate: -1.1deg; } to { rotate: 1.1deg; } }
+  :global(html.js) .nf-swing { opacity: 0; transform: translateY(-60vh); }
+  :global(html.js .is-in) .nf-swing { opacity: 1; transform: none; transition: transform 1.4s 0.9s var(--ease-out-expo), opacity 0.4s 0.9s; }
+  :global(html.js .is-built) .nf-swing { opacity: 0; transform: translateY(-60vh); transition: transform 0.9s cubic-bezier(0.6, 0, 0.8, 0.4), opacity 0.5s 0.4s; }
+
+  /* ---------- Botón sobre el lote y pista ---------- */
+  .nf-build { position: absolute; z-index: 3; width: 34%; aspect-ratio: 1; translate: -50% -50%; border-radius: 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .nf-build:focus-visible { outline: 2px dashed var(--color-brand); outline-offset: 4px; }
+  .is-built .nf-build { pointer-events: none; visibility: hidden; }
+  :global(html:not(.js)) .nf-build, :global(html:not(.js)) .nf-hint { display: none; }
+
+  .nf-hint { position: relative; z-index: 3; justify-self: center; display: table; margin: 4px auto 0; white-space: nowrap; font-size: 13px; font-weight: 600; color: var(--color-brand-ink); background: rgb(255 255 255 / 0.85); border: 1px solid rgb(0 128 193 / 0.25); padding: 6px 12px; border-radius: 999px; pointer-events: none; }
+  .nf-hint span { display: none; }
+  .h-tap { display: inline !important; }
+  @media (pointer: fine) {
+    .h-tap { display: none !important; }
+    .nf-hint .h-click { display: inline; }
+  }
+  .is-built .h-tap, .is-built .h-click { display: none !important; }
+  .is-built .nf-hint .h-done { display: inline; }
+  :global(html.js) .nf-hint { opacity: 0; }
+  :global(html.js .is-in) .nf-hint { opacity: 1; transition: opacity 0.5s 1.8s; animation: nf-nudge 2.4s 2.4s ease-in-out infinite; }
+  :global(html.js .is-built) .nf-hint { animation: nf-pop 0.6s 1.2s var(--ease-out-expo) backwards; }
+  @keyframes nf-nudge { 50% { transform: translateY(-3px); } }
+  @keyframes nf-pop { from { opacity: 0; transform: translateY(6px) scale(0.95); } }
+
+  /* ---------- Texto ---------- */
+  .nf-copy { display: grid; align-content: center; justify-items: center; text-align: center; gap: 12px; max-width: 34rem; justify-self: center; }
+  .nf-h1 { font-size: clamp(2.05rem, 1.35rem + 3vw, 3.9rem); line-height: 1.02; font-weight: 560; letter-spacing: -0.04em; text-wrap: balance; }
+  .nf-h1 .accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.02em; color: var(--color-brand); }
+  .nf-sub { font-size: 1.02rem; line-height: 1.5; color: var(--color-ink-soft); }
+  .nf-act { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
+  .btn { --cut: 9px; display: inline-flex; align-items: center; gap: 8px; height: 50px; padding: 0 24px; font-size: 15px; font-weight: 560; background: var(--color-brand-ink); color: #fff; transition: background-color 0.3s; }
+  .btn:hover { background: var(--color-ink); }
+  .btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .nf-link { position: relative; font-size: 15px; font-weight: 600; color: var(--color-brand-ink); padding: 6px 0; }
+  .nf-link::after { content: ''; position: absolute; left: 0; right: 0; bottom: 2px; height: 1px; background: currentColor; transform: scaleX(0.35); transform-origin: 0 50%; transition: transform 0.4s var(--ease-out-expo); }
+  .nf-link:hover::after, .is-built .nf-link::after { transform: none; }
+  .is-built .nf-link { animation: nf-call 0.9s 1.6s var(--ease-out-expo) both; }
+  @keyframes nf-call { 40% { transform: translateY(-3px); color: var(--color-brand); } }
+
+  .nf-pie { margin-top: 14px; width: 100%; }
+  .nf-pie-l { font-size: 12.5px; font-weight: 600; color: var(--color-ink-mute); margin-bottom: 8px; }
+  .nf-pie ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .nf-pie a { display: inline-flex; align-items: center; height: 38px; padding: 0 14px; font-size: 13.5px; font-weight: 560; color: var(--color-ink); background: var(--color-paper); border: 1px solid var(--color-line); border-radius: 999px; transition: border-color 0.3s, color 0.3s; }
+  .nf-pie a:hover { border-color: var(--color-brand); color: var(--color-brand-ink); }
+
+  /* Entrada del texto */
+  :global(html.js) .nf-copy > * { opacity: 0; transform: translateY(14px); }
+  :global(html.js .is-in) .nf-copy > * { opacity: 1; transform: none; transition: opacity 0.6s, transform 0.8s var(--ease-out-expo); }
+  :global(html.js .is-in) .nf-copy > :nth-child(2) { transition-delay: 0.1s; }
+  :global(html.js .is-in) .nf-copy > :nth-child(3) { transition-delay: 0.2s; }
+  :global(html.js .is-in) .nf-copy > :nth-child(4) { transition-delay: 0.35s; }
+
+  /* ---------- Cajetín ---------- */
+  .nf-cj { display: grid; grid-template-columns: 1fr auto auto; justify-self: center; width: min(100%, 420px); margin-top: 22px; border: 1px solid rgb(11 13 16 / 0.16); font-size: 12.5px; background: rgb(255 255 255 / 0.5); }
+  .nf-cj > div { padding: 7px 11px 8px; border-left: 1px solid rgb(11 13 16 / 0.12); min-width: 0; }
+  .nf-cj > div:first-child { border-left: 0; }
+  .nf-cj dt { font-size: 9.5px; font-weight: 600; letter-spacing: 0.02em; color: var(--color-ink-mute); margin-bottom: 2px; }
+  .nf-cj dd { color: var(--color-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cj-path dd { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; color: var(--color-brand-ink); }
+  .st-1 { display: none; color: var(--color-brand-ink); font-weight: 600; }
+  .is-built .st-0 { display: none; }
+  .is-built .st-1 { display: inline; }
+
+  @media (min-width: 960px) {
+    .nf { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); padding: 96px clamp(32px, 5vw, 80px) 40px; }
+    .nf-stage { grid-column: 2; grid-row: 1; width: 100%; max-width: 720px; }
+    .nf-copy { grid-column: 1; grid-row: 1; justify-items: start; text-align: left; justify-self: start; }
+    .nf-act, .nf-pie ul { justify-content: flex-start; }
+    .nf-cj { grid-column: 1; grid-row: 2; justify-self: start; margin-top: 8px; }
+    .nf { background: radial-gradient(45% 55% at 68% 45%, rgb(0 128 193 / 0.1), transparent 70%), var(--color-bone); }
+  }
+
+  :global(html.rm) .nf * { transition: none !important; animation: none !important; }
+  :global(html.rm) .pc:not(.pc-zero), :global(html.rm) .nf-copy > *, :global(html.rm) .nf-hint { opacity: 1 !important; transform: none !important; }
+</style>
+
+<script>
+  import { track } from '../lib/track';
+
+  const root = document.querySelector<HTMLElement>('[data-nf]');
+  const path = document.querySelector('[data-nf-path]');
+  if (path) path.textContent = decodeURI(location.pathname) || '/';
+  document.documentElement.classList.add('ready');
+
+  if (root) {
+    requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add('is-in')));
+
+    const btn = root.querySelector<HTMLButtonElement>('[data-nf-build]');
+    btn?.addEventListener('click', () => {
+      if (root.classList.contains('is-built')) return;
+      root.classList.add('is-built');
+      navigator.vibrate?.(12);
+      track('not_found_build');
+    });
+
+    // Inclinación leve de la maqueta con el mouse (solo con puntero fino)
+    const tilt = root.querySelector<HTMLElement>('[data-nf-tilt]');
+    if (tilt && matchMedia('(pointer: fine)').matches && !document.documentElement.classList.contains('rm')) {
+      let raf = 0;
+      root.addEventListener('pointermove', (e) => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const x = e.clientX / innerWidth - 0.5;
+          const y = e.clientY / innerHeight - 0.5;
+          tilt.style.transform = `rotateX(${(-y * 6).toFixed(2)}deg) rotateY(${(x * 8).toFixed(2)}deg)`;
+        });
+      });
+      root.addEventListener('pointerleave', () => (tilt.style.transform = ''));
+    }
+  }
+</script>

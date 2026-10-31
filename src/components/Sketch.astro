@@ -1,0 +1,178 @@
+---
+/**
+ * Boceto en capas para que la animación no trabe:
+ * - aguada de fondo (capa propia, se anima solo su opacidad, sin repintar)
+ * - líneas del dibujo (lo único que se repinta mientras se traza)
+ * - aguada de la casa (capa propia)
+ * - lápiz (capa propia, se mueve con transform)
+ */
+import { buildSketch } from '../lib/sketch';
+
+interface Props {
+  class?: string;
+  /** Lápiz que recorre los trazos mientras se dibuja */
+  pencil?: boolean;
+  /** wide: panorámica para pantallas horizontales; tall: vertical para celular */
+  variant?: 'wide' | 'tall';
+}
+const { class: className = '', pencil = false, variant = 'wide' } = Astro.props;
+const sk =
+  variant === 'tall'
+    ? buildSketch({ w: 1200, h: 1500, fit: [0.03, 0.52, 0.97, 0.9], tall: true })
+    : buildSketch({ w: 2400, h: 1500, fit: [0.24, 0.6, 0.76, 0.93] });
+const vb = `0 0 ${sk.w} ${sk.h}`;
+// Tres capas compuestas por separado: lo que se anima en una no obliga a repintar las otras.
+// 0: paisaje, casa y construcción · 1: árboles · 2: pasto, figuras y notas
+const firstTree = sk.strokes.findIndex((s) => s.kind === 'tree');
+const layers = [
+  sk.strokes.filter((s, i) => i < firstTree && s.kind !== 'tree'),
+  sk.strokes.filter((s) => s.kind === 'tree'),
+  sk.strokes.filter((s, i) => i > firstTree && s.kind !== 'tree'),
+];
+---
+
+<div
+  class:list={['sk', className]}
+  data-sketch
+  data-vb={`${sk.w},${sk.h}`}
+  data-route={pencil ? JSON.stringify(sk.route) : undefined}
+  data-rest={pencil ? sk.rest.join(',') : undefined}
+  data-mat-anchor={sk.matAnchor ? sk.matAnchor.join(',') : undefined}
+>
+  <div class="sk-layer sk-wash-back">
+    <svg viewBox={vb} preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">
+      {sk.backWash.map((s) => <path d={s.d} fill={s.fill} fill-opacity={s.o} />)}
+    </svg>
+  </div>
+
+  {
+    layers.map((L, li) => (
+      <svg class="sk-lines" viewBox={vb} preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false" data-lines={li}>
+        {L.map((s) =>
+          s.kind === 'fill' ? (
+            <path class="sk-fill" d={s.d} />
+          ) : (
+            <path
+              class={`sk-l sk-${s.kind}`}
+              d={s.d}
+              pathLength="1"
+              style={`--d:${s.at.toFixed(2)}s;--t:${s.dur.toFixed(2)}s;stroke-width:${s.w};opacity:${s.o}`}
+            />
+          ),
+        )}
+        {li === 2 &&
+          sk.notes.map((n) => (
+            <g class="sk-note" style={`--d:${n.at.toFixed(2)}s`} data-note={n.id}>
+              {n.arrow && <path class="sk-l sk-arrow" d={n.arrow} pathLength="1" style={`--d:${n.at.toFixed(2)}s;--t:0.5s`} />}
+              <text x={n.x} y={n.y} text-anchor={n.anchor}>
+                {n.text}
+              </text>
+            </g>
+          ))}
+      </svg>
+    ))
+  }
+
+  {
+    sk.mats && (
+      <div class="sk-layer sk-mats">
+        <svg viewBox={vb} preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">
+          {Object.entries(sk.mats).map(([id, m]) => (
+            <g class:list={['sk-mat', { on: id === 'madera' }]} data-mat={id}>
+              <path d={m.wash.d} fill={m.wash.fill} fill-opacity={m.wash.o} />
+              {m.lines.map((l) => (
+                <path class="sk-mat-l" d={l.d} style={`stroke-width:${l.w};opacity:${l.o}`} />
+              ))}
+            </g>
+          ))}
+        </svg>
+      </div>
+    )
+  }
+
+  <div class="sk-layer sk-wash-front">
+    <svg viewBox={vb} preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">
+      {sk.frontWash.map((s) => <path d={s.d} fill={s.fill} fill-opacity={s.o} />)}
+    </svg>
+  </div>
+
+  {
+    pencil && (
+      <div class="sk-pencil" data-pencil aria-hidden="true">
+        <svg width="1" height="1" viewBox="0 0 1 1" overflow="visible" focusable="false">
+          <g transform="rotate(-38)">
+            <ellipse cx="190" cy="34" rx="150" ry="8" fill="#1e2228" opacity="0.07" />
+            <path d="M60 -10 H330 Q342 -10 342 0 Q342 10 330 10 H60 Z" fill="#0080c1" />
+            <path d="M60 -3.5 H342 M60 3.5 H342" stroke="#006da5" stroke-width="1.4" />
+            <path d="M60 -10 L4 0 L60 10 Z" fill="#e8d2ad" />
+            <path d="M18 -2.6 L0 0 L18 2.6 Z" fill="#2b2f36" />
+            <path d="M318 -10 H332 V10 H318 Z" fill="#c8ccd2" />
+          </g>
+        </svg>
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .sk { position: relative; width: 100%; height: 100%; }
+  .sk-layer, .sk-lines { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .sk-layer svg { display: block; width: 100%; height: 100%; }
+  .sk-lines { overflow: visible; will-change: transform; transform: translateZ(0); }
+  /* Las aguadas son capas compuestas: su aparición no repinta el dibujo */
+  .sk-wash-back, .sk-wash-front, .sk-mats { will-change: opacity; }
+  .sk-mat { opacity: 0; transition: opacity 0.5s cubic-bezier(0.3, 0, 0.2, 1); }
+  .sk-mat.on { opacity: 1; }
+  .sk-mat-l { fill: none; stroke: var(--sk-ink, #262a30); stroke-linecap: round; stroke-linejoin: round; }
+  .sk-fill { fill: var(--sk-paper, #f4f2ee); stroke: none; }
+  .sk-l {
+    fill: none;
+    stroke: var(--sk-ink, #262a30);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .sk-note .sk-l, .sk-arrow { stroke: var(--color-brand); stroke-width: 1.4; opacity: 0.9; }
+  .sk-note text {
+    font-family: 'Architects Daughter', var(--font-sans);
+    font-size: 30px;
+    fill: var(--color-brand);
+  }
+  .sk-l.sk-note { stroke: var(--color-brand); }
+  .sk-pencil {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1px;
+    height: 1px;
+    transform-origin: 0 0;
+    will-change: transform;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .sk-pencil svg { overflow: visible; display: block; }
+
+  /* Antes de arrancar (html.js sin .go) nada está dibujado; si el JS falla se quita html.js y se ve completo */
+  :global(html.js) .sk:not(.go) .sk-l { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  :global(html.js) .sk:not(.go) .sk-note text,
+  :global(html.js) .sk:not(.go) .sk-wash-back,
+  :global(html.js) .sk:not(.go) .sk-wash-front,
+  :global(html.js) .sk:not(.go) .sk-mats { opacity: 0; }
+  :global(html.js) .sk.go .sk-mats { opacity: 0; animation: sk-ink 1s 2.2s ease forwards; }
+  :global(html.js) .sk.go .sk-l {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: sk-draw var(--t, 0.6s) var(--d, 0s) cubic-bezier(0.45, 0.05, 0.25, 1) forwards;
+  }
+  :global(html.js) .sk.go .sk-note text { opacity: 0; animation: sk-ink 0.7s calc(var(--d) + 0.35s) ease forwards; }
+  :global(html.js) .sk.go .sk-wash-back { opacity: 0; animation: sk-ink 2s 3.3s cubic-bezier(0.3, 0, 0.2, 1) forwards; }
+  :global(html.js) .sk.go .sk-wash-front { opacity: 0; animation: sk-ink 1.8s 3.8s cubic-bezier(0.3, 0, 0.2, 1) forwards; }
+  :global(html.js) .sk.go .sk-pencil { animation: sk-ink 0.5s 0.05s ease forwards; }
+  :global(html.rm) .sk .sk-l { animation: none !important; stroke-dashoffset: 0 !important; }
+  :global(html.rm) .sk .sk-note text,
+  :global(html.rm) .sk .sk-wash-back,
+  :global(html.rm) .sk .sk-wash-front,
+  :global(html.rm) .sk .sk-mats,
+  :global(html.rm) .sk .sk-pencil { animation: none !important; opacity: 1 !important; }
+  @keyframes sk-draw { to { stroke-dashoffset: 0; } }
+  @keyframes sk-ink { to { opacity: 1; } }
+</style>

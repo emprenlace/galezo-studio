@@ -1,0 +1,108 @@
+---
+// Monograma vectorizado desde el original de 15.000 px (coincidencia 99,6 %) + logotipo compuesto.
+// Con `animated`: el contorno del monograma se traza en azul y luego se rellena; las letras suben una a una.
+import d from '../assets/brand/monogram-d.txt?raw';
+
+interface Props {
+  class?: string;
+  wordmark?: boolean;
+  animated?: boolean;
+}
+const { class: className = '', wordmark = true, animated = false } = Astro.props;
+const word = 'Galezo'.split('');
+---
+
+<span class:list={['logo', { 'logo-anim': animated }, className]} data-logo>
+  <svg class="logo-mark" viewBox="0 0 1647 1914" aria-hidden="true" focusable="false">
+    <path class="logo-fill" transform="matrix(1 0 0 -1 0 1914)" d={d.trim()}></path>
+    {animated && <path class="logo-trace" transform="matrix(1 0 0 -1 0 1914)" pathLength="1" d={d.trim()}></path>}
+  </svg>
+  {
+    wordmark && (
+      <span class="logo-word">
+        <span class="sr-only">Galezo Studio</span>
+        <span class="logo-galezo" aria-hidden="true">
+          {word.map((ch, i) => (
+            <span class="logo-ch" style={`--i:${i}`}>
+              {ch}
+            </span>
+          ))}
+        </span>
+        <span class="logo-studio" aria-hidden="true">
+          Studio
+        </span>
+      </span>
+    )
+  }
+</span>
+
+<style>
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.62em;
+    color: inherit;
+    line-height: 1;
+  }
+  .logo-mark {
+    height: 1.95em;
+    width: auto;
+    flex: none;
+    overflow: visible;
+  }
+  .logo-fill { fill: var(--color-brand); }
+  .logo-trace {
+    fill: none;
+    stroke: var(--color-brand);
+    stroke-width: 1.1px;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  .logo-word {
+    display: inline-flex;
+    flex-direction: column;
+    font-weight: 620;
+    font-size: 1.02em;
+    letter-spacing: -0.025em;
+  }
+  .logo-galezo {
+    display: inline-flex;
+    overflow: hidden;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+  .logo-ch { display: inline-block; }
+  .logo-studio {
+    font-weight: 450;
+    font-size: 0.78em;
+    letter-spacing: 0.01em;
+    opacity: 0.62;
+    margin-top: 0.2em;
+  }
+
+  /* Trazo del monograma al cargar (y de nuevo con .redraw) */
+  :global(html.js) .logo-anim .logo-fill { animation: logo-fill 0.7s 1s var(--ease-out-expo) both; }
+  :global(html.js) .logo-anim .logo-trace { animation: logo-trace 1.5s 0.1s cubic-bezier(0.65, 0, 0.35, 1) both; }
+  :global(html.js) .logo-anim .logo-ch { animation: logo-ch 0.9s var(--ease-out-expo) both; animation-delay: calc(0.35s + var(--i) * 45ms); }
+  :global(html.js) .logo-anim .logo-studio { animation: logo-studio 0.9s 0.75s var(--ease-out-expo) both; }
+  :global(html.js) .logo-anim.redraw .logo-trace { animation: logo-trace 0.6s cubic-bezier(0.4, 0, 0.2, 1) both; }
+  :global(html.js) .logo-anim.redraw .logo-fill { animation: logo-refill 0.6s ease-out both; }
+  :global(html.rm) .logo-anim * { animation: none !important; }
+
+  @keyframes logo-trace {
+    0% { stroke-dashoffset: 1; opacity: 1; }
+    75% { stroke-dashoffset: 0; opacity: 1; }
+    100% { stroke-dashoffset: 0; opacity: 0; }
+  }
+  @keyframes logo-fill { from { fill-opacity: 0; } }
+  @keyframes logo-refill {
+    0% { fill-opacity: 1; }
+    25% { fill-opacity: 0.55; }
+    100% { fill-opacity: 1; }
+  }
+  @keyframes logo-ch { from { transform: translateY(105%); } }
+  @keyframes logo-studio { from { opacity: 0; transform: translateY(4px); } }
+</style>

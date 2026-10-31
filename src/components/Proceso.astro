@@ -1,0 +1,665 @@
+---
+/**
+ * Sección 5 · "Cómo trabajamos": la casa que evoluciona.
+ * Una sola lámina donde la misma casa del héroe avanza etapa por etapa: lote → zonas → plano → fachada → planos
+ * para construir. Al lado, el cronograma de obra (barras tipo Gantt): cada barra es una etapa que se llena,
+ * se aprueba y da paso a la siguiente. Todo avanza con el scroll (la sección queda fija mientras tanto). Un solo botón.
+ */
+import { Image } from 'astro:assets';
+import Plomada from './Plomada.astro';
+import Trazos from './Trazos.astro';
+import { buildProceso } from '../lib/proceso';
+import render from '../assets/render-interior.jpg';
+
+const P = buildProceso();
+const pl = P.plan;
+const pasos = [
+  { t: 'Tu espacio', a: 'Nos cuentas de tu espacio y de cómo vives. Con el anticipo, arrancamos.', tag: 'Anticipo' },
+  { t: 'La idea', a: 'Organizamos la casa sobre el terreno: dónde va lo social, lo privado, la luz y la brisa.' },
+  { t: 'El plano', a: 'Distribuimos cada espacio y lo ajustamos contigo hasta que te convenza.' },
+  { t: 'La fachada', a: 'Volumen, materiales y renders: así se verá tu casa, por dentro y por fuera.' },
+  { t: 'Para construir', a: 'Planos técnicos, recorrido virtual y cantidades de obra, listos para tu constructor.', tag: 'Entrega' },
+];
+const cantidades = [
+  ['Concreto', 0.82],
+  ['Mampostería', 0.64],
+  ['Pisos y enchapes', 0.9],
+  ['Cubierta', 0.52],
+  ['Carpintería', 0.38],
+] as const;
+const pad = (i: number) => String(i + 1).padStart(2, '0');
+---
+
+<section class="pr" id="proceso" data-nav-label="Cómo trabajamos" aria-labelledby="pr-title" data-pr>
+ <div class="pr-pin">
+  <Trazos left="rosa" right="muro" />
+  <div class="pr-in">
+    <Plomada n="05" label="Cómo trabajamos" variant="sello" />
+    <header class="pr-head pr-rv">
+      <h2 id="pr-title" class="pr-h2">Tu casa, <span class="accent">etapa por etapa</span></h2>
+      <p class="pr-sub">Arrancamos con un anticipo y avanzamos por etapas: cada una la revisas y la apruebas antes de seguir.</p>
+    </header>
+
+    <div class="pr-body">
+      <!-- La lámina: la misma casa en cada etapa -->
+      <figure class="lam pr-rv" data-step="1" data-lam aria-label="La casa en cada etapa del diseño">
+        <!-- Cada etapa es una capa propia: los cambios solo mueven opacidad y transform (compuestos, sin repintar) -->
+        <!-- 1. Lote -->
+        <svg class="ly g g-lote" viewBox={`0 0 ${P.w} ${P.h}`} aria-hidden="true" focusable="false">
+          <g transform="translate(750 520) scale(0.7) translate(-750 -500)">
+            <path class="road" d={P.road}></path>
+            <text class="dim-t road-t" x={P.roadLabel.x} y={P.roadLabel.y} text-anchor="middle">vía de acceso</text>
+            <path class="lot-fill" d={P.lot}></path>
+            {P.contours.map((c) => <path class="contour dr" d={c} pathLength="1" />)}
+            <path class="lot dr" d={P.lot} pathLength="1"></path>
+            <path class="markers" d={P.markers}></path>
+            <path class="access dr" d={P.access} pathLength="1"></path>
+            {P.lotTrees.map((t) => <circle class="tree" cx={t.x} cy={t.y} r={t.r} />)}
+            <path class="dims dr" d={P.lotDims} pathLength="1"></path>
+            {
+              P.lotLabels.map((l) => (
+                <text class="dim-t" x={l.x} y={l.y} text-anchor="middle" transform={l.r ? `rotate(${l.r} ${l.x} ${l.y})` : undefined}>
+                  {l.t}
+                </text>
+              ))
+            }
+            <text class="hand big" x="750" y="470" text-anchor="middle">tu espacio</text>
+          </g>
+        </svg>
+
+        <!-- 2. Zonas -->
+        <svg class="ly g g-zonas" viewBox={`0 0 ${P.w} ${P.h}`} aria-hidden="true" focusable="false">
+          <g transform="translate(750 520) scale(0.7) translate(-750 -500)">
+            <path class="breeze dr" d={P.breeze} pathLength="1"></path>
+            <text class="hand z-x" x={P.lotTrees[0].x + 140} y={P.lotTrees[0].y + 30}>brisa</text>
+            <g class="sun z-x" transform={`translate(${P.sun.x} ${P.sun.y})`}>
+              <circle r="26"></circle>
+              <path d="M0 -44V-36M0 36V44M-44 0H-36M36 0H44M-31 -31L-25 -25M25 25L31 31M-31 31L-25 25M25 -25L31 -31"></path>
+            </g>
+            <path class="links dr z-x" d={P.links} pathLength="1"></path>
+            {
+              P.bubbles.map((b, i) => (
+                <g class={`bub bub-${b.tone}`} style={`--i:${i}`}>
+                  <ellipse cx={b.cx} cy={b.cy} rx={b.rx} ry={b.ry} />
+                  <text class="hand z-x" x={b.cx} y={b.cy + 10} text-anchor="middle">
+                    {b.t}
+                  </text>
+                </g>
+              ))
+            }
+          </g>
+        </svg>
+
+        <!-- 3 y 5. Plano (entra completo; nada se traza línea a línea: son cientos de trazos) -->
+        <svg class="ly g g-plano" viewBox={`0 0 ${P.w} ${P.h}`} aria-hidden="true" focusable="false">
+          <g transform="translate(750 520) scale(0.7) translate(-750 -500)">
+            <path class="pl-thin" d={pl.thin}></path>
+            <path class="pl-water" d={pl.water}></path>
+            <path class="pl-hidden" d={pl.hidden}></path>
+            <path class="pl-glass" d={pl.glass}></path>
+            <path class="pl-walls" d={pl.walls}></path>
+            <g class="pl-labels">
+              {
+                pl.labels.slice(2).map((l) => (
+                  <text x={l.x} y={l.y} text-anchor={l.a}>
+                    {l.t}
+                  </text>
+                ))
+              }
+            </g>
+          </g>
+        </svg>
+
+        <!-- 5. Para construir: cotas y áreas sobre el plano -->
+        <svg class="ly g g-tecnico" viewBox={`0 0 ${P.w} ${P.h}`} aria-hidden="true" focusable="false">
+          <defs>
+            <pattern id="pr-hatch" patternUnits="userSpaceOnUse" width="14" height="14" patternTransform="rotate(45)">
+              <path d="M0 0V14" stroke="#0080c1" stroke-width="2" opacity="0.5"></path>
+            </pattern>
+          </defs>
+          <g transform="translate(750 520) scale(0.7) translate(-750 -500)">
+            <path class="pl-floor" d={pl.floor}></path>
+            <path class="pl-pool" d={pl.pool}></path>
+            <g class="pl-dims">
+              <path d={pl.dims}></path>
+              {
+                pl.labels.slice(0, 2).map((l) => (
+                  <text x={l.x} y={l.y} text-anchor={l.a} transform={l.r ? `rotate(${l.r} ${l.x} ${l.y})` : undefined}>
+                    {l.t}
+                  </text>
+                ))
+              }
+            </g>
+          </g>
+        </svg>
+
+        <!-- 4. Fachada -->
+        <svg class="ly g g-fachada" viewBox={`0 0 ${P.w} ${P.h}`} aria-hidden="true" focusable="false">
+          <g transform="translate(750 560) scale(1.12) translate(-750 -560)">
+            <path class="e-ground" d={P.ground}></path>
+            {
+              P.elevTrees.map((t) => (
+                <g class="e-tree">
+                  <path d={t.trunk} />
+                  <circle cx={t.x} cy={t.y} r={t.r} />
+                </g>
+              ))
+            }
+            {P.elev.map((e) => <path class={e.cls} d={e.d} />)}
+            {
+              P.elevNotes.map((n) => (
+                <g class="e-note">
+                  <path d={`M${n.to[0]} ${n.to[1] + (n.to[1] < n.at[1] ? 12 : -30)}Q${(n.to[0] + n.at[0]) / 2 + 30} ${(n.to[1] + n.at[1]) / 2} ${n.at[0]} ${n.at[1]}`} pathLength="1" class="dr" />
+                  <text class="hand" x={n.to[0]} y={n.to[1]} text-anchor="middle">
+                    {n.t}
+                  </text>
+                </g>
+              ))
+            }
+          </g>
+        </svg>
+
+        <!-- 4. Render real, sujeto a la lámina -->
+        <div class="lam-render" aria-hidden="true">
+          <Image src={render} alt="" widths={[260, 420]} sizes="(min-width: 1024px) 210px, 120px" loading="lazy" />
+          <span>render</span>
+        </div>
+
+        <!-- 5. Cuadro de cantidades -->
+        <div class="lam-qty" aria-hidden="true">
+          <p class="qty-h">Cantidades de obra</p>
+          <ul>
+            {
+              cantidades.map(([n, v], i) => (
+                <li style={`--v:${v};--i:${i}`}>
+                  <span>{n}</span>
+                  <i />
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <!-- rótulo de la etapa -->
+        <figcaption class="lam-cap" aria-hidden="true">
+          {
+            pasos.map((p, i) => (
+              <span class:list={['cap', { 'is-on': i === 0 }]} data-cap={i}>
+                <b>{pad(i)}</b> {p.t}
+              </span>
+            ))
+          }
+        </figcaption>
+      </figure>
+
+      <!-- Cronograma: cada barra es una etapa -->
+      <div class="side pr-rv">
+        <div class="gantt" role="tablist" aria-label="Etapas del diseño" data-gantt>
+          <p class="g-head" aria-hidden="true"><span>Etapa</span><span>inicio</span><span>entrega</span></p>
+          {
+            pasos.map((p, i) => (
+              <button type="button" role="tab" class:list={['row', { 'is-on': i === 0 }]} aria-selected={i === 0 ? 'true' : 'false'} data-pr-step={i} style={`--i:${i}`}>
+                <span class="r-n">{pad(i)}</span>
+                <span class="r-t">{p.t}</span>
+                <span class="r-track">
+                  <span class="r-bar">
+                    <i class="r-fill" />
+                    <svg class="r-ok" viewBox="0 0 12 12" aria-hidden="true">
+                      <path d="M2.5 6.3 5 8.6 9.6 3.6" />
+                    </svg>
+                  </span>
+                  {p.tag && <span class="r-tag">{p.tag}</span>}
+                </span>
+              </button>
+            ))
+          }
+        </div>
+
+        <div class="desc" aria-live="polite">
+          {
+            pasos.map((p, i) => (
+              <div class:list={['d', { 'is-on': i === 0 }]} data-desc={i} aria-hidden={i === 0 ? 'false' : 'true'}>
+                <p class="d-t">
+                  <span class="d-n">{pad(i)}</span> {p.t}
+                </p>
+                <p class="d-a">{p.a}</p>
+              </div>
+            ))
+          }
+        </div>
+
+        <div class="pr-actions">
+          <a href="#cotizar" class="btn btn-primary chamfer" data-open-chat data-cta="proceso">
+            Cotiza tu diseño
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
+          </a>
+          <p class="pr-note">El primer paso es contarnos de tu espacio.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+ </div>
+</section>
+
+<style>
+  .pr {
+    --hdr: 76px;
+    --pad: 20px;
+    position: relative;
+    background: var(--color-bone);
+    /* recorrido de scroll: la lámina queda fija y cada tramo avanza una etapa */
+    height: 300svh;
+  }
+  .pr-pin {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    padding: calc(var(--hdr) + 8px) var(--pad) 10px;
+    display: flex;
+    overflow: hidden;
+  }
+  :global(html:not(.js)) .pr, :global(html.rm) .pr { height: auto; }
+  :global(html:not(.js)) .pr-pin, :global(html.rm) .pr-pin { position: relative; height: auto; min-height: 100svh; }
+  .pr-in { position: relative; z-index: 1; width: 100%; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .pr-in > * { flex-shrink: 0; }
+  .pr-head { margin-top: auto; text-align: center; display: grid; justify-items: center; gap: 6px; }
+  .pr-body { margin-bottom: auto; display: flex; flex-direction: column; gap: 12px; }
+  .pr-h2 { font-size: clamp(1.9rem, min(1.3rem + 2.6vw, 6svh), 3.6rem); line-height: 1.02; font-weight: 560; letter-spacing: -0.038em; text-wrap: balance; }
+  .pr-h2 .accent { color: var(--color-brand); font-size: 1.08em; letter-spacing: -0.012em; }
+  .pr-sub { max-width: 34rem; font-size: 0.95rem; line-height: 1.45; color: var(--color-ink-soft); text-wrap: balance; }
+
+  /* ---------- La lámina ---------- */
+  .lam {
+    --cut: 16px;
+    position: relative;
+    margin: 0;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    max-height: calc(100svh - 428px);
+    min-height: 170px;
+    background: #fff;
+    box-shadow: 0 1px 0 rgb(40 34 26 / 0.06), 0 18px 30px -22px rgb(40 34 26 / 0.35);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .lam::before, .lam::after { content: ''; position: absolute; z-index: 9; width: var(--cut); height: var(--cut); pointer-events: none; }
+  .lam::before { left: 0; top: 0; background: linear-gradient(135deg, var(--color-bone) 50%, transparent 50.5%); }
+  .lam::after { right: 0; bottom: 0; background: linear-gradient(-45deg, var(--color-bone) 50%, transparent 50.5%); }
+  .ly { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; will-change: opacity, transform; transform: translateZ(0); }
+
+  .g { opacity: 0; transition: opacity 0.6s cubic-bezier(0.37, 0, 0.63, 1), transform 0.8s var(--ease-out-expo); }
+  .dr { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.3s cubic-bezier(0.55, 0, 0.25, 1); }
+  .hand { font-family: 'Architects Daughter', var(--font-sans); font-size: 40px; fill: var(--color-brand-ink); }
+  .hand.big { font-size: 72px; opacity: 0.55; }
+
+  .lot { fill: none; stroke: #2f343b; stroke-width: 3.4; stroke-dasharray: 1; }
+  .road { fill: none; stroke: #ddd6ca; stroke-width: 70; }
+  .road-t { fill: #8a8378; font-weight: 500; }
+  .lot-fill { fill: rgb(127 164 99 / 0.1); }
+  .contour { fill: none; stroke: #b7a98f; stroke-width: 2; opacity: 0.7; }
+  .markers { fill: #fff; stroke: #2f343b; stroke-width: 2.4; }
+  .access { fill: none; stroke: var(--color-brand); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+  .tree { fill: rgb(111 154 85 / 0.1); stroke: #6f8f5d; stroke-width: 2.4; stroke-dasharray: 4 5; }
+  .dims, .pl-dims path { fill: none; stroke: var(--color-brand); stroke-width: 2.6; }
+  .dim-t, .pl-dims text { fill: var(--color-brand); font-family: var(--font-sans); font-size: 32px; font-weight: 600; }
+
+  .breeze { fill: none; stroke: var(--color-brand); stroke-width: 2; stroke-linecap: round; opacity: 0.55; }
+  .sun circle { fill: rgb(255 196 92 / 0.25); stroke: #e0a542; stroke-width: 2; }
+  .sun path { stroke: #e0a542; stroke-width: 2.4; stroke-linecap: round; }
+  .links { fill: none; stroke: #2f343b; stroke-width: 2; stroke-dasharray: 1; opacity: 0.6; }
+  .bub ellipse { stroke-width: 2.2; }
+  .bub-social ellipse { fill: rgb(0 128 193 / 0.14); stroke: var(--color-brand); }
+  .bub-servicio ellipse { fill: rgb(224 165 66 / 0.16); stroke: #c98f2c; }
+  .bub-privado ellipse { fill: rgb(126 96 170 / 0.13); stroke: #7e60aa; }
+  .bub-agua ellipse { fill: rgb(47 159 214 / 0.2); stroke: #2f9fd6; }
+  .bub-exterior ellipse { fill: rgb(111 154 85 / 0.14); stroke: #6f9a55; }
+  .bub { transform-box: fill-box; transform-origin: center; transform: scale(0.4); opacity: 0; transition: transform 0.8s var(--ease-out-expo), opacity 0.5s; transition-delay: calc(0.15s + var(--i) * 0.09s); }
+
+  .pl-thin { fill: none; stroke: #4a5059; stroke-width: 1.6; }
+  .pl-walls { fill: #23262b; }
+  .pl-hidden { fill: none; stroke: #4a5059; stroke-width: 1.3; stroke-dasharray: 10 8; }
+  .pl-glass { fill: none; stroke: #23262b; stroke-width: 1.4; }
+  .pl-water { fill: none; stroke: var(--color-brand); stroke-width: 1.2; }
+  .pl-labels text { fill: #6b7280; font-size: 30px; font-family: var(--font-sans); font-weight: 500; }
+  .pl-floor { fill: url(#pr-hatch); }
+  .pl-pool { fill: rgb(47 159 214 / 0.22); }
+
+  .e-ground { stroke: #2f343b; stroke-width: 2; }
+  .e-tree path { stroke: #6f5a44; stroke-width: 5; }
+  .e-tree circle { fill: rgb(111 154 85 / 0.32); stroke: #6f8f5d; stroke-width: 1.6; }
+  .e-wall { fill: #f1ede6; stroke: #2f343b; stroke-width: 1.4; }
+  .e-glass { fill: #8fb0c2; stroke: #2f343b; stroke-width: 1.4; }
+  .e-refl { fill: rgb(255 255 255 / 0.28); }
+  .e-mull { stroke: #2b3036; stroke-width: 2.4; }
+  .e-wood-bg { fill: #3a2a1e; }
+  .e-wood { fill: #b98353; }
+  .e-roof { fill: #f6f3ee; stroke: #2f343b; stroke-width: 1.4; }
+  .e-shadow { fill: rgb(20 26 34 / 0.28); }
+  .e-col { fill: #3b4047; }
+  .e-deck { fill: #a87c52; }
+  .e-conc { fill: #c8c4bd; stroke: #2f343b; stroke-width: 1.2; }
+  .e-note path { fill: none; stroke: var(--color-brand); stroke-width: 1.8; }
+  .e-note text { font-size: 30px; }
+
+  /* ---------- Estados por etapa ---------- */
+  /* lote: se traza una vez y luego queda de fondo */
+  .lam[data-step='1'] .g-lote { opacity: 1; }
+  .lam[data-step='2'] .g-lote { opacity: 0.55; }
+  .lam:is([data-step='3'], [data-step='5']) .g-lote { opacity: 0.28; }
+  .lam:not([data-step='0']) .g-lote .dr { stroke-dashoffset: 0; }
+  .g-lote .hand.big { transition: opacity 0.4s; }
+  .lam:not([data-step='1']) .g-lote .hand.big { opacity: 0; }
+
+  /* zonas: las burbujas crecen; en el plano quedan de fondo */
+  .lam[data-step='2'] .g-zonas { opacity: 1; }
+  .lam[data-step='3'] .g-zonas { opacity: 0.2; }
+  .lam:is([data-step='2'], [data-step='3']) .g-zonas .dr { stroke-dashoffset: 0; transition-delay: 0.4s; }
+  .lam:is([data-step='2'], [data-step='3']) .bub { transform: none; opacity: 1; }
+  .z-x { transition: opacity 0.4s; }
+  .lam[data-step='3'] .z-x { opacity: 0; }
+
+  /* plano: entra completo con un leve asentamiento (capa compuesta) */
+  .g-plano { transform: scale(0.97); }
+  .lam:is([data-step='3'], [data-step='5']) .g-plano { opacity: 1; transform: none; }
+  .lam[data-step='5'] .g-tecnico { opacity: 1; }
+
+  /* fachada: sube desde el piso (capa compuesta) */
+  .g-fachada { transform: translateY(16px); }
+  .lam[data-step='4'] .g-fachada { opacity: 1; transform: none; }
+  .lam[data-step='4'] .g-fachada .dr { stroke-dashoffset: 0; transition-delay: 0.5s; }
+
+  /* render real sujeto con cinta (etapa 4) */
+  .lam-render {
+    position: absolute;
+    z-index: 3;
+    right: 4%;
+    top: 7%;
+    width: 26%;
+    padding: 5px 5px 18px;
+    background: #fff;
+    box-shadow: 0 10px 22px -12px rgb(20 26 34 / 0.55), 0 0 0 1px rgb(20 26 34 / 0.06);
+    rotate: 3deg;
+    opacity: 0;
+    transform: translateY(-14px) scale(0.96);
+    transition: opacity 0.5s, transform 0.8s var(--ease-out-expo);
+  }
+  .lam-render :global(img) { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; }
+  .lam-render span { position: absolute; left: 8px; bottom: 2px; font-family: 'Architects Daughter', var(--font-sans); font-size: 12px; color: var(--color-brand-ink); }
+  .lam-render::before { content: ''; position: absolute; left: 50%; top: -8px; width: 46px; height: 16px; translate: -50% 0; rotate: -4deg; background: rgb(0 128 193 / 0.2); }
+  .lam[data-step='4'] .lam-render { opacity: 1; transform: none; transition-delay: 0.7s; }
+
+  /* cuadro de cantidades (etapa 5) */
+  .lam-qty {
+    position: absolute;
+    z-index: 3;
+    right: 3.5%;
+    bottom: 6%;
+    width: 30%;
+    min-width: 150px;
+    padding: 10px 12px 11px;
+    background: rgb(255 255 255 / 0.94);
+    box-shadow: 0 0 0 1px rgb(20 26 34 / 0.12), 0 10px 22px -14px rgb(20 26 34 / 0.45);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s, transform 0.8s var(--ease-out-expo);
+  }
+  .qty-h { font-size: 11px; font-weight: 700; color: var(--color-brand-ink); margin-bottom: 6px; }
+  .lam-qty ul { display: grid; gap: 5px; }
+  .lam-qty li { display: grid; grid-template-columns: 1fr 44%; align-items: center; gap: 8px; font-size: 11px; color: var(--color-ink-soft); }
+  .lam-qty i { display: block; height: 5px; background: var(--color-brand-soft); position: relative; overflow: hidden; }
+  .lam-qty i::after { content: ''; position: absolute; inset: 0; background: var(--color-brand); transform-origin: 0 50%; transform: scaleX(0); transition: transform 0.9s var(--ease-out-expo); transition-delay: calc(0.8s + var(--i) * 0.1s); }
+  .lam[data-step='5'] .lam-qty { opacity: 1; transform: none; transition-delay: 0.5s; }
+  .lam[data-step='5'] .lam-qty i::after { transform: scaleX(var(--v)); }
+
+  /* rótulo */
+  .lam-cap { position: absolute; z-index: 4; left: 14px; top: 12px; display: grid; }
+  .cap { grid-area: 1 / 1; padding: 5px 10px 6px; background: var(--color-ink); color: #fff; font-size: 12px; font-weight: 600; white-space: nowrap; opacity: 0; transform: translateY(-6px); transition: opacity 0.35s, transform 0.5s var(--ease-out-expo); }
+  .cap b { font-family: var(--font-serif); font-style: italic; font-weight: 400; color: #9fd3f0; margin-right: 3px; }
+  .cap.is-on { opacity: 1; transform: none; transition-delay: 0.1s; }
+
+  /* ---------- Cronograma ---------- */
+  .side { display: flex; flex-direction: column; gap: 12px; }
+  .gantt { display: grid; }
+  .g-head { display: none; }
+  .row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 22px 96px 1fr;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-bottom: 1px solid rgb(40 34 26 / 0.09);
+    background: none;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .r-n { font-family: var(--font-serif); font-style: italic; font-size: 14px; color: var(--color-ink-mute); transition: color 0.3s; }
+  .r-t { font-size: 13.5px; font-weight: 560; letter-spacing: -0.01em; color: var(--color-ink-soft); white-space: nowrap; transition: color 0.3s; }
+  .row.is-on .r-n { color: var(--color-brand); }
+  .row.is-on .r-t { color: var(--color-ink); }
+  /* pista del tiempo: 5 columnas; cada etapa ocupa la suya y se monta un poco sobre la siguiente */
+  .r-track { position: relative; height: 100%; background: repeating-linear-gradient(90deg, rgb(40 34 26 / 0.07) 0 1px, transparent 1px 20%); }
+  .r-bar {
+    --cut: 4px;
+    position: absolute;
+    top: 50%;
+    left: calc(var(--i) * 19%);
+    width: 24%;
+    height: 12px;
+    translate: 0 -50%;
+    background: rgb(0 113 171 / 0.12);
+    clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+    overflow: hidden;
+  }
+  .r-fill { position: absolute; inset: 0; background: var(--color-brand-ink); transform-origin: 0 50%; transform: scaleX(0); }
+  .row.is-done .r-fill { transform: scaleX(1); transition: transform 0.4s; }
+  /* la barra de la etapa activa se llena al ritmo del scroll */
+  .row.is-on .r-fill { transform: scaleX(var(--f, 0)); }
+  .r-ok { position: absolute; right: 3px; top: 50%; width: 10px; height: 10px; translate: 0 -50%; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity 0.3s; }
+  .row.is-done .r-ok { opacity: 1; }
+  .r-tag { position: absolute; top: 50%; translate: 0 -50%; left: calc(var(--i) * 19% + 25%); font-family: 'Architects Daughter', var(--font-sans); font-size: 12px; color: var(--color-brand-ink); white-space: nowrap; }
+  .row[data-pr-step='4'] .r-tag { left: auto; right: calc(24% + 4px); }
+  .row:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+  .row:hover .r-t { color: var(--color-ink); }
+
+  .desc { display: grid; }
+  .d { grid-area: 1 / 1; opacity: 0; transform: translateY(8px); transition: opacity 0.35s, transform 0.5s var(--ease-out-expo); pointer-events: none; }
+  .d.is-on { opacity: 1; transform: none; transition-delay: 0.08s; }
+  .d-t { font-size: 1.12rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.15; }
+  .d-n { font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--color-brand); margin-right: 3px; }
+  .d-a { margin-top: 3px; font-size: 0.93rem; line-height: 1.42; color: var(--color-ink-soft); text-wrap: pretty; }
+
+  .pr-actions { display: flex; align-items: center; gap: 10px 16px; }
+  .btn { --cut: 9px; display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 22px; font-size: 15px; font-weight: 560; white-space: nowrap; }
+  .btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.45s var(--ease-out-expo); }
+  .btn-primary { background: var(--color-brand-ink); color: #fff; transition: background-color 0.3s var(--ease-out-expo); }
+  .btn-primary:hover { background: var(--color-ink); }
+  .btn-primary:hover svg { transform: translateX(3px); }
+  .pr-note { font-size: 12.5px; line-height: 1.4; color: var(--color-ink-mute); text-wrap: balance; }
+
+  /* Entradas */
+  :global(html.js) .pr-rv { opacity: 0; transform: translateY(18px); transition: opacity 0.9s var(--ease-out-expo), transform 1s var(--ease-out-expo); }
+  :global(html.js) .pr-rv.is-in { opacity: 1; transform: none; }
+  :global(html.js) .lam.pr-rv { transition-delay: 0.1s; }
+  :global(html.js) .side.pr-rv { transition-delay: 0.2s; }
+  :global(html.rm) .pr-rv { opacity: 1 !important; transform: none !important; }
+  :global(html.rm) .pr * { transition-duration: 0.01s !important; transition-delay: 0s !important; }
+
+  @media (max-width: 639px) and (max-height: 700px) {
+    .pr .lam { aspect-ratio: 16 / 10.2; }
+  }
+  @media (max-width: 360px) {
+    .lam { aspect-ratio: 16 / 9; max-height: calc(100svh - 456px); }
+    .pr-h2 { font-size: 1.7rem; }
+    .pr-in, .pr-body, .side { gap: 8px; }
+    .pr-sub { font-size: 0.88rem; }
+    .row { grid-template-columns: 20px 84px 1fr; }
+    .pr-note { display: none; }
+  }
+  @media (max-width: 639px) {
+    .pr-in, .pr-body, .side { gap: 10px; }
+    .d-a { font-size: 0.9rem; }
+    .pr-sub { font-size: 0.9rem; }
+    .lam { --cut: 12px; }
+    .hand { font-size: 66px; }
+    .hand.big { font-size: 110px; }
+    .e-note text { font-size: 50px; }
+    .dim-t, .pl-labels text, .pl-dims text { display: none; }
+    /* cronograma en una sola línea: cinco tramos */
+    .gantt { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+    .row { grid-template-columns: 1fr; grid-template-rows: auto 7px; height: auto; gap: 4px; border: 0; }
+    .r-t, .r-tag { display: none; }
+    .r-n { font-size: 13px; line-height: 1; }
+    .r-track { height: 7px; background: none; }
+    .r-bar { left: 0; width: 100%; height: 7px; --cut: 3px; }
+    .r-ok { display: none; }
+    .d-t { display: block; font-size: 1.02rem; }
+    .d-a { margin-top: 2px; }
+    .lam-render { width: 30%; padding: 3px 3px 12px; }
+    .lam-render span { font-size: 9px; left: 5px; bottom: 0; }
+    .lam-qty { min-width: 0; width: 40%; padding: 6px 7px 7px; }
+    .qty-h { font-size: 8.5px; margin-bottom: 3px; }
+    .lam-qty ul { gap: 2px; }
+    .lam-qty li { font-size: 8px; gap: 4px; }
+    .lam-qty i { height: 3px; }
+    .lam-cap { left: 10px; top: 9px; }
+    .cap { font-size: 11px; padding: 4px 8px 5px; }
+  }
+  @media (min-width: 640px) {
+    .pr { --pad: 28px; }
+    .pr-pin { padding-bottom: 16px; }
+    .lam { max-height: calc(100svh - 600px); }
+    .row { height: 30px; grid-template-columns: 26px 120px 1fr; }
+    .pr-sub { font-size: 1rem; }
+  }
+  /* ---------- Escritorio: lámina a la izquierda, cronograma a la derecha ---------- */
+  @media (min-width: 1024px) {
+    .pr {
+      --pad: max(40px, calc((100% - 1200px) / 2));
+      --hdr: 84px;
+    }
+    .pr-pin { padding: calc(var(--hdr) + clamp(14px, 3svh, 36px)) var(--pad) clamp(24px, 4svh, 48px); }
+    .pr-in, .pr-body { gap: clamp(12px, 2.4svh, 28px); }
+    .pr-sub { max-width: none; font-size: clamp(0.98rem, 0.92rem + 0.3vw, 1.12rem); }
+    .pr-body { display: grid; grid-template-columns: minmax(0, 1fr) clamp(330px, 30vw, 380px); align-items: stretch; }
+    .lam { --cut: 20px; max-height: none; height: clamp(320px, calc(100svh - var(--hdr) - 150px - 15svh), 600px); aspect-ratio: auto; }
+    .side { gap: clamp(14px, 2.2svh, 22px); }
+    .g-head { display: grid; grid-template-columns: 26px 120px 1fr 1fr; gap: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--color-ink); font-size: 11.5px; font-weight: 600; color: var(--color-ink-mute); }
+    .g-head span:first-child { grid-column: 1 / 3; }
+    .g-head span:last-child { text-align: right; }
+    .row { height: clamp(32px, 4.6svh, 42px); }
+    .d-t { font-size: 1.35rem; }
+    .d-a { font-size: 1rem; }
+    .pr-actions { margin-top: auto; flex-wrap: wrap; }
+    .pr-note { flex: 1 1 100%; }
+  }
+  @media (min-width: 1024px) and (max-height: 800px) {
+    .pr-note { display: none; }
+    .g-head { display: none; }
+  }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-pr]')!;
+  const lam = sec.querySelector<HTMLElement>('[data-lam]')!;
+  const gantt = sec.querySelector<HTMLElement>('[data-gantt]')!;
+  const rows = [...sec.querySelectorAll<HTMLButtonElement>('[data-pr-step]')];
+  const descs = [...sec.querySelectorAll<HTMLElement>('[data-desc]')];
+  const caps = [...sec.querySelectorAll<HTMLElement>('[data-cap]')];
+  const reduced = document.documentElement.classList.contains('rm');
+  const N = rows.length;
+  void gantt;
+
+  let cur = -1;
+  const set = (i: number) => {
+    if (i === cur) return;
+    if (cur >= 0) rows[cur].style.setProperty('--f', i > cur ? '1' : '0');
+    lastF = -1;
+    cur = i;
+    lam.dataset.step = String(cur + 1);
+    rows.forEach((r, j) => {
+      r.classList.toggle('is-on', j === cur);
+      r.classList.toggle('is-done', j < cur);
+      r.setAttribute('aria-selected', String(j === cur));
+    });
+    descs.forEach((d, j) => {
+      d.classList.toggle('is-on', j === cur);
+      d.setAttribute('aria-hidden', String(j !== cur));
+    });
+    caps.forEach((c, j) => c.classList.toggle('is-on', j === cur));
+  };
+
+  // El scroll manda: el recorrido de la sección se reparte en cinco tramos
+  // Recorrido = alto de la sección menos el de la lámina fija (no innerHeight: en iOS cambia con la barra de Safari)
+  const pin = sec.querySelector<HTMLElement>('.pr-pin')!;
+  const range = () => {
+    const top = sec.getBoundingClientRect().top + scrollY;
+    return { top, len: Math.max(1, sec.offsetHeight - pin.offsetHeight) };
+  };
+  const HYST = 0.06;
+  let lastF = -1;
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const { top, len } = range();
+    const p = Math.min(0.9999, Math.max(0, (scrollY - top) / len));
+    const x = p * N;
+    // Histéresis: solo cambia de etapa si se pasa el borde con margen (evita el titileo al frenar justo en el límite)
+    let i = cur < 0 ? Math.floor(x) : cur;
+    if (x >= i + 1 + HYST) i = Math.floor(x);
+    else if (x < i - HYST) i = Math.floor(x);
+    i = Math.max(0, Math.min(N - 1, i));
+    set(i);
+    const f = Math.max(0, Math.min(1, x - i));
+    if (Math.abs(f - lastF) > 0.004) {
+      lastF = f;
+      rows[i].style.setProperty('--f', f.toFixed(3));
+    }
+  };
+  const onScroll = () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  };
+
+  // Tocar una etapa lleva el scroll a ella
+  const goTo = (i: number) => {
+    const { top, len } = range();
+    scrollTo({ top: top + ((i + 0.35) / N) * len, behavior: reduced ? 'auto' : 'smooth' });
+  };
+  rows.forEach((r, i) => r.addEventListener('click', () => (reduced ? set(i) : goTo(i))));
+  sec.querySelector('[data-gantt]')!.addEventListener('keydown', (e) => {
+    const ke = e as KeyboardEvent;
+    const d = ke.key === 'ArrowDown' || ke.key === 'ArrowRight' ? 1 : ke.key === 'ArrowUp' || ke.key === 'ArrowLeft' ? -1 : 0;
+    if (!d) return;
+    e.preventDefault();
+    const n = Math.max(0, Math.min(N - 1, cur + d));
+    reduced ? set(n) : goTo(n);
+    rows[n].focus();
+  });
+
+  lam.dataset.step = '0';
+  if (reduced) set(0);
+  else {
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll, { passive: true });
+  }
+  // Entrada de los textos
+  const io = new IntersectionObserver(
+    (es) => {
+      for (const e of es) {
+        if (!e.isIntersecting) continue;
+        sec.querySelectorAll('.pr-rv').forEach((el) => el.classList.add('is-in'));
+        if (!reduced) update();
+        io.disconnect();
+      }
+    },
+    { threshold: 0.12 },
+  );
+  io.observe(sec);
+</script>

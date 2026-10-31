@@ -1,0 +1,506 @@
+---
+/**
+ * Cotizador: formulario de una pregunta por pantalla. Lo abre cualquier botón con `data-open-chat`
+ * (con `data-cta` y, si lo sabe, `data-service`).
+ * - Compromiso progresivo: primero lo fácil (qué, etapa, tamaño, dónde, cuándo) y al final el contacto.
+ * - Recompensa: la maqueta del servicio elegido se arma pieza por pieza a medida que responde.
+ * - Al enviar: guarda el lead en la base de datos (Google Sheets) encaje o no; si encaja marca la conversión;
+ *   en ambos casos abre WhatsApp con el mensaje escrito (el cliente toca Enviar: WhatsApp no permite enviarlo solo).
+ * - Si deja nombre y WhatsApp válidos y cierra sin enviar, se guarda como lead parcial.
+ * Lógica en lib/lead.ts (probada), medición en lib/track.ts.
+ */
+import mono from '../assets/brand/monogram-d.txt?raw';
+import { PHONE } from '../lib/seo';
+const leadsUrl = import.meta.env.PUBLIC_LEADS_URL || '';
+---
+
+<div class="cz" data-cz hidden>
+  <div class="cz-veil" data-cz-close></div>
+  <section class="cz-box" role="dialog" aria-modal="true" aria-labelledby="cz-q" tabindex="-1" data-cz-box data-phone={PHONE} data-leads={leadsUrl}>
+    <header class="cz-top">
+      <button type="button" class="cz-back" aria-label="Atrás" data-cz-back hidden>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"></path></svg>
+      </button>
+      <span class="cz-brand" aria-hidden="true">
+        <svg viewBox="0 0 1647 1914"><path transform="matrix(1 0 0 -1 0 1914)" d={mono.trim()}></path></svg>
+        Cotiza tu diseño
+      </span>
+      <span class="cz-count" aria-live="polite" data-cz-count></span>
+      <button type="button" class="cz-x" aria-label="Cerrar" data-cz-close>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9"></path></svg>
+      </button>
+      <span class="cz-prog" aria-hidden="true"><i data-cz-prog></i></span>
+    </header>
+
+    <div class="cz-body">
+      <!-- La lámina: la maqueta del servicio se arma con cada respuesta -->
+      <aside class="cz-lam" aria-hidden="true">
+        <div class="cz-mq is-built" data-cz-mq></div>
+        <ul class="cz-chips" data-cz-chips></ul>
+      </aside>
+      <div class="cz-main">
+        <div class="cz-step" data-cz-step></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+  .cz { position: fixed; inset: 0; z-index: 90; }
+  .cz[hidden] { display: none; }
+  .cz-veil { position: absolute; inset: 0; background: rgb(11 13 16 / 0.4); animation: cz-fade 0.4s ease both; }
+  .cz-box {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    animation: cz-in 0.55s var(--ease-out-expo) both;
+    outline: none;
+  }
+  .cz-top { position: relative; display: flex; align-items: center; gap: 8px; height: 56px; padding: 0 8px 0 12px; padding-top: env(safe-area-inset-top); border-bottom: 1px solid var(--color-line); flex: none; }
+  .cz-brand { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 650; color: var(--color-ink); }
+  .cz-brand svg { width: 20px; fill: var(--color-brand); }
+  .cz-count { margin-left: auto; font-size: 12.5px; font-weight: 600; color: var(--color-ink-mute); font-variant-numeric: tabular-nums; }
+  .cz-back, .cz-x { width: 40px; height: 40px; display: grid; place-items: center; border: 0; background: none; color: var(--color-ink-soft); cursor: pointer; flex: none; }
+  .cz-back[hidden] { display: none; }
+  .cz-back svg, .cz-x svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .cz-back:focus-visible, .cz-x:focus-visible { outline: 2px solid var(--color-brand); }
+  .cz-prog { position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; background: var(--color-brand-soft); }
+  .cz-prog i { display: block; height: 100%; background: var(--color-brand); transform-origin: 0 50%; transform: scaleX(var(--p, 0)); transition: transform 0.7s var(--ease-out-expo); }
+
+  .cz-body { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow-y: auto; overscroll-behavior: contain; }
+  /* lámina: arriba en celular, pequeña */
+  .cz-lam { position: relative; flex: none; display: grid; place-items: center; height: clamp(120px, 22svh, 190px); padding: 10px 20px 0; background: radial-gradient(70% 90% at 50% 100%, var(--color-brand-soft), rgb(227 241 249 / 0) 70%), var(--color-bone); }
+  .cz-mq { width: min(240px, 62vw); aspect-ratio: 4 / 3; }
+  .cz-mq :global(.mq) { width: 100%; height: 100%; overflow: visible; }
+  .cz-mq :global(.pc) { transition: opacity 0.5s, transform 0.7s var(--ease-out-expo) !important; animation: none !important; }
+  .cz-chips { display: none; }
+
+  .cz-main { flex: 1; padding: 20px 18px calc(22px + env(safe-area-inset-bottom)); }
+  .cz-step { max-width: 520px; margin: 0 auto; }
+  .cz-step :global(.k) { font-size: 12.5px; font-weight: 600; color: var(--color-brand-ink); }
+  .cz-step :global(h2) { margin-top: 4px; font-size: clamp(1.45rem, 1.2rem + 1.2vw, 2rem); line-height: 1.12; font-weight: 600; letter-spacing: -0.03em; text-wrap: balance; }
+  .cz-step :global(.sub) { margin-top: 6px; font-size: 14px; line-height: 1.45; color: var(--color-ink-mute); }
+  .cz-step :global(.opts) { display: grid; gap: 8px; margin-top: 18px; }
+  .cz-step :global(.opt) {
+    --c: 8px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 58px;
+    padding: 12px 44px 12px 16px;
+    border: 1.5px solid var(--color-line);
+    background: #fff;
+    font: inherit;
+    font-size: 15.5px;
+    font-weight: 560;
+    color: var(--color-ink);
+    text-align: left;
+    cursor: pointer;
+    clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c));
+    transition: border-color 0.2s, background-color 0.2s, transform 0.25s var(--ease-out-expo);
+    animation: cz-opt 0.45s var(--ease-out-expo) both;
+    animation-delay: calc(var(--i, 0) * 45ms);
+  }
+  .cz-step :global(.opt::after) { content: ''; position: absolute; right: 16px; top: 50%; width: 18px; height: 18px; margin-top: -9px; border: 1.5px solid var(--color-line); border-radius: 50%; transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s; }
+  .cz-step :global(.opt:hover) { border-color: var(--color-brand); }
+  .cz-step :global(.opt:focus-visible) { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+  .cz-step :global(.opt.is-on) { border-color: var(--color-brand-ink); background: var(--color-brand-soft); }
+  .cz-step :global(.opt.is-on::after) { border-color: var(--color-brand-ink); background: var(--color-brand-ink); box-shadow: inset 0 0 0 3px #fff; }
+  .cz-step :global(.opt:active) { transform: scale(0.985); }
+  .cz-step :global(.opt small) { display: block; font-size: 12.5px; font-weight: 500; color: var(--color-ink-mute); }
+
+  /* contacto */
+  .cz-step :global(.fields) { display: grid; gap: 12px; margin-top: 18px; }
+  .cz-step :global(label.f) { display: grid; gap: 5px; font-size: 13px; font-weight: 600; color: var(--color-ink-soft); }
+  .cz-step :global(.f input), .cz-step :global(.f textarea) { width: 100%; height: 50px; padding: 0 14px; border: 1.5px solid var(--color-line); background: #fff; font: inherit; font-size: 16px; color: var(--color-ink); transition: border-color 0.2s; }
+  .cz-step :global(.f textarea) { height: 82px; padding: 10px 14px; resize: vertical; }
+  .cz-step :global(.f input:focus), .cz-step :global(.f textarea:focus) { outline: none; border-color: var(--color-brand); }
+  .cz-step :global(.f.bad input) { border-color: #c2410c; }
+  .cz-step :global(.f .err) { display: none; font-size: 12px; font-weight: 500; color: #c2410c; }
+  .cz-step :global(.f.bad .err) { display: block; }
+  .cz-step :global(.phone) { display: flex; }
+  .cz-step :global(.phone span) { display: grid; place-items: center; padding: 0 12px; border: 1.5px solid var(--color-line); border-right: 0; background: var(--color-bone); font-size: 15px; font-weight: 600; color: var(--color-ink-soft); }
+  .cz-step :global(.more) { justify-self: start; border: 0; background: none; padding: 2px 0; font: inherit; font-size: 13.5px; font-weight: 600; color: var(--color-brand-ink); cursor: pointer; }
+  .cz-step :global(.ok) { display: flex; gap: 10px; align-items: flex-start; font-size: 12.5px; line-height: 1.45; color: var(--color-ink-mute); font-weight: 500; }
+  .cz-step :global(.ok input) { width: 18px; height: 18px; margin-top: 1px; accent-color: var(--color-brand-ink); flex: none; }
+  .cz-step :global(.ok a) { color: var(--color-brand-ink); font-weight: 600; }
+  .cz-step :global(.hp) { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .cz-step :global(.send) {
+    --c: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    width: 100%;
+    height: 56px;
+    margin-top: 6px;
+    border: 0;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 650;
+    color: #fff;
+    background: var(--color-brand-ink);
+    clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c));
+    cursor: pointer;
+    transition: background-color 0.25s;
+  }
+  .cz-step :global(.send:hover) { background: var(--color-ink); }
+  .cz-step :global(.send svg) { width: 18px; height: 18px; }
+  .cz-step :global(.trust) { display: flex; gap: 8px; align-items: center; justify-content: center; margin-top: 4px; font-size: 12px; color: var(--color-ink-mute); }
+  .cz-step :global(.trust svg) { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.6; }
+  .cz-step :global(.done) { text-align: center; padding-top: 10px; }
+  .cz-step :global(.done .send) { margin-top: 18px; }
+  .cz-step :global(.anim) { animation: cz-step 0.5s var(--ease-out-expo) both; }
+
+  @keyframes cz-fade { from { opacity: 0; } }
+  @keyframes cz-in { from { opacity: 0; transform: translateY(26px); } }
+  @keyframes cz-step { from { opacity: 0; transform: translateX(18px); } }
+  @keyframes cz-opt { from { opacity: 0; transform: translateY(8px); } }
+  :global(html.rm) .cz * { animation: none !important; transition: none !important; }
+
+  /* Celular: el botón de enviar queda siempre a la vista (fijo abajo dentro del formulario) */
+  @media (max-width: 759px) {
+    .cz-step :global(.send:not(.done .send)) { position: sticky; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 2; box-shadow: 0 10px 24px -10px rgb(0 40 70 / 0.5); }
+  }
+  /* ---------- Tableta y escritorio: ventana con la lámina a la izquierda ---------- */
+  @media (min-width: 760px) {
+    .cz-box {
+      --cut: 20px;
+      inset: auto;
+      left: 50%;
+      top: 50%;
+      width: min(980px, calc(100vw - 48px));
+      height: min(660px, calc(100svh - 48px));
+      translate: -50% -50%;
+      clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+      box-shadow: 0 40px 100px -30px rgb(11 13 16 / 0.5);
+    }
+    .cz-top { height: 60px; padding: 0 12px 0 20px; }
+    .cz-body { flex-direction: row; overflow: hidden; }
+    .cz-lam { width: 42%; height: auto; padding: 32px 28px; align-content: center; gap: 18px; }
+    .cz-mq { width: 100%; max-width: 340px; }
+    .cz-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; min-height: 30px; }
+    .cz-chips :global(li) { --c: 5px; padding: 5px 10px 6px; font-size: 12px; font-weight: 600; color: var(--color-brand-ink); background: #fff; clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c)); animation: cz-opt 0.4s var(--ease-out-expo) both; }
+    .cz-main { overflow-y: auto; padding: 36px 40px; display: flex; align-items: center; }
+    .cz-step { width: 100%; }
+    .cz-step :global(.opts.two) { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+
+<script>
+  import { track, attribution, captureAttribution } from '../lib/track';
+  import {
+    SERVICES,
+    stagesFor,
+    SIZES,
+    PLACES,
+    TIMINGS,
+    fits,
+    quality,
+    QUALITY_LABEL,
+    QUALITY_VALUE,
+    makeRef,
+    messageWithName,
+    waLink,
+    normalizePhone,
+    validEmail,
+    validName,
+    leadRecord,
+    type Answers,
+    type ServiceId,
+    type Contact,
+  } from '../lib/lead';
+
+  captureAttribution();
+
+  const root = document.querySelector<HTMLElement>('[data-cz]')!;
+  const box = root.querySelector<HTMLElement>('[data-cz-box]')!;
+  const stepEl = root.querySelector<HTMLElement>('[data-cz-step]')!;
+  const mqEl = root.querySelector<HTMLElement>('[data-cz-mq]')!;
+  const chipsEl = root.querySelector<HTMLElement>('[data-cz-chips]')!;
+  const prog = root.querySelector<HTMLElement>('[data-cz-prog]')!;
+  const count = root.querySelector<HTMLElement>('[data-cz-count]')!;
+  const back = root.querySelector<HTMLButtonElement>('[data-cz-back]')!;
+  const PHONE_N = box.dataset.phone!;
+  const LEADS = box.dataset.leads || '';
+
+  type StepId = 'service' | 'stage' | 'size' | 'location' | 'timing' | 'contact';
+  let a: Answers = {};
+  let c: Contact = { name: '', phone: '', email: '' };
+  let cta = '';
+  let initial: string | undefined;
+  let steps: StepId[] = [];
+  let idx = 0;
+  let ref = '';
+  let sent = false;
+  let partialSaved = false;
+  let opener: HTMLElement | null = null;
+  const base = () => ({ cta_id: cta, service_id: a.service });
+  const esc = (s: string) => s.replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]!);
+  const isNew = () => a.service === 'campestre' || a.service === 'urbana' || a.service === 'comercial';
+
+  // ---------- La maqueta: se clona del menú de servicios y se arma con el avance ----------
+  const setModel = () => {
+    const i = Math.max(0, SERVICES.findIndex((s) => s.id === (a.service || 'campestre')));
+    const src = document.querySelectorAll<SVGElement>('.dd-card .mq')[i];
+    mqEl.innerHTML = '';
+    if (src) mqEl.appendChild(src.cloneNode(true));
+  };
+  const build = (p: number) => {
+    const pcs = [...mqEl.querySelectorAll<SVGGElement>('.pc')];
+    const n = Math.round(pcs.length * (a.service ? Math.max(0.2, p) : 0.12));
+    pcs.forEach((pc, k) => {
+      const on = k < n;
+      pc.style.opacity = on ? '1' : '0.08';
+      pc.style.transform = on ? 'none' : 'translateY(-10px)';
+    });
+  };
+  const chips = () => {
+    const labels = [
+      SERVICES.find((s) => s.id === a.service)?.label,
+      stagesFor(a.service).find((s) => s.id === a.stage)?.label,
+      SIZES.find((s) => s.id === a.size)?.label,
+      PLACES.find((s) => s.id === a.location)?.label,
+      TIMINGS.find((s) => s.id === a.timing)?.label,
+    ].filter(Boolean) as string[];
+    chipsEl.innerHTML = labels.map((l) => `<li>${esc(l)}</li>`).join('');
+  };
+
+  // ---------- Pasos ----------
+  const Q: Record<Exclude<StepId, 'contact'>, () => { q: string; sub?: string; list: { id: string; label: string }[]; two?: boolean }> = {
+    service: () => ({ q: '¿Qué quieres diseñar?', sub: 'Elige una opción; te tomará menos de un minuto.', list: SERVICES }),
+    stage: () => ({ q: a.service === 'remodelacion' || a.service === 'interiores' ? '¿Cómo está tu espacio hoy?' : '¿En qué etapa estás?', list: stagesFor(a.service) }),
+    size: () => ({ q: isNew() ? (a.service === 'comercial' ? '¿De qué tamaño sería el local?' : '¿De qué tamaño sería tu casa?') : '¿Qué área vamos a intervenir?', sub: 'Un aproximado está bien.', list: SIZES, two: true }),
+    location: () => ({ q: '¿Dónde será la obra?', sub: 'Diseñamos en todo Colombia.', list: PLACES }),
+    timing: () => ({ q: '¿Cuándo te gustaría empezar?', list: TIMINGS }),
+  };
+  const field = { service: 'service', stage: 'stage', size: 'size', location: 'location', timing: 'timing' } as const;
+
+  const render = () => {
+    const id = steps[idx];
+    const total = steps.length;
+    count.textContent = `${idx + 1} de ${total}`;
+    prog.style.setProperty('--p', String(idx / total));
+    back.hidden = idx === 0;
+    build(idx / total);
+    chips();
+    if (id === 'contact') return renderContact();
+    const cfg = Q[id]();
+    const cur = a[field[id]];
+    stepEl.innerHTML = `<div class="anim"><p class="k">${idx === 0 ? 'Cotiza tu diseño' : 'Paso ' + (idx + 1) + ' de ' + total}</p><h2 id="cz-q">${cfg.q}</h2>${cfg.sub ? `<p class="sub">${cfg.sub}</p>` : ''}<div class="opts${cfg.two ? ' two' : ''}" role="radiogroup" aria-labelledby="cz-q">${cfg.list
+      .map((o, i) => `<button type="button" role="radio" aria-checked="${cur === o.id}" class="opt${cur === o.id ? ' is-on' : ''}" style="--i:${i}" data-v="${o.id}">${esc(o.label)}</button>`)
+      .join('')}</div></div>`;
+    stepEl.querySelectorAll<HTMLButtonElement>('.opt').forEach((b) =>
+      b.addEventListener('click', () => {
+        stepEl.querySelectorAll('.opt').forEach((x) => x.classList.remove('is-on'));
+        b.classList.add('is-on');
+        (a as Record<string, string>)[field[id]] = b.dataset.v!;
+        if (id === 'service') {
+          setModel();
+          track('service_select', base());
+        } else track('lead_step', { ...base(), step: id, answer: b.dataset.v });
+        setTimeout(next, 260); // un instante para ver la selección
+      }),
+    );
+    (stepEl.querySelector<HTMLElement>('.opt.is-on') || stepEl.querySelector<HTMLElement>('.opt'))?.focus({ preventScroll: true });
+  };
+  const next = () => {
+    if (idx < steps.length - 1) {
+      idx++;
+      render();
+    }
+  };
+
+  const renderContact = () => {
+    track('lead_step', { ...base(), step: 'contact' });
+    const f = fits(a);
+    const lead = f.ok ? 'Último paso. ¿A quién le enviamos la cotización?' : 'Último paso. Déjanos tus datos y te escribimos.';
+    stepEl.innerHTML = `<form class="anim" novalidate>
+      <p class="k">Paso ${idx + 1} de ${steps.length}</p>
+      <h2 id="cz-q">${lead}</h2>
+      <p class="sub">Te abrimos WhatsApp con tu mensaje listo; solo tocas Enviar.</p>
+      <div class="fields">
+        <label class="f" data-f="name">Tu nombre<input name="name" autocomplete="name" enterkeyhint="next" value="${esc(c.name)}" /><span class="err">Escribe tu nombre.</span></label>
+        <label class="f" data-f="phone">Tu WhatsApp<span class="phone"><span>+57</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="300 123 4567" enterkeyhint="next" value="${esc(c.phone)}" /></span><span class="err">Revisa el número (10 dígitos, empieza por 3). Si no es de Colombia, escríbelo con +.</span></label>
+        <label class="f" data-f="email">Tu correo<input name="email" type="email" inputmode="email" autocomplete="email" enterkeyhint="done" value="${esc(c.email)}" /><span class="err">Revisa el correo.</span></label>
+        <button type="button" class="more" data-more>+ Contarnos más de tu proyecto (opcional)</button>
+        <label class="f" data-f="details" hidden>Tu proyecto<textarea name="details" maxlength="600" placeholder="Habitaciones, cómo es el lote, lo que te gusta…">${esc(a.details || '')}</textarea></label>
+        <input class="hp" name="empresa" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <label class="ok"><input type="checkbox" name="ok" required checked /><span>Autorizo a Galezo Studio a usar mis datos para responder mi solicitud, según la <a href="/privacidad" target="_blank">política de privacidad</a>.</span></label>
+        <button type="submit" class="send">Enviar y abrir WhatsApp <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.7 11.7 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2l-.5-.3Z"/></svg></button>
+        <p class="trust"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1"></rect><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"></path></svg>Tus datos solo los ve el equipo de Galezo Studio.</p>
+      </div>
+    </form>`;
+    const form = stepEl.querySelector('form')!;
+    const get = (n: string) => form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${n}"]`)!;
+    form.querySelector<HTMLButtonElement>('[data-more]')!.addEventListener('click', (e) => {
+      (e.currentTarget as HTMLElement).hidden = true;
+      const d = form.querySelector<HTMLElement>('[data-f="details"]')!;
+      d.hidden = false;
+      get('details').focus();
+    });
+    const check = (n: 'name' | 'phone' | 'email') => {
+      const v = get(n).value;
+      const ok = n === 'name' ? validName(v) : n === 'phone' ? !!normalizePhone(v) : validEmail(v);
+      form.querySelector(`[data-f="${n}"]`)!.classList.toggle('bad', !ok);
+      return ok;
+    };
+    (['name', 'phone', 'email'] as const).forEach((n) => {
+      get(n).addEventListener('blur', () => {
+        if (get(n).value) check(n);
+        c = { name: get('name').value, phone: get('phone').value, email: get('email').value };
+      });
+      get(n).addEventListener('input', () => form.querySelector(`[data-f="${n}"]`)!.classList.remove('bad'));
+    });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      c = { name: get('name').value, phone: get('phone').value, email: get('email').value };
+      a.details = get('details').value;
+      const bad = (['name', 'phone', 'email'] as const).filter((n) => !check(n));
+      if (bad.length) {
+        get(bad[0]).focus();
+        track('lead_step', { ...base(), step: 'contact_error', answer: bad.join('_') });
+        return;
+      }
+      if (!form.querySelector<HTMLInputElement>('[name="ok"]')!.checked) return;
+      submit(get('empresa').value);
+    });
+    get('name').focus({ preventScroll: true });
+  };
+
+  // ---------- Guardar en la base de datos ----------
+  const save = (status: 'completo' | 'parcial', honeypot = '') => {
+    if (!LEADS) return;
+    const rec = { ...leadRecord(a, c, { ref, status, cta, page: location.pathname, attribution: attribution() }), empresa: honeypot };
+    const body = JSON.stringify(rec);
+    // fetch con keepalive sobrevive a que se abra WhatsApp o se cierre la pestaña. Va primero porque los bloqueadores
+    // de anuncios suelen frenar sendBeacon y Safari lo envía sin cuerpo; sendBeacon queda solo de respaldo.
+    fetch(LEADS, { method: 'POST', body, mode: 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain;charset=UTF-8' } }).catch(
+      () => navigator.sendBeacon?.(LEADS, new Blob([body], { type: 'text/plain;charset=UTF-8' })),
+    );
+  };
+
+  const submit = (honeypot: string) => {
+    const q = quality(a);
+    ref = ref.replace(/-\d$/, `-${q}`) || makeRef(q);
+    sent = true;
+    save('completo', honeypot);
+    const f = fits(a);
+    if (f.ok) {
+      track('generate_lead', {
+        ...base(),
+        stage: a.stage,
+        size: a.size,
+        location: a.location,
+        timing: a.timing,
+        shared_details: !!a.details?.trim(),
+        lead_quality: QUALITY_LABEL[q],
+        lead_value: QUALITY_VALUE[q],
+        lead_ref: ref,
+        event_id: ref,
+        ...attribution(),
+      });
+    } else track('lead_unqualified', { ...base(), reason: f.reason, lead_quality: 'no_encaja', lead_ref: ref, stage: a.stage, size: a.size });
+
+    const link = waLink(PHONE_N, messageWithName(a, c.name, ref));
+    // abrir WhatsApp en el mismo toque (si no, el navegador lo bloquea)
+    // en otra pestaña, para que la web quede abierta. Sin 'noopener' en las opciones: con él window.open devuelve null
+    // y el respaldo sacaba también esta pestaña hacia WhatsApp. El vínculo con esta página se corta a mano.
+    const w = window.open(link, '_blank');
+    if (w) w.opener = null;
+    else location.href = link;
+    done(link);
+  };
+
+  const done = (link: string) => {
+    prog.style.setProperty('--p', '1');
+    count.textContent = '';
+    back.hidden = true;
+    build(1);
+    const first = c.name.trim().split(/\s+/)[0];
+    stepEl.innerHTML = `<div class="anim done">
+      <p class="k">Listo${first ? ', ' + esc(first) : ''}</p>
+      <h2 id="cz-q">Te abrimos WhatsApp con tu mensaje</h2>
+      <p class="sub">Solo toca Enviar en WhatsApp y te respondemos. Guardamos tu solicitud con la referencia <b>${ref}</b>.</p>
+      <a class="send" href="${link}" target="_blank" rel="noopener">Abrir WhatsApp de nuevo</a>
+    </div>`;
+  };
+
+  // ---------- Abrir y cerrar ----------
+  const open = (el: HTMLElement) => {
+    opener = el;
+    cta = el.dataset.cta || 'otro';
+    initial = el.dataset.service;
+    a = {};
+    if (initial && SERVICES.some((s) => s.id === initial)) a.service = initial as ServiceId;
+    sent = false;
+    partialSaved = false;
+    ref = makeRef(3);
+    steps = [...(a.service ? [] : (['service'] as StepId[])), 'stage', 'size', 'location', 'timing', 'contact'];
+    idx = 0;
+    track('cta_click', base());
+    track('service_dialog_open', base());
+    setModel();
+    root.hidden = false;
+    document.documentElement.classList.add('cz-open');
+    box.focus({ preventScroll: true });
+    render();
+  };
+  const savePartial = () => {
+    if (sent || partialSaved || !validName(c.name) || !normalizePhone(c.phone)) return;
+    partialSaved = true;
+    ref = ref.replace(/-\d$/, `-${quality(a)}`);
+    save('parcial');
+    track('lead_partial', { ...base(), lead_ref: ref });
+  };
+  const close = () => {
+    if (root.hidden) return;
+    savePartial();
+    if (!sent) track('service_dialog_close', { ...base(), step: steps[idx] });
+    root.hidden = true;
+    document.documentElement.classList.remove('cz-open');
+    opener?.focus({ preventScroll: true });
+  };
+  back.addEventListener('click', () => {
+    if (idx > 0) {
+      idx--;
+      render();
+    }
+  });
+  document.addEventListener('click', (e) => {
+    const el = (e.target as HTMLElement).closest<HTMLElement>('[data-open-chat]');
+    if (!el) return;
+    e.preventDefault();
+    open(el);
+  });
+  root.querySelectorAll('[data-cz-close]').forEach((b) => b.addEventListener('click', close));
+  addEventListener('pagehide', () => !root.hidden && savePartial());
+  addEventListener('keydown', (e) => {
+    if (root.hidden) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'Tab') {
+      const f = [...box.querySelectorAll<HTMLElement>('button, a[href], input:not(.hp), textarea')].filter((x) => x.offsetParent);
+      if (!f.length) return;
+      if (e.shiftKey && document.activeElement === f[0]) {
+        e.preventDefault();
+        f[f.length - 1].focus();
+      } else if (!e.shiftKey && document.activeElement === f[f.length - 1]) {
+        e.preventDefault();
+        f[0].focus();
+      }
+    }
+  });
+  if (location.hash === '#cotizar') {
+    const fake = document.createElement('a');
+    fake.dataset.cta = 'url';
+    setTimeout(() => open(fake), 800);
+  }
+</script>
+
+<style is:global>
+  html.cz-open { overflow: hidden; }
+</style>

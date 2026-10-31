@@ -1,0 +1,276 @@
+---
+/**
+ * Sección 6 · "Quién diseña": su carrera en corte.
+ * Lo que respalda el diseño, dibujado como el corte de un edificio que se construye piso por piso al entrar:
+ * cimientos = su formación; cada piso, una fortaleza (sin empresas ni fechas); en la cubierta, tu casa.
+ * Al lado, su foto, su frase (del portafolio) y su nombre escrito a mano. Datos tomados del portafolio de Ulises.
+ */
+import { Image } from 'astro:assets';
+import Plomada from './Plomada.astro';
+import Trazos from './Trazos.astro';
+import ulises from '../assets/ulises.jpg';
+import mono from '../assets/brand/monogram-d.txt?raw';
+
+// de arriba hacia abajo (el corte se lee como un edificio): lo que respalda el diseño de tu casa, sin hoja de vida
+const pisos = [
+  { y: 'N +12,00', t: 'Planos que se construyen', d: 'Con renders y cantidades de obra' },
+  { y: 'N +9,00', t: 'Obra pública construida', d: 'Colegios y espacios públicos en el Cesar' },
+  { y: 'N +6,00', t: 'Vivienda urbana y campestre', d: 'Casas y condominios' },
+  { y: 'N +3,00', t: '6 años de experiencia', d: 'En el sector público y privado' },
+];
+const total = pisos.length + 2;
+---
+
+<section class="es" id="estudio" data-nav-label="Quién diseña" aria-labelledby="es-title" data-es>
+  <Trazos left="puerta" right="sube" />
+  <div class="es-in">
+    <Plomada n="06" label="Quién diseña" variant="firma" />
+    <header class="es-head es-rv">
+      <h2 id="es-title" class="es-h2">Quién está detrás de <span class="accent">tu diseño</span></h2>
+    </header>
+
+    <div class="es-body">
+      <!-- Perfil -->
+      <div class="perfil es-rv">
+        <div class="pf-photo">
+          <Image src={ulises} alt="Ulises Galezo Cifuentes, arquitecto" widths={[160, 320]} sizes="(min-width: 1024px) 150px, 76px" class="pf-img" />
+        </div>
+        <div class="pf-tx">
+          <p class="pf-name">Ulises Galezo Cifuentes</p>
+          <p class="pf-role">Arquitecto · Fundador de Galezo Studio</p>
+          <p class="pf-years">Lidera el diseño de cada casa, junto a su equipo, de la primera idea a los planos para construir.</p>
+        </div>
+        <blockquote class="pf-quote">
+          <p>Mi compromiso está con las personas: mejorar su calidad de vida con la arquitectura.</p>
+          <footer class="pf-sign" aria-hidden="true"><span>Ulises Galezo</span></footer>
+        </blockquote>
+        <div class="es-actions">
+          <a href="#cotizar" class="btn btn-primary chamfer" data-open-chat data-cta="estudio">
+            Cotiza tu diseño
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
+          </a>
+          <p class="es-note">Hablas directo con el equipo que diseña tu casa.</p>
+        </div>
+      </div>
+
+      <!-- El corte -->
+      <figure class="corte es-rv" aria-label="Lo que respalda tu diseño, dibujado como el corte de un edificio">
+        <ol class="ct" role="list">
+          <li class="ct-roof" style={`--n:${total - 1}`}>
+            <span class="ct-logo" aria-hidden="true">
+              <svg viewBox="0 0 1647 1914"><path transform="matrix(1 0 0 -1 0 1914)" d={mono.trim()}></path></svg>
+            </span>
+            <span class="ct-y">Cubierta</span>
+            <span class="ct-t">Tu casa</span>
+            <span class="ct-d">Diseñada y firmada por Ulises</span>
+          </li>
+          {
+            pisos.map((p, i) => (
+              <li class="ct-floor" style={`--n:${total - 2 - i}`}>
+                <span class="ct-y">{p.y}</span>
+                <span class="ct-t">{p.t}</span>
+                <span class="ct-d">{p.d}</span>
+              </li>
+            ))
+          }
+          <li class="ct-base" style="--n:0">
+            <span class="ct-y">Cimientos</span>
+            <span class="ct-t">Arquitecto</span>
+            <span class="ct-d">Universidad del Atlántico</span>
+          </li>
+        </ol>
+        <!-- escalera en corte: une los pisos -->
+        <svg class="ct-stair" viewBox="0 0 40 400" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M4 396V350H14V330H24V310H34V290M4 290V270H14V250H24V230H34V210M4 210V190H14V170H24V150H34V130M4 130V110H14V90H24V70H34V50"></path>
+        </svg>
+        <figcaption class="ct-cap" aria-hidden="true">corte A–A' · lo que respalda tu diseño</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<style>
+  .es {
+    --hdr: 76px;
+    --pad: 20px;
+    position: relative;
+    background: #fff;
+    padding: calc(var(--hdr) + 8px) var(--pad) 10px;
+    min-height: 100svh;
+    display: flex;
+    overflow: hidden;
+  }
+  .es-in { position: relative; z-index: 1; width: 100%; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .es-in > * { flex-shrink: 0; }
+  .es-head { margin-top: auto; text-align: center; }
+  .es-body { margin-bottom: auto; display: flex; flex-direction: column; gap: 14px; }
+  .es-h2 { font-size: clamp(1.9rem, min(1.3rem + 2.6vw, 6svh), 3.6rem); line-height: 1.02; font-weight: 560; letter-spacing: -0.038em; text-wrap: balance; }
+  .es-h2 .accent { color: var(--color-brand); font-size: 1.08em; letter-spacing: -0.012em; }
+
+  /* ---------- Perfil ---------- */
+  .perfil { display: grid; grid-template-columns: 76px 1fr; gap: 6px 14px; align-items: center; }
+  .pf-photo { --cut: 10px; position: relative; width: 76px; aspect-ratio: 1; overflow: hidden; clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); background: var(--color-brand-soft); }
+  .pf-photo :global(.pf-img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; filter: grayscale(1) contrast(1.05); mix-blend-mode: multiply; }
+  .pf-name { font-size: 1.12rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.15; }
+  .pf-role { font-size: 13px; color: var(--color-ink-mute); margin-top: 1px; }
+  .pf-years { font-size: 13.5px; color: var(--color-ink-soft); margin-top: 4px; line-height: 1.35; }
+  .pf-years b { font-weight: 650; color: var(--color-brand-ink); }
+  .pf-quote, .pf-tools { display: none; }
+  .pf-quote p { font-family: var(--font-serif); font-style: italic; font-size: clamp(1.25rem, 1rem + 0.9vw, 1.7rem); line-height: 1.2; color: var(--color-ink); text-wrap: balance; }
+  .pf-quote p::before { content: '“'; color: var(--color-brand); }
+  .pf-quote p::after { content: '”'; color: var(--color-brand); }
+  .pf-sign { margin-top: 10px; font-family: 'Architects Daughter', var(--font-sans); font-size: 22px; color: var(--color-brand-ink); }
+  .pf-sign span { display: inline-block; clip-path: inset(0 100% 0 0); }
+  .es.is-in .pf-sign span { animation: es-write 1.4s 1.6s cubic-bezier(0.45, 0.05, 0.25, 1) forwards; }
+  @keyframes es-write { to { clip-path: inset(0 0 0 0); } }
+  :global(html.rm) .pf-sign span, :global(html:not(.js)) .pf-sign span { clip-path: none; animation: none; }
+  .pf-tools { flex-wrap: wrap; gap: 6px; }
+  .pf-tools li { --cut: 5px; padding: 5px 10px 6px; font-size: 12px; font-weight: 560; color: var(--color-ink-soft); background: var(--color-bone); clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); }
+  .es-actions { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px 16px; margin-top: 6px; }
+  .btn { --cut: 9px; display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 22px; font-size: 15px; font-weight: 560; white-space: nowrap; }
+  .btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.45s var(--ease-out-expo); }
+  .btn-primary { background: var(--color-brand-ink); color: #fff; transition: background-color 0.3s var(--ease-out-expo); }
+  .btn-primary:hover { background: var(--color-ink); }
+  .btn-primary:hover svg { transform: translateX(3px); }
+  .es-note { font-size: 12.5px; line-height: 1.4; color: var(--color-ink-mute); text-wrap: balance; }
+
+  /* ---------- El corte ---------- */
+  .corte {
+    --wall: 7px;
+    --slab: 6px;
+    position: relative;
+    margin: 0;
+    height: clamp(200px, calc(100svh - 448px), 380px);
+    padding: 0 var(--wall);
+    margin-bottom: 18px;
+    order: -1;
+  }
+  .ct { position: relative; height: 100%; display: flex; flex-direction: column; }
+  .ct li {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow: visible;
+    display: grid;
+    grid-template-columns: minmax(74px, 22%) 1fr;
+    grid-template-rows: auto auto;
+    align-content: center;
+    column-gap: 12px;
+    padding: 0 46px 0 12px;
+    border-bottom: var(--slab) solid var(--color-ink);
+    /* muros cortados a lado y lado */
+    box-shadow: calc(var(--wall) * -1) 0 0 var(--color-ink), var(--wall) 0 0 var(--color-ink);
+    background: #fff;
+  }
+  /* vanos de ventana en los muros (corte) */
+  .ct li::before, .ct li::after { content: ''; position: absolute; top: 28%; height: 34%; width: var(--wall); background: #fff; box-shadow: inset 0 0 0 1.5px var(--color-ink); }
+  .ct li::before { left: calc(var(--wall) * -1); }
+  .ct li::after { right: calc(var(--wall) * -1); }
+  .ct-y { grid-row: 1 / 3; font-family: var(--font-sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; color: var(--color-brand); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  /* marca de nivel ▽ antes de la cota */
+  .ct-y::before { content: ''; display: inline-block; width: 9px; height: 7px; margin-right: 5px; background: var(--color-brand); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+  .ct-t { font-size: 14px; font-weight: 600; letter-spacing: -0.015em; color: var(--color-ink); line-height: 1.2; }
+  .ct-d { font-size: 12px; color: var(--color-ink-mute); line-height: 1.3; }
+  /* cubierta: el piso de hoy, con alero y el logo */
+  .ct-roof { border-top: calc(var(--slab) + 2px) solid var(--color-ink); background: var(--color-brand-soft) !important; }
+  .ct-roof .ct-t { color: var(--color-brand-ink); }
+  .ct-roof::before, .ct-roof::after { display: none; }
+  .ct-logo { position: absolute; right: 50px; top: 50%; translate: 0 -50%; width: 20px; }
+  .ct-logo svg { display: block; width: 100%; fill: var(--color-brand); }
+  .ct-roof { margin: 0 calc(var(--wall) * -1 - 10px) 0; padding-left: calc(12px + var(--wall) + 10px); padding-right: calc(46px + var(--wall) + 10px); box-shadow: none; }
+  /* cimientos: sin ventanas, sobre el terreno achurado */
+  .ct-base { border-bottom: 0 !important; background: #fff; }
+  .ct-base::before, .ct-base::after { display: none; }
+  .corte::after {
+    content: '';
+    position: absolute;
+    left: -14px;
+    right: -14px;
+    bottom: -16px;
+    height: 16px;
+    background: repeating-linear-gradient(-45deg, rgb(11 13 16 / 0.35) 0 1.2px, transparent 1.2px 7px);
+    border-top: 1.5px solid var(--color-ink);
+  }
+  .ct-stair { position: absolute; right: calc(var(--wall) + 6px); top: 0; bottom: 0; width: 34px; height: 100%; }
+  .ct-stair path { fill: none; stroke: var(--color-ink-mute); stroke-width: 1.3; vector-effect: non-scaling-stroke; }
+  .ct-cap { position: absolute; left: 0; bottom: -40px; font-family: 'Architects Daughter', var(--font-sans); font-size: 13px; color: var(--color-ink-mute); }
+
+  /* Se construye piso por piso, de los cimientos a la cubierta */
+  :global(html.js:not(.rm)) .ct li { opacity: 0; transform: translateY(16px); }
+  :global(html.js:not(.rm)) .es.is-in .ct li { opacity: 1; transform: none; transition: opacity 0.5s, transform 0.7s var(--ease-out-expo); transition-delay: calc(0.25s + var(--n) * 0.16s); }
+  :global(html.js:not(.rm)) .ct-stair { clip-path: inset(100% 0 0 0); }
+  :global(html.js:not(.rm)) .es.is-in .ct-stair { clip-path: inset(0 0 0 0); transition: clip-path 1.3s 0.4s cubic-bezier(0.5, 0, 0.2, 1); }
+
+  /* Entradas */
+  :global(html.js) .es-rv { opacity: 0; transform: translateY(18px); transition: opacity 0.9s var(--ease-out-expo), transform 1s var(--ease-out-expo); }
+  :global(html.js) .es.is-in .es-rv { opacity: 1; transform: none; }
+  :global(html.js) .es.is-in .perfil { transition-delay: 0.15s; }
+  :global(html.rm) .es-rv { opacity: 1 !important; transform: none !important; }
+
+  /* Celular: cada piso en una línea (año + nombre); la cubierta no se sale del ancho */
+  @media (max-width: 639px) {
+    /* sin escalera (a este tamaño ensucia); cada piso: nivel + título y su descripción debajo */
+    .ct-stair { display: none; }
+    .corte { height: clamp(222px, calc(100svh - 432px), 400px); }
+    .ct li { grid-template-columns: 76px 1fr; padding: 0 12px 0 10px; }
+    .ct-y { font-size: 11px; }
+    .ct-t { font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ct-d { font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ct-roof { margin: 0 calc(var(--wall) * -1 - 4px); padding-left: calc(10px + var(--wall) + 4px); padding-right: calc(40px + var(--wall) + 4px); }
+    .ct-logo { right: 16px; }
+    /* el perfil no repite lo que ya dice el corte */
+    .pf-years { display: none; }
+    .ct-cap { display: none; }
+    .corte::after { left: -6px; right: -6px; }
+  }
+  @media (max-width: 360px) {
+    .corte { height: clamp(170px, calc(100svh - 486px), 380px); }
+    .ct li { grid-template-columns: 66px 1fr; }
+    .ct-d { display: none; }
+    .es-note { display: none; }
+  }
+  @media (min-width: 640px) {
+    .es { --pad: 28px; padding-bottom: 16px; }
+    .corte { height: clamp(300px, calc(100svh - 470px), 560px); }
+    .ct-t { font-size: 15px; }
+    .ct-d { font-size: 13px; }
+  }
+  /* ---------- Escritorio: perfil a la izquierda, corte a la derecha ---------- */
+  @media (min-width: 1024px) {
+    .es {
+      --pad: max(40px, calc((100% - 1200px) / 2));
+      --hdr: 84px;
+      padding: calc(var(--hdr) + clamp(14px, 3svh, 36px)) var(--pad) clamp(40px, 6svh, 64px);
+    }
+    .es-in { gap: clamp(12px, 2.4svh, 28px); }
+    .es-body { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
+    .corte { order: 0; height: clamp(320px, calc(100svh - var(--hdr) - 190px - 12svh), 560px); }
+    .perfil { grid-template-columns: 120px 1fr; gap: 14px 22px; align-content: center; }
+    .pf-photo { width: 120px; }
+    .pf-name { font-size: 1.5rem; }
+    .pf-role { font-size: 14px; }
+    .pf-years { font-size: 15px; }
+    .pf-quote { display: block; grid-column: 1 / -1; margin-top: 6px; }
+    .pf-tools { display: flex; grid-column: 1 / -1; }
+    .ct li { padding-right: 56px; }
+    .ct-y { font-size: 13px; }
+    .ct-t { font-size: 16px; }
+  }
+  @media (min-width: 1024px) and (max-height: 800px) {
+    .pf-tools { display: none; }
+    .pf-quote p { font-size: 1.25rem; }
+  }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-es]')!;
+  const io = new IntersectionObserver(
+    ([e]) => {
+      if (!e.isIntersecting) return;
+      sec.classList.add('is-in');
+      io.disconnect();
+    },
+    { threshold: 0.3 },
+  );
+  io.observe(sec);
+</script>

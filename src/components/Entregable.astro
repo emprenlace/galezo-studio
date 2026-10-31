@@ -1,0 +1,794 @@
+---
+/**
+ * Sección 2 · "Qué recibes": una casa, cuatro formas de verla.
+ * La sección queda fija y con el scroll se pasan las cuatro láminas como hojas de un juego de planos:
+ * la de arriba se levanta desde el borde izquierdo y gira hacia quien mira, dejando ver la siguiente.
+ * El escalímetro de abajo marca el avance (línea de carga ligada al scroll) y sirve de selector.
+ * La ficha de la derecha y el contador cambian con cada lámina. Todo cabe en una pantalla.
+ */
+import { Image } from 'astro:assets';
+import render from '../assets/render-interior.jpg';
+import { buildPlan } from '../lib/plan';
+import Plomada from './Plomada.astro';
+import Trazos from './Trazos.astro';
+
+const p = buildPlan();
+const items = [
+  {
+    id: 'planos',
+    short: 'Planos',
+    name: ['Planos', 'completos'],
+    lead: 'Todo lo que tu maestro de obra necesita para construir sin adivinar.',
+    list: ['Plantas, fachadas y cortes', 'Despiece de muebles y cuadro de puertas y ventanas', 'Planos de detalle constructivo'],
+    meta: 'AutoCAD · Revit · PDF',
+  },
+  {
+    id: 'renders',
+    short: 'Renders',
+    name: ['Renders', 'realistas'],
+    lead: 'Ves tu casa terminada antes de gastar un peso en obra.',
+    list: ['Imágenes de tu casa terminada', 'Con materiales, luz y mobiliario', 'Para decidir acabados con calma'],
+    meta: 'Imagen de un proyecto de Galezo Studio',
+  },
+  {
+    id: 'recorrido',
+    short: 'Recorrido',
+    name: ['Recorrido', 'en video'],
+    lead: 'Caminas tu casa de la entrada a la piscina, como si ya vivieras ahí.',
+    list: ['Un video de toda la casa', 'Cada espacio a escala real', 'Para mostrársela a tu familia'],
+    meta: 'Video de toda la casa',
+  },
+  {
+    id: 'cantidades',
+    short: 'Cantidades',
+    name: ['Cantidades', 'de obra'],
+    lead: 'Sabes cuánto material lleva tu casa, para cotizar bien y que no se te vaya la plata.',
+    list: ['Memoria de cantidades por ítem', 'Cotizaciones comparables entre proveedores', 'Control de lo que se compra'],
+    meta: 'Memoria de cantidades',
+  },
+];
+
+// Etiquetas de cantidades (casa de ejemplo): en la franja libre de arriba y abajo de la planta, nunca en los bordes
+const top = p.at(0, -8)[1] - 70;
+const bot = p.at(0, 8.5)[1] + 62;
+const q = [
+  { k: 'Muros', v: '186,4 m²', a: p.at(-10.9, -6), t: [p.at(-9.5, 0)[0], top] },
+  { k: 'Piso', v: '147,2 m²', a: p.at(-5.5, -2.8), t: [p.at(-1.2, 0)[0], top] },
+  { k: 'Cubierta', v: '274,6 m²', a: p.at(10.4, -7.6), t: [p.at(7.6, 0)[0], top] },
+  { k: 'Piscina', v: '31,0 m²', a: p.at(6.5, 6.2), t: [p.at(6.5, 0)[0], bot] },
+].map((it) => ({ ...it, w: 52 + (it.k.length + it.v.length) * 17.5 }));
+---
+
+<section class="en" id="entregable" data-nav-label="Lo que recibes" data-en aria-labelledby="en-title">
+  <div class="en-sticky">
+    <Trazos left="norte" right="escala" />
+    <span class="en-slab" aria-hidden="true"></span>
+    <div class="en-in">
+      <Plomada n="02" label="Lo que recibes" />
+      <header class="en-top">
+        <h2 id="en-title" class="en-h2 rv">Una casa, <span class="accent">cuatro formas de verla</span> antes de construirla</h2>
+        <p class="count rv" aria-hidden="true">
+          <span class="count-n">{items.map((it, i) => <span class:list={['count-d', { 'is-on': i === 0 }]} data-count={i}>0{i + 1}</span>)}</span>
+          <span class="count-of">/ 04</span>
+        </p>
+      </header>
+
+      <div class="en-mid">
+        <!-- El juego de láminas: se pasan como hojas con el scroll -->
+        <div class="stage rv" id="en-stage" role="tabpanel" aria-labelledby="st-planos" data-stage>
+          <span class="sheet-back sheet-back-1" aria-hidden="true"></span>
+          <span class="sheet-back sheet-back-2" aria-hidden="true"></span>
+          <div class="pages">
+            <div class="page" data-page="0" data-mode="planos" style="z-index:10">
+              <div class="page-face">
+                <span class="paper-frame" aria-hidden="true"></span>
+                <div class="page-art">
+                  <svg class="plan" viewBox={`0 0 ${p.w} ${p.h}`} aria-hidden="true">
+                    <g class="base">
+                      {p.trees.map((t) => <circle class="b-tree" cx={t.x} cy={t.y} r={t.r} />)}
+                      <path class="b-thin" pathLength="1" d={p.thin} />
+                      <path class="b-water" d={p.water} />
+                      <path class="b-hidden" d={p.hidden} />
+                      <path class="b-glass" d={p.glass} />
+                      <path class="b-walls" d={p.walls} />
+                      <g class="b-labels">{p.labels.slice(2).map((l) => <text x={l.x} y={l.y} text-anchor={l.a}>{l.t}</text>)}</g>
+                    </g>
+                    <g class="m-dims">
+                      <path pathLength="1" d={p.dims} />
+                      {p.labels.slice(0, 2).map((l) => (
+                        <text x={l.x} y={l.y} text-anchor={l.a} transform={l.r ? `rotate(${l.r} ${l.x} ${l.y})` : undefined}>{l.t}</text>
+                      ))}
+                    </g>
+                  </svg>
+                </div>
+                  <p class="stage-note">planta general · casa de ejemplo</p>
+                <span class="page-shade" aria-hidden="true"></span>
+                <span class="page-crease" aria-hidden="true"></span>
+              </div>
+            </div>
+            <div class="page" data-page="1" data-mode="renders" style="z-index:8">
+              <div class="page-face">
+                <span class="paper-frame" aria-hidden="true"></span>
+                <div class="page-art">
+                  <Image src={render} alt="Render de un interior diseñado por Galezo Studio" widths={[560, 900, 1300]} sizes="(min-width: 1024px) 760px, 92vw" class="r-img" loading="lazy" />
+                </div>
+                <span class="page-shade" aria-hidden="true"></span>
+                <span class="page-crease" aria-hidden="true"></span>
+              </div>
+            </div>
+            <div class="page" data-page="2" data-mode="recorrido" style="z-index:6">
+              <div class="page-face">
+                <span class="paper-frame" aria-hidden="true"></span>
+                <div class="page-art">
+                  <svg class="plan" viewBox={`0 0 ${p.w} ${p.h}`} aria-hidden="true">
+                    <g class="base">
+                      {p.trees.map((t) => <circle class="b-tree" cx={t.x} cy={t.y} r={t.r} />)}
+                      <path class="b-thin" d={p.thin} />
+                      <path class="b-water" d={p.water} />
+                      <path class="b-hidden" d={p.hidden} />
+                      <path class="b-glass" d={p.glass} />
+                      <path class="b-walls" d={p.walls} />
+                      <g class="b-labels">{p.labels.slice(2).map((l) => <text x={l.x} y={l.y} text-anchor={l.a}>{l.t}</text>)}</g>
+                    </g>
+                    <g class="m-tour">
+                      <path id="en-path" class="t-path" pathLength="1" d={p.path} />
+                      <g class="t-cam">
+                        <path class="t-cone" d="M0 0 L210 -90 A228 228 0 0 1 210 90 Z" />
+                        <circle class="t-halo" r="34" />
+                        <circle class="t-dot" r="17" />
+                        <animateMotion dur="9s" repeatCount="indefinite" rotate="auto" keyPoints="0;1;0" keyTimes="0;0.5;1" calcMode="linear">
+                          <mpath href="#en-path" />
+                        </animateMotion>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                  <p class="stage-note">recorrido · casa de ejemplo</p>
+                <span class="page-shade" aria-hidden="true"></span>
+                <span class="page-crease" aria-hidden="true"></span>
+              </div>
+            </div>
+            <div class="page" data-page="3" data-mode="cantidades" style="z-index:4">
+              <div class="page-face">
+                <span class="paper-frame" aria-hidden="true"></span>
+                <div class="page-art">
+                  <svg class="plan" viewBox={`0 0 ${p.w} ${p.h}`} aria-hidden="true">
+                    <g class="m-qty-fill">
+                      <path class="z-roof" d={p.hidden} />
+                      <path class="z-floor" d={p.floor} />
+                      <path class="z-pool" d={p.pool} />
+                    </g>
+                    <g class="base">
+                      {p.trees.map((t) => <circle class="b-tree" cx={t.x} cy={t.y} r={t.r} />)}
+                      <path class="b-thin" d={p.thin} />
+                      <path class="b-water" d={p.water} />
+                      <path class="b-glass" d={p.glass} />
+                    </g>
+                    <g class="m-qty">
+                      <path class="q-walls" d={p.walls} />
+                      {q.map((it, i) => (
+                        <g class="q-tag" style={`--i:${i}`}>
+                          <path class="q-lead" d={`M${it.a[0]} ${it.a[1]} L${it.t[0]} ${it.t[1]}`} />
+                          <circle class="q-pin" cx={it.a[0]} cy={it.a[1]} r="9" />
+                          <rect class="q-box" x={it.t[0] - it.w / 2} y={it.t[1] - 32} width={it.w} height="64" />
+                          <text class="q-k" x={it.t[0]} y={it.t[1] + 12} text-anchor="middle">{it.k} <tspan class="q-v">{it.v}</tspan></text>
+                        </g>
+                      ))}
+                    </g>
+                  </svg>
+                </div>
+                  <p class="stage-note">cantidades · casa de ejemplo</p>
+                <span class="page-shade" aria-hidden="true"></span>
+                <span class="page-crease" aria-hidden="true"></span>
+              </div>
+            </div>
+            <!-- Reverso doblado de cada hoja (la parte que se levanta al pasarla) -->
+            {items.slice(0, -1).map((_, i) => <span class="flap" data-flap={i} style={`z-index:${11 - i * 2}`} />)}
+          </div>
+        </div>
+
+        <!-- Ficha del entregable -->
+        <div class="info rv" data-info>
+          {
+            items.map((it, i) => (
+              <div class:list={['card', { 'is-on': i === 0 }]} data-card={i} aria-hidden={i === 0 ? 'false' : 'true'}>
+                <h3 class="card-t">
+                  <span class="ln"><span>{it.name[0]}</span></span>
+                  <span class="ln"><span class="accent">{it.name[1]}</span></span>
+                </h3>
+                <p class="card-lead">{it.lead}</p>
+                <ul class="card-list">
+                  {it.list.map((l, j) => (
+                    <li style={`--j:${j}`}>{l}</li>
+                  ))}
+                </ul>
+                <p class="card-meta">{it.meta}</p>
+              </div>
+            ))
+          }
+          <a href="#cotizar" class="btn btn-primary chamfer" data-open-chat data-cta="entregable">
+            Cotiza tu diseño
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Escalímetro: avance ligado al scroll y selector -->
+      <div class="ruler rv" data-ruler>
+        <svg class="ruler-ticks" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 1000 60">
+          {
+            Array.from({ length: 101 }, (_, i) => (
+              <path d={`M${i * 10} 60V${i % 10 === 0 ? 44 : i % 5 === 0 ? 50 : 54}`} vector-effect="non-scaling-stroke" />
+            ))
+          }
+        </svg>
+        <span class="ruler-scale" aria-hidden="true">esc. 1:100</span>
+        <span class="ruler-fill" aria-hidden="true"><i data-fill></i></span>
+        <span class="marker" aria-hidden="true"></span>
+        <div class="ruler-tabs" role="tablist" aria-label="Lo que incluye tu diseño">
+          {
+            items.map((it, i) => (
+              <button type="button" role="tab" class="st" id={`st-${it.id}`} aria-controls="en-stage" aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} data-st={i}>
+                <span class="st-n">0{i + 1}</span>
+                <span class="st-l">{it.short}</span>
+              </button>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Tramo de scroll: una pantalla fija + el recorrido de las tres hojas que se pasan */
+  .en { position: relative; background: #fff; }
+  :global(html.js:not(.rm)) .en { height: 220svh; }
+  .en-sticky {
+    --hdr: 76px;
+    --pad: 20px;
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 560px;
+    padding: calc(var(--hdr) + clamp(10px, 2.4svh, 30px)) var(--pad) clamp(18px, 3svh, 36px);
+    display: flex;
+    overflow: clip;
+  }
+  :global(html:not(.js)) .en-sticky, :global(html.rm) .en-sticky { position: relative; height: auto; min-height: 100svh; }
+  .en-in { position: relative; z-index: 1; width: 100%; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(14px, 2.6svh, 30px); }
+
+  /* Bloque azul suave con corte a 45°: sangra hasta el borde izquierdo y abraza la lámina */
+  .en-slab {
+    position: absolute;
+    left: 0;
+    top: 34%;
+    width: 62%;
+    height: 50%;
+    background: var(--color-brand-soft);
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 44px), calc(100% - 44px) 100%, 0 100%);
+  }
+
+  /* ---------- Encabezado: título + contador ---------- */
+  .en-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+  .en-h2 {
+    font-size: clamp(1.55rem, min(1.05rem + 2.2vw, 4.8svh), 2.9rem);
+    line-height: 1.06;
+    font-weight: 560;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+    max-width: 17em;
+  }
+  .en-h2 .accent, .card-t .accent { color: var(--color-brand); letter-spacing: -0.012em; }
+  .en-h2 .accent { font-size: 1.08em; }
+  .count { display: flex; align-items: baseline; gap: 10px; flex: none; }
+  .count-n { position: relative; display: inline-grid; overflow: hidden; height: 1em; font-family: var(--font-serif); font-style: italic; font-size: clamp(3rem, 2rem + 4vw, 6.2rem); line-height: 1; color: var(--color-brand); }
+  .count-d { grid-area: 1 / 1; transform: translateY(130%); transition: transform 0.7s var(--ease-out-expo); }
+  .count-d.is-on { transform: none; }
+  .count-d.is-out { transform: translateY(-130%); }
+  .count-of { font-size: 14px; font-weight: 560; color: var(--color-ink-mute); font-variant-numeric: tabular-nums; }
+
+  /* ---------- Centro: láminas + ficha ---------- */
+  .en-mid { flex: 1; min-height: 0; display: grid; gap: 18px; }
+  .stage { position: relative; width: 100%; aspect-ratio: 3 / 2; align-self: center; }
+  .sheet-back { position: absolute; inset: 0; background: #f7f4ee; box-shadow: 0 10px 24px -16px rgb(20 40 60 / 0.35); }
+  .sheet-back-1 { rotate: -2.4deg; translate: -6px 6px; }
+  .sheet-back-2 { rotate: 1.6deg; translate: 8px 2px; background: #fbf9f5; }
+
+  /* Las hojas: al pasarlas se doblan como papel. La parte que queda se recorta por el pliegue (clip-path)
+     y la parte levantada se dibuja como el reverso del papel, reflejado sobre el pliegue (.flap). */
+  .pages { position: absolute; inset: 0; }
+  .page { position: absolute; inset: 0; }
+  .page-face { position: absolute; inset: 0; background: #fffdf9; overflow: hidden; box-shadow: 0 26px 50px -26px rgb(20 40 60 / 0.45), 0 1px 3px rgb(20 40 60 / 0.08); }
+  .page-shade, .page-crease { position: absolute; inset: 0; opacity: 0; pointer-events: none; z-index: 3; }
+  .flap {
+    position: absolute;
+    left: -100%;
+    top: -100%;
+    width: 300%;
+    height: 300%;
+    pointer-events: none;
+    visibility: hidden;
+    filter: none;
+  }
+  .page-art { position: absolute; inset: 0; }
+  .page[data-mode='renders'] .page-art :global(.r-img) { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .page[data-mode='renders'] .paper-frame { display: none; }
+  .paper-frame { position: absolute; inset: 2.2%; border: 1px solid rgb(35 38 43 / 0.18); outline: 1px solid rgb(35 38 43 / 0.08); outline-offset: 4px; pointer-events: none; z-index: 1; }
+  .plan { position: absolute; left: 4%; top: 5%; width: 92%; height: 87%; overflow: visible; }
+  .stage-note {
+    position: absolute;
+    left: 4.4%;
+    bottom: 3.4%;
+    z-index: 2;
+    font-family: 'Architects Daughter', var(--font-sans);
+    font-size: clamp(11px, 1.05vw, 14px);
+    color: #8a8f97;
+  }
+
+  /* Planta base */
+  .b-thin { fill: none; stroke: #4a5059; stroke-width: 1.2; }
+  .b-hidden { fill: none; stroke: #4a5059; stroke-width: 1.3; stroke-dasharray: 10 8; }
+  .b-glass { fill: none; stroke: #23262b; stroke-width: 1.4; }
+  .b-water { fill: none; stroke: var(--color-brand); stroke-width: 1.2; opacity: 0.6; }
+  .b-walls { fill: #23262b; }
+  .b-tree { fill: none; stroke: #9aa0a8; stroke-width: 1.2; stroke-dasharray: 3 4; }
+  .b-labels text { fill: #6b7280; font-size: 24px; font-family: var(--font-sans); font-weight: 500; }
+  .m-dims path { fill: none; stroke: var(--color-brand); stroke-width: 1.8; stroke-dasharray: 1; stroke-dashoffset: 0; }
+  .m-dims text { fill: var(--color-brand); font-size: 32px; font-family: var(--font-sans); font-weight: 600; }
+  .page[data-mode='recorrido'] .base { opacity: 0.55; }
+  .t-path { fill: none; stroke: var(--color-brand); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+  .t-cone { fill: rgb(0 128 193 / 0.14); stroke: rgb(0 128 193 / 0.4); stroke-width: 1.5; }
+  .t-halo { fill: rgb(0 128 193 / 0.18); }
+  .t-dot { fill: var(--color-brand); stroke: #fff; stroke-width: 4; }
+  .z-roof { fill: rgb(0 128 193 / 0.06); stroke: var(--color-brand); stroke-width: 2.5; stroke-dasharray: 12 8; }
+  .z-floor { fill: rgb(196 168 120 / 0.28); }
+  .z-pool { fill: rgb(0 128 193 / 0.22); }
+  .q-walls { fill: var(--color-brand); }
+  .q-lead { stroke: var(--color-ink); stroke-width: 2; }
+  .q-pin { fill: #fff; stroke: var(--color-ink); stroke-width: 3; }
+  .q-box { fill: var(--color-ink); }
+  .q-k { fill: #fff; font-size: 32px; font-family: var(--font-sans); font-weight: 500; }
+  .q-v { font-weight: 700; fill: #9fd3f2; }
+
+  /* Cada lámina anima su contenido cuando queda a la vista (is-live) */
+  .page.is-live[data-mode='planos'] .b-thin { stroke-dasharray: 1; animation: draw 1.6s cubic-bezier(0.5, 0, 0.2, 1) both; }
+  .page.is-live[data-mode='planos'] .m-dims path { animation: draw 1.2s 0.5s cubic-bezier(0.5, 0, 0.2, 1) both; }
+  .page.is-live[data-mode='planos'] .m-dims text { animation: en-ink 0.6s 1.2s both; }
+  .page.is-live[data-mode='renders'] :global(.r-img) { animation: settle 1.8s var(--ease-out-expo) both; }
+  .page.is-live[data-mode='recorrido'] .t-path { animation: draw 1.6s 0.1s cubic-bezier(0.5, 0, 0.2, 1) both; }
+  .page.is-live[data-mode='cantidades'] .m-qty-fill, .page.is-live[data-mode='cantidades'] .q-walls { animation: en-ink 0.7s both; }
+  .page.is-live[data-mode='cantidades'] .q-tag { animation: en-ink 0.5s both; animation-delay: calc(0.3s + var(--i) * 0.12s); }
+  @keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes en-ink { from { opacity: 0; } }
+  @keyframes settle { from { transform: scale(1.08); } }
+
+  /* ---------- Ficha ---------- */
+  .info { display: grid; grid-template-columns: 100%; align-content: center; }
+  .card { grid-area: 1 / 1; pointer-events: none; }
+  .card.is-on { pointer-events: auto; }
+  .btn { grid-area: 2 / 1; }
+  .card-t { font-size: clamp(1.7rem, 1.2rem + 2vw, 3rem); line-height: 1; font-weight: 600; letter-spacing: -0.035em; }
+  .card-t .accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: 1.1em; }
+  .ln { display: block; overflow: hidden; padding: 0.04em 0 0.14em; margin-bottom: -0.1em; }
+  .ln > span { display: inline-block; transform: translateY(150%); transition: transform 0.8s var(--ease-out-expo); }
+  .card.is-on .ln > span { transform: none; }
+  .card.is-on .ln:nth-child(2) > span { transition-delay: 0.06s; }
+  .card.is-out .ln > span { transform: translateY(-150%); transition-duration: 0.45s; }
+  .card-lead { margin-top: clamp(10px, 1.6svh, 16px); max-width: 24em; font-size: clamp(1rem, 0.94rem + 0.3vw, 1.18rem); line-height: 1.45; color: var(--color-ink); text-wrap: pretty; }
+  .card-lead, .card-list li, .card-meta { opacity: 0; transform: translateY(10px); transition: opacity 0.4s, transform 0.6s var(--ease-out-expo); }
+  .card.is-on .card-lead { opacity: 1; transform: none; transition-delay: 0.12s; }
+  .card.is-on .card-list li { opacity: 1; transform: none; transition-delay: calc(0.2s + var(--j) * 0.06s); }
+  .card.is-on .card-meta { opacity: 1; transform: none; transition-delay: 0.4s; }
+  .card-list { margin-top: clamp(12px, 2svh, 20px); display: grid; gap: 8px; }
+  .card-list li { position: relative; padding-left: 20px; font-size: 14.5px; line-height: 1.4; color: var(--color-ink-soft); }
+  .card-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.42em;
+    width: 8px;
+    height: 8px;
+    background: var(--color-brand);
+    clip-path: polygon(2.5px 0, 100% 0, 100% 5.5px, 5.5px 100%, 0 100%, 0 2.5px);
+  }
+  .card-meta { margin-top: clamp(12px, 2svh, 18px); font-size: 12.5px; font-weight: 600; color: var(--color-brand-ink); }
+  .btn {
+    --cut: 9px;
+    justify-self: start;
+    margin-top: clamp(16px, 3svh, 30px);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 50px;
+    padding: 0 22px;
+    font-size: 15px;
+    font-weight: 560;
+    white-space: nowrap;
+  }
+  .btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.45s var(--ease-out-expo); }
+  .btn-primary { background: var(--color-brand-ink); color: #fff; transition: background-color 0.3s var(--ease-out-expo); }
+  .btn-primary:hover { background: var(--color-ink); }
+  .btn-primary:hover svg { transform: translateX(3px); }
+
+  /* ---------- Escalímetro ---------- */
+  .ruler {
+    --st: 0;
+    --p: 0;
+    position: relative;
+    flex: none;
+    height: 62px;
+    background: #f6f2ea;
+    border: 1px solid #ddd4c3;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  }
+  .ruler-ticks { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .ruler-ticks path { stroke: #9a9284; stroke-width: 1; }
+  .ruler-scale { position: absolute; right: 14px; top: 8px; font-size: 10.5px; color: #8a8273; font-variant-numeric: tabular-nums; }
+  /* Línea de carga: avanza con el scroll */
+  .ruler-fill { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; }
+  .ruler-fill i { display: block; height: 100%; background: var(--color-brand); transform-origin: 0 50%; transform: scaleX(var(--p)); }
+  .marker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 25%;
+    height: 100%;
+    transform: translateX(calc(var(--st) * 100%));
+    transition: transform 0.8s var(--ease-out-expo);
+    pointer-events: none;
+  }
+  .marker::before {
+    content: '';
+    position: absolute;
+    inset: 7px 10px;
+    background: var(--color-brand-ink);
+    clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+  }
+  .ruler-tabs { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); }
+  .st { position: relative; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; color: var(--color-ink); transition: color 0.35s; padding-bottom: 6px; }
+  /* Fondo del color de la regla detrás de las letras: las marcas nunca les quitan contraste */
+  .st-n, .st-l { position: relative; background: #f6f2ea; padding: 0 4px; border-radius: 2px; transition: background-color 0.35s; }
+  .st[aria-selected='true'] .st-n, .st[aria-selected='true'] .st-l { background: transparent; }
+  .st:hover { color: var(--color-ink); }
+  .st[aria-selected='true'] { color: #fff; }
+  .st-n { font-size: 11.5px; font-weight: 600; color: var(--color-brand-ink); font-variant-numeric: tabular-nums; }
+  .st[aria-selected='true'] .st-n { color: rgb(255 255 255 / 0.85); }
+  .st-l { font-size: 15px; font-weight: 600; letter-spacing: -0.015em; }
+
+  :global(html.js) .rv { opacity: 0; transform: translateY(20px); transition: opacity 0.9s var(--ease-out-expo), transform 1s var(--ease-out-expo); }
+  :global(html.js) .rv.is-in { opacity: 1; transform: none; }
+  :global(html.js) .stage.rv { transition-delay: 0.08s; }
+  :global(html.js) .info.rv { transition-delay: 0.16s; }
+  :global(html.js) .ruler.rv { transition-delay: 0.24s; }
+  :global(html.rm) .en * { transition-duration: 0s !important; animation: none !important; }
+
+  /* ---------- Celular y tableta ---------- */
+  @media (max-width: 1023px) {
+    .en-sticky { --hdr: 72px; }
+    .count { display: none; }
+    .en-slab { top: 22%; height: 34%; width: 88%; }
+    .en-mid { display: contents; }
+    .stage { order: 1; }
+    .ruler { order: 2; height: 52px; }
+    .info { order: 3; align-content: start; }
+    .en-in { gap: 16px; }
+    .card-t { font-size: 1.55rem; display: flex; gap: 0.3em; flex-wrap: wrap; }
+    .card-t .ln { display: inline-block; }
+    .card-lead { margin-top: 6px; font-size: 15px; }
+    .card-list, .card-meta { display: none; }
+    .btn { margin-top: 14px; }
+    /* El bloque se reparte en el alto disponible: sin vacío abajo */
+    .en-in { justify-content: center; }
+    .st { flex-direction: column; gap: 0; }
+    .st-l { font-size: 13px; }
+    .st-n { font-size: 10.5px; }
+    .ruler-scale { display: none; }
+    .marker::before { inset: 5px 4px; }
+  }
+  /* Celulares altos: hay espacio para lo que incluye cada entregable */
+  @media (max-width: 639px) and (max-height: 700px) {
+    .card-lead { font-size: 14px; }
+    .en-h2 { font-size: 1.4rem; }
+    .en-in { gap: 10px; }
+    .btn { margin-top: 10px; height: 46px; }
+  }
+  @media (min-width: 640px) and (max-width: 1023px) and (min-height: 760px) {
+    .card-list { display: grid; margin-top: 14px; gap: 7px; }
+    .card-list li { font-size: 14px; }
+    .card-meta { display: block; margin-top: 12px; }
+    .en-in { gap: 20px; }
+  }
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .card-t { font-size: 2rem; }
+    .card-lead { font-size: 16px; }
+    /* La lámina no crece más de lo que cabe con la ficha debajo */
+    .stage { width: min(100%, calc((100svh - var(--hdr) - 600px) * 1.5)); justify-self: center; }
+  }
+  @media (min-width: 640px) {
+    .en-sticky { --pad: 28px; }
+  }
+  @media (min-width: 1024px) {
+    .en-sticky { --pad: max(40px, calc((100% - 1200px) / 2)); --hdr: 84px; }
+    .en-mid { grid-template-columns: 1.55fr 1fr; gap: clamp(32px, 4vw, 64px); align-items: center; }
+    .stage { width: min(100%, calc((100svh - var(--hdr) - 320px) * 1.5)); justify-self: start; }
+  }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-en]')!;
+  const stage = sec.querySelector<HTMLElement>('[data-stage]')!;
+  const ruler = sec.querySelector<HTMLElement>('[data-ruler]')!;
+  const sts = [...sec.querySelectorAll<HTMLButtonElement>('[data-st]')];
+  const cards = [...sec.querySelectorAll<HTMLElement>('[data-card]')];
+  const counts = [...sec.querySelectorAll<HTMLElement>('[data-count]')];
+  const pages = [...sec.querySelectorAll<HTMLElement>('[data-page]')];
+  const shades = pages.map((p) => p.querySelector<HTMLElement>('.page-shade')!);
+  const creases = pages.map((p) => p.querySelector<HTMLElement>('.page-crease')!);
+  const flaps = [...sec.querySelectorAll<HTMLElement>('[data-flap]')];
+  const N = pages.length;
+  const reduced = document.documentElement.classList.contains('rm');
+  const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+
+  // ----- Bloque azul: abraza la lámina y termina en la mitad del espacio entre lámina y ficha (nunca toca el texto) -----
+  {
+    const slab = sec.querySelector<HTMLElement>('.en-slab')!;
+    const info = sec.querySelector<HTMLElement>('[data-info]')!;
+    const fitSlab = () => {
+      if (innerWidth < 1024) {
+        slab.style.removeProperty('width');
+        return;
+      }
+      const base = slab.offsetParent ? (slab.offsetParent as HTMLElement).getBoundingClientRect().left : 0;
+      const sr = stage.getBoundingClientRect().right;
+      const il = info.getBoundingClientRect().left;
+      slab.style.width = `${Math.round(sr + (il - sr) / 2 - base)}px`;
+    };
+    fitSlab();
+    new ResizeObserver(fitSlab).observe(sec);
+    addEventListener('resize', fitSlab, { passive: true });
+  }
+
+  // ----- Ficha, contador y marcador -----
+  let cur = 0;
+  const swap = (els: HTMLElement[], i: number) => {
+    els.forEach((el, j) => {
+      const was = el.classList.contains('is-on');
+      el.classList.toggle('is-on', j === i);
+      el.classList.toggle('is-out', was && j !== i);
+      if (!was && j !== i) el.classList.remove('is-out');
+    });
+  };
+  const show = (i: number) => {
+    if (i === cur) return;
+    cur = i;
+    sts.forEach((t, j) => {
+      t.setAttribute('aria-selected', String(j === i));
+      t.tabIndex = j === i ? 0 : -1;
+    });
+    stage.setAttribute('aria-labelledby', sts[i].id);
+    ruler.style.setProperty('--st', String(i));
+    swap(cards, i);
+    cards.forEach((c, j) => c.setAttribute('aria-hidden', String(j !== i)));
+    swap(counts, i);
+  };
+
+  // ----- Hojas: cada una se anima cuando queda a la vista -----
+  const live = new Set<number>();
+  const setLive = (j: number, on: boolean) => {
+    if (on === live.has(j)) return;
+    if (on) {
+      live.add(j);
+      pages[j].classList.remove('is-live');
+      void pages[j].offsetWidth;
+      pages[j].classList.add('is-live');
+    } else {
+      live.delete(j);
+      pages[j].classList.remove('is-live');
+    }
+  };
+
+  // u: 0 … N-1 (posición en el juego de láminas). La hoja j gira entre u = j + 0.25 y j + 0.75.
+  // ----- Geometría del doblez -----
+  type P = [number, number];
+  let PW = 1;
+  let PH = 1;
+  const measurePage = () => {
+    PW = pages[0].offsetWidth || 1;
+    PH = pages[0].offsetHeight || 1;
+  };
+  // Recorta un polígono con el semiplano side(p) * sign >= 0 (Sutherland–Hodgman)
+  const clipHalf = (poly: P[], side: (p: P) => number, sign: number): P[] => {
+    const out: P[] = [];
+    for (let i = 0; i < poly.length; i++) {
+      const a = poly[i];
+      const b = poly[(i + 1) % poly.length];
+      const sa = side(a) * sign;
+      const sb = side(b) * sign;
+      if (sa >= 0) out.push(a);
+      if (sa * sb < 0) {
+        const k = sa / (sa - sb);
+        out.push([a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k]);
+      }
+    }
+    return out;
+  };
+  const poly = (pts: P[], dx = 0, dy = 0) => `polygon(${pts.map(([x, y]) => `${(x + dx).toFixed(1)}px ${(y + dy).toFixed(1)}px`).join(',')})`;
+  // Gradiente lineal en px a lo largo de "dir", con paradas medidas desde el pliegue
+  const grad = (dir: P, boxW: number, boxH: number, cx: number, cy: number, A: P, stops: [string, number][]) => {
+    const ang = (Math.atan2(dir[0], -dir[1]) * 180) / Math.PI;
+    const L = Math.abs(boxW * dir[0]) + Math.abs(boxH * dir[1]);
+    const t0 = (A[0] - cx) * dir[0] + (A[1] - cy) * dir[1] + L / 2;
+    return `linear-gradient(${ang.toFixed(2)}deg, ${stops.map(([c, d]) => `${c} ${(t0 + d).toFixed(1)}px`).join(', ')})`;
+  };
+
+  const fold = (j: number, f: number) => {
+    const pg = pages[j];
+    const fl = flaps[j];
+    const shade = shades[j + 1];
+    const crease = creases[j];
+    if (f <= 0 || f >= 1) {
+      pg.style.clipPath = '';
+      pg.style.visibility = f >= 1 ? 'hidden' : '';
+      if (fl) fl.style.visibility = 'hidden';
+      if (shade) shade.style.opacity = '0';
+      crease.style.opacity = '0';
+      return;
+    }
+    pg.style.visibility = '';
+    const W = PW;
+    const H = PH;
+    // Pliegue: arranca por la esquina inferior derecha y se endereza al cruzar la hoja
+    const d = f * W * 1.42;
+    const tilt = W * 0.42 * (1 - f * 0.85);
+    const A: P = [W - d + tilt, 0];
+    const B: P = [W - d, H];
+    let nx = H;
+    let ny = -(B[0] - A[0]);
+    const nl = Math.hypot(nx, ny);
+    nx /= nl;
+    ny /= nl; // normal hacia la derecha (lado que se levanta)
+    const side = (p: P) => (p[0] - A[0]) * nx + (p[1] - A[1]) * ny;
+    const rect: P[] = [[0, 0], [W, 0], [W, H], [0, H]];
+    const keep = clipHalf(rect, side, -1);
+    const lifted = clipHalf(rect, side, 1);
+    pg.style.clipPath = keep.length > 2 ? poly(keep) : 'polygon(0 0,0 0,0 0)';
+
+    // Reverso: la parte levantada reflejada sobre el pliegue
+    let refl = lifted.map((p) => {
+      const s = side(p);
+      return [p[0] - 2 * s * nx, p[1] - 2 * s * ny] as P;
+    });
+    // La parte levantada no sale de la altura de la hoja (como una página real): no tapa el título
+    refl = clipHalf(refl, (p) => p[1] + 10, 1);
+    refl = clipHalf(refl, (p) => H + 10 - p[1], 1);
+    refl = clipHalf(refl, (p) => p[0] + 24, 1);
+    const depth = Math.max(1, ...lifted.map((p) => side(p)));
+    if (fl) {
+      if (refl.length > 2) {
+        fl.style.visibility = 'visible';
+        fl.style.clipPath = poly(refl, W, H);
+        // Papel: sombra en el quiebre, luz en la curva, y el borde un poco más oscuro
+        fl.style.background = grad([-nx, -ny], W * 3, H * 3, W * 1.5 - W, H * 1.5 - H, A, [
+          ['#cfc6b6', 0],
+          ['#f1ece2', Math.min(depth * 0.18, 26)],
+          ['#fdfbf6', depth * 0.45],
+          ['#ece5d7', depth],
+        ]);
+      } else fl.style.visibility = 'hidden';
+    }
+    // Sombra del reverso sobre la hoja de abajo, junto al pliegue
+    const k = Math.sin(f * Math.PI);
+    if (shade) {
+      shade.style.opacity = String((0.35 + 0.65 * k).toFixed(3));
+      shade.style.background = grad([nx, ny], W, H, W / 2, H / 2, A, [
+        ['rgb(20 30 40 / 0.34)', 0],
+        ['rgb(20 30 40 / 0.1)', Math.min(depth * 0.25, 40)],
+        ['rgb(20 30 40 / 0)', Math.min(depth * 0.6, 120)],
+      ]);
+    }
+    // La hoja se oscurece suave justo antes del pliegue (donde empieza a curvarse)
+    crease.style.opacity = '1';
+    crease.style.background = grad([-nx, -ny], W, H, W / 2, H / 2, A, [
+      ['rgb(20 30 40 / 0.16)', 0],
+      ['rgb(20 30 40 / 0.04)', 14],
+      ['rgb(20 30 40 / 0)', 34],
+    ]);
+  };
+
+  const turn = (u: number) => {
+    for (let j = 0; j < N; j++) {
+      // La hoja j se pasa entre u = j + 0.12 y j + 0.88: casi todo el tramo es movimiento
+      const f = j < N - 1 ? clamp01((u - j - 0.12) / 0.76) : 0;
+      fold(j, f);
+      setLive(j, u >= j - 0.88 && u < j + 0.88);
+    }
+    show(Math.min(N - 1, Math.max(0, Math.round(u))));
+  };
+
+  // ----- Scroll -----
+  let run = 1;
+  const measure = () => {
+    run = Math.max(1, sec.offsetHeight - innerHeight);
+    measurePage();
+  };
+  let last = -1;
+  const paint = () => {
+    const top = -sec.getBoundingClientRect().top;
+    const p = clamp01(top / run);
+    if (Math.abs(p - last) < 0.0002) return;
+    last = p;
+    ruler.style.setProperty('--p', p.toFixed(4));
+    turn(p * (N - 1));
+  };
+  let raf = 0;
+  const kick = () => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      paint();
+    });
+  };
+
+  // Ir a una lámina: lleva el scroll a su posición (o cambia directo si no hay movimiento)
+  const goTo = (i: number, focus = false) => {
+    if (reduced) {
+      pages.forEach((pg, j) => (pg.style.visibility = j < i ? 'hidden' : ''));
+      setLive(i, true);
+      show(i);
+    } else {
+      const y = scrollY + sec.getBoundingClientRect().top + (i / (N - 1)) * run;
+      scrollTo({ top: y, behavior: 'smooth' });
+    }
+    if (focus) sts[i].focus();
+  };
+  sts.forEach((t, i) => {
+    t.addEventListener('click', () => goTo(i));
+    t.addEventListener('keydown', (e) => {
+      const k = e.key;
+      const step = k === 'ArrowRight' ? 1 : k === 'ArrowLeft' ? -1 : 0;
+      if (!step && k !== 'Home' && k !== 'End') return;
+      e.preventDefault();
+      goTo(k === 'Home' ? 0 : k === 'End' ? N - 1 : Math.min(N - 1, Math.max(0, cur + step)), true);
+    });
+  });
+
+  // Entradas
+  const io = new IntersectionObserver(
+    (es) => {
+      for (const e of es) if (e.isIntersecting) e.target.classList.add('is-in');
+    },
+    { threshold: 0.2 },
+  );
+  sec.querySelectorAll('.rv').forEach((el) => io.observe(el));
+
+  if (reduced) {
+    setLive(0, true);
+  } else {
+    let on = false;
+    new IntersectionObserver(([e]) => {
+      on = e.isIntersecting;
+      if (on) kick();
+    }).observe(sec);
+    addEventListener('scroll', () => on && kick(), { passive: true });
+    addEventListener('resize', () => {
+      measure();
+      last = -1;
+      kick();
+    });
+    measure();
+    paint();
+    // La primera lámina se traza cuando la sección aparece
+    const first = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          live.delete(0);
+          setLive(0, true);
+          first.disconnect();
+        }
+      },
+      { threshold: 0.4 },
+    );
+    first.observe(stage);
+  }
+</script>

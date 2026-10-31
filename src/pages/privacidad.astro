@@ -1,0 +1,57 @@
+---
+/**
+ * Política de tratamiento de datos personales (Ley 1581 de 2012). Borrador: validar con Ulises (y su abogado si quiere)
+ * el responsable, el NIT si aplica y el correo de contacto antes de publicar.
+ */
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+const fecha = '31 de octubre de 2026';
+---
+
+<Base title="Política de privacidad · Galezo Studio" description="Cómo trata Galezo Studio los datos personales de quienes solicitan una cotización." noindex pageType="legal">
+  <Header />
+  <main class="lg">
+    <article>
+      <p class="k">Política de tratamiento de datos personales</p>
+      <h1>Tus datos, <span class="accent">bien cuidados</span></h1>
+      <p class="meta">Última actualización: {fecha}</p>
+
+      <h2>Quién es el responsable</h2>
+      <p>Galezo Studio, estudio de diseño arquitectónico de Ulises Galezo Cifuentes, con sede en Valledupar, Cesar (Colombia). Contacto: <a href="mailto:arquitectoulisesgalezo@gmail.com">arquitectoulisesgalezo@gmail.com</a> · WhatsApp +57 304 339 5726.</p>
+
+      <h2>Qué datos recogemos</h2>
+      <p>Cuando pides una cotización: tu nombre, tu número de WhatsApp, tu correo y las respuestas sobre tu proyecto (tipo de proyecto, etapa, tamaño, ubicación, cuándo quieres empezar y lo que nos quieras contar). También datos de navegación y de la campaña por la que llegaste, para medir el sitio.</p>
+
+      <h2>Para qué los usamos</h2>
+      <ul>
+        <li>Responder tu solicitud y enviarte la cotización.</li>
+        <li>Hacer seguimiento a tu proyecto y contarte novedades del estudio, si nos lo permites.</li>
+        <li>Medir y mejorar el sitio y nuestros anuncios.</li>
+      </ul>
+      <p>No vendemos ni compartimos tus datos con terceros para fines propios de ellos. Usamos herramientas de Google y Meta para guardar la información y medir el sitio.</p>
+
+      <h2>Tus derechos</h2>
+      <p>Puedes conocer, actualizar, rectificar y pedir que eliminemos tus datos, o revocar la autorización, escribiendo a <a href="mailto:arquitectoulisesgalezo@gmail.com">arquitectoulisesgalezo@gmail.com</a>. Respondemos consultas en un máximo de diez días hábiles y reclamos en un máximo de quince, como indica la Ley 1581 de 2012. También puedes acudir a la Superintendencia de Industria y Comercio.</p>
+
+      <h2>Cuánto tiempo los guardamos</h2>
+      <p>Mientras sean necesarios para atender tu solicitud y la relación con el estudio, o hasta que nos pidas eliminarlos.</p>
+    </article>
+  </main>
+</Base>
+
+<style>
+  .lg { padding: 120px 20px 80px; background: var(--color-bone); }
+  article { max-width: 680px; margin: 0 auto; }
+  .k { font-size: 13px; font-weight: 600; color: var(--color-brand-ink); }
+  h1 { margin-top: 6px; font-size: clamp(2rem, 1.4rem + 2.6vw, 3.4rem); line-height: 1.05; font-weight: 560; letter-spacing: -0.04em; }
+  h1 .accent { color: var(--color-brand); font-size: 1.08em; }
+  .meta { margin-top: 8px; font-size: 13px; color: var(--color-ink-mute); }
+  h2 { margin-top: 32px; font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; }
+  p, li { margin-top: 10px; font-size: 1rem; line-height: 1.6; color: var(--color-ink-soft); }
+  ul { padding-left: 1.2em; list-style: disc; }
+  a { color: var(--color-brand-ink); font-weight: 600; }
+</style>
+
+<script>
+  document.documentElement.classList.add('ready');
+</script>

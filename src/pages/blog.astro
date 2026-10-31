@@ -1,0 +1,55 @@
+---
+/**
+ * Blog · Próximamente. Mientras no haya artículos: página de marca que no se indexa y lleva al chat.
+ */
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Cierre from '../components/Cierre.astro';
+import mono from '../assets/brand/monogram-d.txt?raw';
+---
+
+<Base title="Blog · Galezo Studio" description="Ideas para diseñar tu casa: pronto publicaremos guías de Galezo Studio." noindex pageType="blog">
+  <Header />
+  <main>
+    <section class="bl" data-nav-label="Blog" aria-labelledby="bl-title">
+      <div class="bl-in">
+        <span class="bl-mono" aria-hidden="true">
+          <svg viewBox="0 0 1647 1914"><path transform="matrix(1 0 0 -1 0 1914)" d={mono.trim()} pathLength="1"></path></svg>
+        </span>
+        <p class="bl-k">Blog · Próximamente</p>
+        <h1 id="bl-title" class="bl-h1">Estamos escribiendo <span class="accent">para ti</span></h1>
+        <p class="bl-sub">Pronto publicaremos guías para diseñar tu casa: cómo elegir el lote, qué pedir en unos planos y cómo cuidar el presupuesto de obra.</p>
+        <div class="bl-act">
+          <a href="#cotizar" class="btn chamfer" data-open-chat data-cta="blog">
+            Cotiza tu diseño
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
+          </a>
+          <a href="/" class="bl-back">Volver al inicio</a>
+        </div>
+      </div>
+    </section>
+    <Cierre />
+  </main>
+</Base>
+
+<style>
+  .bl { min-height: 100svh; display: grid; place-items: center; padding: 110px 20px 60px; background: var(--color-bone); text-align: center; }
+  .bl-in { display: grid; justify-items: center; gap: 14px; max-width: 40rem; }
+  .bl-mono svg { width: 54px; display: block; }
+  .bl-mono path { fill: none; stroke: var(--color-brand); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: 1; animation: bl-draw 1.8s 0.2s cubic-bezier(0.45, 0.05, 0.25, 1) forwards; }
+  @keyframes bl-draw { to { stroke-dashoffset: 0; } }
+  .bl-k { font-size: 13px; font-weight: 600; color: var(--color-brand-ink); }
+  .bl-h1 { font-size: clamp(2.2rem, 1.4rem + 3.6vw, 4.4rem); line-height: 1.02; font-weight: 560; letter-spacing: -0.04em; text-wrap: balance; }
+  .bl-h1 .accent { color: var(--color-brand); font-size: 1.08em; letter-spacing: -0.012em; }
+  .bl-sub { font-size: 1.05rem; line-height: 1.5; color: var(--color-ink-soft); text-wrap: balance; }
+  .bl-act { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+  .btn { --cut: 9px; display: inline-flex; align-items: center; gap: 8px; height: 50px; padding: 0 24px; font-size: 15px; font-weight: 560; background: var(--color-brand-ink); color: #fff; transition: background-color 0.3s; }
+  .btn:hover { background: var(--color-ink); }
+  .btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .bl-back { font-size: 14px; font-weight: 560; color: var(--color-brand-ink); }
+  :global(html.rm) .bl-mono path { animation: none; stroke-dashoffset: 0; }
+</style>
+
+<script>
+  document.documentElement.classList.add('ready');
+</script>

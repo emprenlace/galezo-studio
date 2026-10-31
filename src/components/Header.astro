@@ -1,0 +1,587 @@
+---
+import Logo from './Logo.astro';
+import { servicios } from '../lib/servicios';
+import Maqueta from './Maqueta.astro';
+import { campestre, urbana, ampliacion, interiores, comercial } from '../lib/iso';
+const modelos = [campestre(), urbana(), ampliacion(), interiores(), comercial()];
+
+// Servicios despliega la lista de páginas de cada servicio; Blog va directo
+const links = [{ href: '/blog', label: 'Blog' }];
+const pad = (i: number) => String(i + 1).padStart(2, '0');
+---
+
+<!--
+  Cabecera en dos estados:
+  - Arriba: barra abierta dentro del panel del héroe (logo completo, enlaces, botón).
+  - Desde el primer scroll: se recoge en una cápsula flotante con cortes a 45°, el logotipo se pliega
+    al monograma (que se vuelve a trazar), aparece la sección actual y una línea de progreso de lectura.
+-->
+<header class="hd" data-hd>
+  <div class="hd-shell" data-shell>
+    <span class="hd-plate chamfer" aria-hidden="true"><span class="hd-plate-in chamfer"></span></span>
+
+    <a href="/" class="hd-logo">
+      <Logo animated />
+    </a>
+
+    <span class="hd-label" aria-hidden="true"><span data-label>Inicio</span></span>
+
+    <nav class="hd-nav" aria-label="Principal">
+      <ul>
+        <li class="hd-dd" data-dd>
+          <button type="button" class="hd-dd-btn" aria-expanded="false" aria-controls="menu-servicios" data-dd-btn data-sec="servicios">
+            Servicios
+            <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.6 6 7.6 9 4.6"></path></svg>
+          </button>
+          <div class="hd-dd-panel chamfer" id="menu-servicios" data-dd-panel hidden>
+            <div class="dd-head">
+              <p class="dd-h">Qué diseñamos</p>
+              <p class="dd-s">Cada proyecto, de la primera idea a los planos para construir.</p>
+              <a href="/#servicios" class="dd-all">Ver en la página <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg></a>
+            </div>
+            <ul class="dd-cards">
+              {
+                servicios.map((s, i) => (
+                  <li style={`--i:${i}`}>
+                    <a href={`/servicios/${s.slug}`} class="dd-card is-built">
+                      <span class="dd-mq" aria-hidden="true">
+                        <Maqueta model={modelos[i]} />
+                      </span>
+                      <span class="dd-n">{pad(i)}</span>
+                      <span class="dd-t">{s.title}</span>
+                      <span class="dd-l">{s.line}</span>
+                      <svg class="dd-go" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </li>
+        {links.map((l, i) => <li style={`--i:${i + 1}`}><a href={l.href} data-sec={l.href.slice(1)}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="hd-end">
+      <a href="#cotizar" class="hd-cta chamfer" data-open-chat data-cta="header">
+        <span>Cotiza tu diseño</span>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <button class="hd-menu" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu-movil" data-menu>
+        <span></span><span></span>
+      </button>
+    </div>
+
+    <span class="hd-progress" aria-hidden="true"><i data-progress></i></span>
+  </div>
+
+  <div class="hd-sheet chamfer" id="menu-movil" data-sheet hidden>
+    <ul>
+      <li style="--i:0" class="sh-dd">
+        <button type="button" class="sh-dd-btn" aria-expanded="false" aria-controls="menu-servicios-movil" data-sh-dd><span>01</span>Servicios<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.6 6 7.6 9 4.6"></path></svg></button>
+        <ul class="sh-sub" id="menu-servicios-movil" data-sh-sub hidden>
+          {
+            servicios.map((s) => (
+              <li>
+                <a href={`/servicios/${s.slug}`}>{s.title}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </li>
+      {links.map((l, i) => <li style={`--i:${i + 1}`}><a href={l.href}><span>0{i + 2}</span>{l.label}</a></li>)}
+    </ul>
+    <a href="#cotizar" class="hd-sheet-cta chamfer" data-open-chat data-cta="menu">Cotiza tu diseño</a>
+  </div>
+</header>
+
+<style>
+  .hd {
+    --g: 8px;
+    --top-h: 60px;
+    --dock-h: 54px;
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    pointer-events: none;
+    color: var(--color-ink);
+  }
+  .hd-shell {
+    position: absolute;
+    left: 50%;
+    top: calc(env(safe-area-inset-top) + var(--g));
+    width: calc(100% - 60px);
+    height: var(--top-h);
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0;
+    pointer-events: auto;
+    transition:
+      width 0.6s var(--ease-out-expo),
+      height 0.5s var(--ease-out-expo),
+      top 0.5s var(--ease-out-expo),
+      padding 0.5s var(--ease-out-expo);
+  }
+
+  /* Placa de vidrio oscuro: solo en el estado recogido */
+  .hd-plate {
+    --cut: 12px;
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    background: rgb(11 13 16 / 0.1);
+    opacity: 0;
+    transform: scaleX(0.96);
+    transition: opacity 0.35s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
+    z-index: -1;
+  }
+  .hd-plate-in {
+    --cut: 11.6px;
+    display: block;
+    height: 100%;
+    background: rgb(255 255 255 / 0.78);
+    -webkit-backdrop-filter: saturate(1.5) blur(16px);
+    backdrop-filter: saturate(1.5) blur(16px);
+  }
+
+  .hd-logo {
+    font-size: 14px;
+    border-radius: 4px;
+    flex: none;
+  }
+  .hd-logo :global(.logo-word) {
+    transition: opacity 0.22s ease, max-width 0.45s var(--ease-out-expo), margin 0.45s var(--ease-out-expo);
+    max-width: 120px;
+    overflow: hidden;
+  }
+
+  .hd-label {
+    display: none;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-size: 13.5px;
+    font-weight: 520;
+    letter-spacing: -0.01em;
+    color: var(--color-ink-soft);
+    white-space: nowrap;
+  }
+  .hd-label span { display: inline-block; }
+  .hd-label.is-tight span { visibility: hidden; }
+  .hd-label span.swap { animation: label-swap 0.6s var(--ease-out-expo); }
+  @keyframes label-swap { from { opacity: 0; transform: translateY(70%); } }
+
+  .hd-nav { display: none; }
+  .hd-end {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .hd-cta {
+    --cut: 7px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 13px;
+    background: var(--color-brand-ink);
+    color: #fff;
+    font-size: 13.5px;
+    font-weight: 560;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+    transition: opacity 0.4s var(--ease-out-expo), transform 0.5s var(--ease-out-expo), background-color 0.3s, color 0.3s;
+  }
+  .hd-cta svg { width: 15px; height: 15px; display: none; transition: transform 0.4s var(--ease-out-expo); }
+  .hd-cta:hover { background: var(--color-ink); }
+  .hd-cta:hover svg { transform: translateX(2px); }
+
+  .hd-menu {
+    width: 44px;
+    height: 44px;
+    margin-right: -13px; /* las líneas del ícono quedan alineadas con el margen, como el logo */
+    display: grid;
+    place-content: center;
+    gap: 6px;
+    color: var(--color-ink);
+  }
+  .hd-menu span {
+    display: block;
+    width: 18px;
+    height: 1.6px;
+    background: currentColor;
+    border-radius: 2px;
+    transition: transform 0.45s var(--ease-out-expo);
+  }
+  .hd.is-open .hd-menu span:first-child { transform: translateY(3.8px) rotate(45deg); }
+  .hd.is-open .hd-menu span:last-child { transform: translateY(-3.8px) rotate(-45deg); }
+
+  .hd-progress {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 0;
+    height: 1.5px;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+  .hd-progress i {
+    display: block;
+    height: 100%;
+    background: var(--color-brand);
+    transform-origin: 0 50%;
+    transform: scaleX(0);
+  }
+
+  /* Sobre el render del héroe (filtro oscuro), la cabecera abierta va en blanco */
+  :global(html.hero-fading) .hd, :global(html.hero-fading) .hd-menu, :global(html.hero-fading) .hd-nav a { transition: color 1.4s cubic-bezier(0.37, 0, 0.63, 1) 1.45s; }
+  :global(html.hero-dark) .hd:not(.is-docked):not(.is-open),
+  :global(html.hero-dark) .hd:not(.is-docked):not(.is-open) .hd-menu { color: #fff; }
+  :global(html.hero-dark) .hd:not(.is-docked) .hd-nav a { color: rgb(255 255 255 / 0.82); }
+  :global(html.hero-dark) .hd:not(.is-docked) .hd-nav a:hover,
+  :global(html.hero-dark) .hd:not(.is-docked) .hd-nav a.is-active { color: #fff; }
+
+  /* ---------- Estado recogido ---------- */
+  .hd.is-docked .hd-shell {
+    width: calc(100% - 20px);
+    height: var(--dock-h);
+    top: calc(env(safe-area-inset-top) + 10px);
+    padding: 0 7px 0 14px;
+  }
+  .hd.is-docked .hd-plate { opacity: 1; transform: none; }
+  .hd.is-docked .hd-progress { opacity: 1; }
+  .hd.is-docked .hd-logo :global(.logo-word) {
+    max-width: 0;
+    opacity: 0;
+    margin-left: -0.62em;
+  }
+  .hd.is-docked .hd-label { display: block; }
+  .hd.is-docked .hd-menu { margin-right: -2px; }
+
+  /* ---------- Menú móvil ---------- */
+  .hd-sheet {
+    --cut: 14px;
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: calc(env(safe-area-inset-top) + 10px + var(--dock-h) + 8px);
+    padding: 10px 20px 20px;
+    background: rgb(255 255 255 / 0.98);
+    box-shadow: 0 30px 60px -30px rgb(11 13 16 / 0.25);
+    pointer-events: auto;
+  }
+  .hd.is-open:not(.is-docked) .hd-sheet { top: calc(env(safe-area-inset-top) + var(--g) + var(--top-h) + 4px); }
+  .hd-sheet ul { display: grid; }
+  .hd-sheet li a {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 15px 0;
+    font-size: 26px;
+    font-weight: 520;
+    letter-spacing: -0.025em;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .hd-sheet li a span {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-brand-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .hd-sheet-cta {
+    --cut: 9px;
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    background: var(--color-brand-ink);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 560;
+  }
+  .sh-dd-btn { display: flex; align-items: baseline; gap: 14px; width: 100%; padding: 15px 0; border: 0; border-bottom: 1px solid var(--color-line); background: none; font: inherit; font-size: 26px; font-weight: 520; letter-spacing: -0.025em; color: inherit; text-align: left; cursor: pointer; }
+  .sh-dd-btn span { font-size: 12px; font-weight: 600; color: var(--color-brand-ink); font-variant-numeric: tabular-nums; }
+  .sh-dd-btn svg { align-self: center; width: 16px; height: 16px; margin-left: auto; fill: none; stroke: var(--color-brand-ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.4s var(--ease-out-expo); }
+  .sh-dd-btn[aria-expanded='true'] svg { transform: rotate(180deg); }
+  .sh-sub { display: grid; padding: 4px 0 8px 32px; border-bottom: 1px solid var(--color-line); }
+  .sh-sub[hidden] { display: none; }
+  .hd-sheet .sh-sub a { display: block; padding: 9px 0; border: 0; font-size: 17px; font-weight: 500; color: var(--color-ink-soft); }
+  .hd-sheet .sh-sub a:hover { color: var(--color-brand-ink); }
+  .sh-sub li { animation: sheet-li 0.5s var(--ease-out-expo) both; }
+  .hd.is-open .hd-sheet { animation: sheet-in 0.6s var(--ease-out-expo) both; }
+  .hd.is-open .hd-sheet li { animation: sheet-li 0.7s var(--ease-out-expo) both; animation-delay: calc(80ms + var(--i) * 50ms); }
+  @keyframes sheet-in { from { opacity: 0; transform: translateY(-10px); } }
+  @keyframes sheet-li { from { opacity: 0; transform: translateY(12px); } }
+
+  /* ---------- Escritorio ---------- */
+  @media (min-width: 1024px) {
+    .hd { --g: 10px; --top-h: 76px; --dock-h: 58px; }
+    /* Arriba: mismo contenedor que el héroe (logo y botón alineados con el contenido, no pegados al borde) */
+    .hd-shell { width: min(1200px, calc(100% - 80px)); padding: 0; gap: 0; }
+    .hd-logo { font-size: 15.5px; }
+    .hd-menu, .hd-label { display: none !important; }
+    .hd-nav {
+      display: block;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .hd-nav ul { display: flex; gap: 4px; }
+    .hd-nav a {
+      position: relative;
+      display: block;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-ink-soft);
+      transition: color 0.25s;
+    }
+    /* Marca de la sección: el bloque con corte a 45° del monograma */
+    .hd-nav :is(a, .hd-dd-btn)::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 3px;
+      width: 6px;
+      height: 6px;
+      margin-left: -3px;
+      background: var(--color-brand);
+      clip-path: polygon(2px 0, 100% 0, 100% 4px, 4px 100%, 0 100%, 0 2px);
+      opacity: 0;
+      transform: translateY(4px) scale(0.6);
+      transition: opacity 0.35s var(--ease-out-expo), transform 0.5s var(--ease-out-expo);
+    }
+    .hd-nav a:hover { color: var(--color-ink); }
+    .hd-nav a:hover::after, .hd-nav :is(a, .hd-dd-btn).is-active::after { opacity: 1; transform: none; }
+    .hd-dd-btn { position: relative; }
+    .hd-dd-btn.is-active { color: var(--color-ink); }
+    .hd-nav a.is-active { color: var(--color-ink); }
+
+    /* ---------- Desplegable de servicios ---------- */
+    .hd-dd { position: relative; }
+    .hd-dd-btn { display: flex; align-items: center; gap: 5px; padding: 10px 14px; border: 0; background: none; font: inherit; font-size: 14px; font-weight: 500; color: var(--color-ink-soft); cursor: pointer; transition: color 0.25s; }
+    .hd-dd-btn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.4s var(--ease-out-expo); }
+    .hd-dd-btn:hover, .hd-dd-btn[aria-expanded='true'] { color: var(--color-ink); }
+    .hd-dd-btn[aria-expanded='true'] svg { transform: rotate(180deg); }
+    .hd-dd-btn:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+    /* el panel se centra en la cabecera (el nav es su bloque contenedor) */
+    .hd-dd { position: static; }
+    .hd-dd-panel {
+      --cut: 16px;
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 18px);
+      width: min(1120px, calc(100vw - 48px));
+      translate: -50% 0;
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 18px;
+      padding: 18px;
+      background: rgb(255 255 255 / 0.97);
+      -webkit-backdrop-filter: saturate(1.4) blur(14px);
+      backdrop-filter: saturate(1.4) blur(14px);
+      box-shadow: 0 40px 80px -36px rgb(11 13 16 / 0.4), 0 0 0 1px rgb(11 13 16 / 0.06);
+    }
+    .hd-dd-panel[hidden] { display: none; }
+    .hd-dd-panel::before { content: ''; position: absolute; left: 0; right: 0; top: -20px; height: 20px; }
+    .dd-head { display: flex; flex-direction: column; gap: 8px; padding: 8px 6px; }
+    .dd-h { font-size: 22px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; color: var(--color-ink); }
+    .dd-s { font-size: 13px; line-height: 1.45; color: var(--color-ink-mute); }
+    .hd-dd-panel .dd-all { margin-top: auto; display: inline-flex; align-items: center; gap: 6px; padding: 0; font-size: 13px; font-weight: 600; color: var(--color-brand-ink); }
+    .hd-dd-panel :is(.dd-all, .dd-card)::after { display: none; }
+    .dd-all svg, .dd-go { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.4s var(--ease-out-expo); }
+    .dd-all:hover svg { transform: translateX(3px); }
+    .hd-nav .dd-cards { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+    .hd-dd-panel .dd-card {
+      --c: 10px;
+      position: relative;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-content: start;
+      column-gap: 6px;
+      height: 100%;
+      padding: 10px 12px 14px;
+      color: var(--color-ink);
+      background: var(--color-bone);
+      clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c));
+      transition: background-color 0.35s;
+    }
+    .dd-mq { grid-column: 1 / -1; display: block; aspect-ratio: 4 / 3; margin: 18px 4px 8px; transition: transform 0.6s var(--ease-out-expo); }
+    .dd-card :global(.mq) { width: 100%; height: 100%; }
+    .dd-card .dd-n { font-family: var(--font-serif); font-style: italic; font-size: 14px; color: var(--color-brand); line-height: 1.3; }
+    .dd-card .dd-t { font-size: 14px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.25; }
+    .dd-card .dd-l { grid-column: 1 / -1; margin-top: 3px; font-size: 12px; line-height: 1.35; color: var(--color-ink-mute); }
+    .dd-go { position: absolute; right: 12px; top: 12px; color: var(--color-brand-ink); opacity: 0; transform: translateX(-6px); transition: opacity 0.3s, transform 0.45s var(--ease-out-expo); }
+    /* al pasar: la tarjeta se ilumina, la maqueta sube y se abre por niveles, aparece la flecha */
+    .hd-dd-panel .dd-card:hover, .hd-dd-panel .dd-card:focus-visible { background: var(--color-brand-soft); outline: none; }
+    .dd-card:hover .dd-mq, .dd-card:focus-visible .dd-mq { transform: translateY(-6px); }
+    .dd-card:hover .dd-go, .dd-card:focus-visible .dd-go { opacity: 1; transform: none; }
+    .hd-dd.is-open .hd-dd-panel { animation: dd-in 0.5s var(--ease-out-expo) both; }
+    .hd-dd.is-open .dd-cards li { animation: sheet-li 0.6s var(--ease-out-expo) both; animation-delay: calc(60ms + var(--i) * 50ms); }
+    @keyframes dd-in { from { opacity: 0; transform: translateY(-8px); } }
+    .hd.is-docked .hd-dd-btn { padding: 10px 12px; }
+
+    .hd-cta { height: 44px; padding: 0 18px 0 20px; font-size: 14px; }
+    .hd-cta svg { display: block; }
+
+    .hd.is-docked .hd-shell {
+      width: min(760px, calc(100% - 40px));
+      top: 14px;
+      padding: 0 8px 0 16px;
+    }
+    .hd.is-docked .hd-cta { height: 42px; }
+    .hd.is-docked .hd-nav a { padding: 10px 12px; }
+    .hd-sheet { display: none; }
+  }
+
+  :global(html.rm) .hd-shell, :global(html.rm) .hd-plate { transition: none; }
+</style>
+
+<script>
+  const hd = document.querySelector<HTMLElement>('[data-hd]')!;
+  const btn = hd.querySelector<HTMLButtonElement>('[data-menu]')!;
+  const sheet = hd.querySelector<HTMLElement>('[data-sheet]')!;
+  const logo = hd.querySelector<HTMLElement>('[data-logo]')!;
+  const label = hd.querySelector<HTMLElement>('[data-label]')!;
+  const bar = hd.querySelector<HTMLElement>('[data-progress]')!;
+  const navLinks = [...hd.querySelectorAll<HTMLAnchorElement>('[data-sec]')];
+
+  const setOpen = (open: boolean) => {
+    hd.classList.toggle('is-open', open);
+    btn.setAttribute('aria-expanded', String(open));
+    btn.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+    sheet.hidden = !open;
+  };
+  btn.addEventListener('click', () => setOpen(!hd.classList.contains('is-open')));
+  sheet.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a')) setOpen(false);
+  });
+  addEventListener('keydown', (e) => e.key === 'Escape' && setOpen(false));
+
+  // Desplegable de servicios (escritorio): clic, teclado o pasar el mouse
+  {
+    const dd = hd.querySelector<HTMLElement>('[data-dd]')!;
+    const ddBtn = dd.querySelector<HTMLButtonElement>('[data-dd-btn]')!;
+    const panel = dd.querySelector<HTMLElement>('[data-dd-panel]')!;
+    let t = 0;
+    const show = (on: boolean) => {
+      dd.classList.toggle('is-open', on);
+      ddBtn.setAttribute('aria-expanded', String(on));
+      panel.hidden = !on;
+    };
+    ddBtn.addEventListener('click', () => show(!dd.classList.contains('is-open')));
+    if (matchMedia('(pointer: fine)').matches) {
+      dd.addEventListener('pointerenter', () => {
+        clearTimeout(t);
+        show(true);
+      });
+      dd.addEventListener('pointerleave', () => {
+        t = window.setTimeout(() => show(false), 180);
+      });
+    }
+    addEventListener('click', (e) => {
+      if (!dd.contains(e.target as Node)) show(false);
+    });
+    addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && dd.classList.contains('is-open')) {
+        show(false);
+        ddBtn.focus();
+      }
+    });
+    panel.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) show(false);
+    });
+    // la maqueta de la tarjeta se abre por niveles al pasar o enfocar
+    panel.querySelectorAll<HTMLElement>('.dd-card').forEach((c) => {
+      const on = () => c.classList.add('is-exploded');
+      const off = () => c.classList.remove('is-exploded');
+      c.addEventListener('pointerenter', on);
+      c.addEventListener('pointerleave', off);
+      c.addEventListener('focus', on);
+      c.addEventListener('blur', off);
+    });
+  }
+  // Servicios en el menú del celular: se despliegan dentro de la hoja
+  {
+    const b = hd.querySelector<HTMLButtonElement>('[data-sh-dd]')!;
+    const sub = hd.querySelector<HTMLElement>('[data-sh-sub]')!;
+    b.addEventListener('click', () => {
+      const on = b.getAttribute('aria-expanded') !== 'true';
+      b.setAttribute('aria-expanded', String(on));
+      sub.hidden = !on;
+    });
+  }
+
+  // Recoger en cápsula desde el primer scroll; al recogerse, el monograma se vuelve a trazar
+  let docked = false;
+  let ticking = false;
+  const sync = () => {
+    ticking = false;
+    const d = scrollY > 24;
+    if (d !== docked) {
+      docked = d;
+      hd.classList.toggle('is-docked', d);
+      if (d) {
+        logo.classList.remove('redraw');
+        void logo.offsetWidth;
+        logo.classList.add('redraw');
+        setTimeout(fitLabel, 650); // tras el cambio de ancho de la cápsula
+      }
+    }
+    const max = document.documentElement.scrollHeight - innerHeight;
+    bar.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 0})`;
+  };
+  addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(sync);
+      }
+    },
+    { passive: true },
+  );
+  sync();
+
+  // Sección actual: el héroe la anuncia por evento; las demás secciones por IntersectionObserver
+  let current = '';
+  // En pantallas angostas el nombre nunca se muestra cortado: si no cabe entero, no se muestra
+  function fitLabel() {
+    const box = label.parentElement!;
+    box.classList.remove('is-tight');
+    if (box.clientWidth && label.offsetWidth > box.clientWidth + 1) box.classList.add('is-tight');
+  }
+  addEventListener('resize', fitLabel, { passive: true });
+  const setLabel = (text: string, id = '') => {
+    if (text && text !== label.textContent) {
+      label.textContent = text;
+      label.classList.remove('swap');
+      void label.offsetWidth;
+      label.classList.add('swap');
+      fitLabel();
+    }
+    if (id !== current) {
+      current = id;
+      navLinks.forEach((a) => a.classList.toggle('is-active', a.dataset.sec === id));
+    }
+  };
+  addEventListener('section', (e) => setLabel((e as CustomEvent<string>).detail));
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const en of entries) {
+        if (en.isIntersecting) {
+          const el = en.target as HTMLElement;
+          setLabel(el.dataset.navLabel || '', el.id);
+        }
+      }
+    },
+    { rootMargin: '-45% 0px -50% 0px' },
+  );
+  document.querySelectorAll<HTMLElement>('section[data-nav-label]').forEach((s) => io.observe(s));
+</script>

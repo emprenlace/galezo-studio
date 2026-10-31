@@ -1,0 +1,476 @@
+---
+/**
+ * Sección 8 · Cierre y pie de página: "El último trazo", en el bloque azul de la marca.
+ * El sitio termina como termina una lámina: con el cajetín, sobre un gran bloque azul con cortes a 45°.
+ * - La hoja se dibuja contigo: en escritorio el puntero es un lápiz blanco que deja trazos que se desvanecen;
+ *   en celular (sin puntero fino) un lápiz dibuja solo una fachada tenue, sin interferir con el scroll.
+ * - El monograma gigante se traza al fondo con el scroll; "Galezo Studio" se llena de tinta y queda cortado
+ *   por el borde inferior, como un sello.
+ * - El cajetín es el pie de página: contacto, ubicación, índice y "Lámina 08 / 08".
+ */
+import Plomada from './Plomada.astro';
+import mono from '../assets/brand/monogram-d.txt?raw';
+
+const year = new Date().getFullYear();
+---
+
+<section class="ci" id="contacto" data-nav-label="Tu casa" aria-labelledby="ci-title" data-ci>
+  <div class="ci-block" data-block>
+    <!-- monograma gigante que se traza al fondo -->
+    <svg class="ci-mono" viewBox="0 0 1647 1914" aria-hidden="true" focusable="false">
+      <path transform="matrix(1 0 0 -1 0 1914)" d={mono.trim()} pathLength="1"></path>
+    </svg>
+    <!-- la hoja: trazos de lápiz -->
+    <canvas class="ci-canvas" data-sketchpad aria-hidden="true"></canvas>
+    <p class="ci-hint" aria-hidden="true" data-hint>
+      <span>pasa el lápiz<br />por la hoja</span>
+      <svg viewBox="0 0 54 40"><path d="M50 4C34 2 16 10 8 30M2 22L8 31L17 26"></path></svg>
+    </p>
+
+    <div class="ci-in">
+      <Plomada n="08" label="Tu casa" variant="trazo" />
+
+      <div class="ci-main">
+        <h2 id="ci-title" class="ci-h2"><span class="ln"><span class="ln-in">¿Empezamos</span></span> <span class="ln"><span class="ln-in accent">tu casa?</span></span></h2>
+        <p class="ci-sub a-up" style="--d:0.5s">Cuéntanos de tu espacio y te enviamos la cotización por WhatsApp.</p>
+        <a href="#cotizar" class="btn chamfer a-pop" style="--d:0.65s" data-open-chat data-cta="cierre">
+          Cotiza tu diseño
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
+        </a>
+      </div>
+
+      <!-- El cajetín -->
+      <footer class="caj">
+        <span class="caj-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <div class="cj cj-brand" style="--i:0">
+          <span class="cj-logo" aria-hidden="true"><svg viewBox="0 0 1647 1914"><path transform="matrix(1 0 0 -1 0 1914)" d={mono.trim()}></path></svg></span>
+          <p><b>Galezo Studio</b><span>Diseño arquitectónico</span></p>
+        </div>
+        <div class="cj cj-contact" style="--i:1">
+          <p class="cj-l">Contacto</p>
+          <ul>
+            <li><a href="https://wa.me/573043395726" data-open-chat data-cta="footer-whatsapp" rel="noopener">WhatsApp · +57 304 339 5726</a></li>
+            <li><a href="mailto:arquitectoulisesgalezo@gmail.com">arquitectoulisesgalezo@gmail.com</a></li>
+            <li><a href="https://www.instagram.com/galezostudio" target="_blank" rel="noopener">Instagram · @galezostudio</a></li>
+          </ul>
+        </div>
+        <div class="cj cj-place" style="--i:2">
+          <p class="cj-l">Estudio</p>
+          <p>Valledupar, Cesar</p>
+          <p class="cj-soft">Diseñamos en todo Colombia</p>
+        </div>
+        <div class="cj cj-sheet" style="--i:3" aria-hidden="true">
+          <div><p class="cj-l">Lámina</p><p class="cj-big">08<span> / 08</span></p></div>
+          <div><p class="cj-l">Escala</p><p>1 : 1</p></div>
+          <div><p class="cj-l">Fecha</p><p>{year}</p></div>
+        </div>
+        <p class="cj cj-legal" style="--i:4">
+          <span>© {year} Galezo Studio · <a href="/privacidad">Política de privacidad</a></span>
+          <a href="#" class="cj-top" data-top>Volver al inicio <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 10V2M2.5 5.5 6 2l3.5 3.5"></path></svg></a>
+        </p>
+      </footer>
+
+      <!-- La marca, como sello, cortada por el borde del bloque -->
+      <p class="ci-word" aria-hidden="true">
+        <span class="w" style="--d:0.2s"><span class="w-out">Galezo</span><span class="w-mask" data-mask><span class="w-fill" data-fill>Galezo</span></span></span>
+        <span class="w w2" style="--d:0.38s"><span class="w-out">Studio</span><span class="w-mask" data-mask><span class="w-fill" data-fill>Studio</span></span></span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ci {
+    --hdr: 76px;
+    --pad: 20px;
+    --g: 8px;
+    position: relative;
+    background: #fff;
+    /* tarjeta azul con margen blanco: se lee como el final de la página */
+    padding: clamp(28px, 6svh, 64px) var(--g) var(--g);
+    display: flex;
+  }
+  /* El bloque azul: cortes a 45° como el panel del héroe */
+  .ci-block {
+    --cut: 26px;
+    position: relative;
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    isolation: isolate;
+    color: #fff;
+    background:
+      radial-gradient(70% 60% at 85% 10%, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0) 70%),
+      radial-gradient(60% 70% at 0% 100%, rgb(0 40 70 / 0.35), rgb(0 40 70 / 0) 70%),
+      linear-gradient(160deg, #0a84c4 0%, var(--color-brand-ink) 45%, #00547f 100%);
+    clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+    padding: clamp(40px, 7svh, 80px) var(--pad) 0;
+  }
+  /* la marca de sección en blanco sobre el azul */
+  .ci-block :global(.plom) { --color-brand: #fff; --color-brand-ink: #fff; --color-ink-soft: rgb(255 255 255 / 0.85); }
+
+  .ci-mono {
+    position: absolute;
+    z-index: 0;
+    right: -6%;
+    top: -10%;
+    height: 125%;
+    width: auto;
+    pointer-events: none;
+  }
+  .ci-mono path { fill: none; stroke: rgb(255 255 255 / 0.13); stroke-width: 1.4; vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 3.2s 0.4s cubic-bezier(0.45, 0.05, 0.25, 1); }
+  .ci.is-in .ci-mono path { stroke-dashoffset: 0; }
+  :global(html.rm) .ci-mono path, :global(html:not(.js)) .ci-mono path { stroke-dashoffset: 0; transition: none; }
+  .ci-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+  @media (pointer: coarse) { .ci-canvas { display: none; } }
+  .ci-in { position: relative; z-index: 2; width: 100%; max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; pointer-events: none; }
+  .ci-in > * { flex-shrink: 0; }
+  .ci-in a, .ci-in button, .ci-in nav { pointer-events: auto; }
+
+  .ci-main { display: grid; justify-items: center; text-align: center; gap: 10px; }
+  .ci-h2 { font-size: clamp(1.9rem, 1.3rem + 2.4vw, 3.4rem); line-height: 1; font-weight: 560; letter-spacing: -0.042em; text-wrap: balance; }
+  .ci-h2 .accent { color: #bfe6fb; font-size: 1.08em; letter-spacing: -0.012em; }
+  .ci-sub { max-width: 26rem; font-size: 0.95rem; line-height: 1.45; color: rgb(255 255 255 / 0.82); text-wrap: balance; }
+  .btn { --cut: 9px; display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 22px; margin-top: 6px; font-size: 15px; font-weight: 600; white-space: nowrap; background: #fff; color: var(--color-brand-ink); box-shadow: 0 14px 30px -14px rgb(0 20 40 / 0.6); transition: background-color 0.3s, color 0.3s; }
+  .btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.45s var(--ease-out-expo); }
+  .btn:hover { background: var(--color-ink); color: #fff; }
+  .btn:hover svg { transform: translateX(3px); }
+  .ci-hint { display: none; }
+
+  /* ---------- El cajetín, en líneas blancas ---------- */
+  .caj { display: grid; grid-template-columns: 1fr 1fr; border: 1.5px solid rgb(255 255 255 / 0.9); background: rgb(0 60 95 / 0.22); }
+  .cj { padding: 9px 11px 10px; border-right: 1px solid rgb(255 255 255 / 0.22); border-bottom: 1px solid rgb(255 255 255 / 0.22); font-size: 12.5px; line-height: 1.4; color: rgb(255 255 255 / 0.85); transition: background-color 0.3s; }
+  .cj:hover { background: rgb(255 255 255 / 0.07); }
+  .cj-l { font-size: 9.5px; font-weight: 600; letter-spacing: 0.02em; color: rgb(255 255 255 / 0.55); margin-bottom: 3px; }
+  .cj-soft { color: rgb(255 255 255 / 0.6); }
+  .cj a { position: relative; color: #fff; text-decoration: none; }
+  .cj a::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: #bfe6fb; transform: scaleX(0); transform-origin: 0 50%; transition: transform 0.4s var(--ease-out-expo); }
+  .cj a:hover::after { transform: none; }
+  .cj a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .cj-brand { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; }
+  .cj-brand b { display: block; font-size: 14px; font-weight: 650; color: #fff; }
+  .cj-brand span { font-size: 12px; color: rgb(255 255 255 / 0.6); }
+  .cj-logo { width: 26px; flex: none; }
+  .cj-logo svg { display: block; width: 100%; fill: #fff; }
+  .cj-contact { grid-column: 1 / -1; }
+  .cj-contact ul { display: grid; gap: 2px; }
+  .cj-sheet { display: grid; grid-template-columns: repeat(3, auto); justify-content: space-between; gap: 8px; }
+  .cj-big { font-family: var(--font-serif); font-style: italic; font-size: 20px; line-height: 1; color: #bfe6fb; }
+  .cj-big span { font-family: var(--font-sans); font-style: normal; font-size: 11px; color: rgb(255 255 255 / 0.55); }
+  .cj-legal { grid-column: 1 / -1; border-bottom: 0; font-size: 11px; color: rgb(255 255 255 / 0.6); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .cj-legal .cj-top { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
+  .cj-top svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.4s var(--ease-out-expo); }
+  .cj-top:hover svg { transform: translateY(-2px); }
+
+  /* ---------- La marca como sello: se llena de tinta con el scroll y queda cortada por el borde ---------- */
+  .ci-word {
+    display: flex;
+    justify-content: center;
+    gap: 0.06em;
+    width: 100%;
+    margin: 6px 0 -0.14em;
+    font-size: var(--fs, 14vw);
+    font-weight: 640;
+    letter-spacing: -0.06em;
+    line-height: 0.8;
+    white-space: nowrap;
+    user-select: none;
+  }
+  /* Relleno sin repintar: el contorno queda quieto y una copia llena se descubre con dos transform opuestos
+     (máscara y contenido se mueven en sentidos contrarios), todo en capas compuestas */
+  .w { position: relative; display: inline-block; padding: 0.14em 0.12em; margin: -0.14em -0.12em; }
+  .w-out { display: block; color: transparent; -webkit-text-stroke: 1.4px rgb(255 255 255 / 0.85); will-change: opacity; }
+  .w2 .w-out { -webkit-text-stroke-color: rgb(191 230 251 / 0.85); }
+  .w-mask { position: absolute; inset: 0; overflow: hidden; transform: translate3d(-100%, 0, 0); will-change: transform; }
+  .w-fill { position: absolute; inset: 0; padding: 0.14em 0.12em; color: #fff; transform: translate3d(100%, 0, 0); will-change: transform; }
+  .w2 .w-fill { color: #bfe6fb; }
+  :global(html.rm) .w-mask, :global(html.rm) .w-fill, :global(html:not(.js)) .w-mask, :global(html:not(.js)) .w-fill { transform: none; }
+  :global(html.rm) .w-out, :global(html:not(.js)) .w-out { opacity: 0; }
+
+  /* Entradas */
+  /* ---------- Entradas, en cadena ---------- */
+  .ci-h2 .ln { display: inline-block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; vertical-align: bottom; }
+  .ci-h2 .ln-in { display: inline-block; }
+  .caj { position: relative; }
+  .caj-frame { display: none; }
+  :global(html.js:not(.rm)) .ci-block { opacity: 0; transform: translateY(46px) scale(0.985); transition: opacity 0.9s var(--ease-out-expo), transform 1.2s var(--ease-out-expo); }
+  :global(html.js:not(.rm)) .ci.is-in .ci-block { opacity: 1; transform: none; }
+  /* el título sube línea por línea desde su máscara */
+  :global(html.js:not(.rm)) .ci-h2 .ln-in { transform: translateY(105%); transition: transform 1s var(--ease-out-expo); }
+  :global(html.js:not(.rm)) .ci-h2 .ln:nth-child(2) .ln-in { transition-delay: 0.12s; }
+  :global(html.js:not(.rm)) .ci.is-in .ci-h2 .ln-in { transform: none; transition-delay: calc(0.3s + var(--k, 0s)); }
+  :global(html.js:not(.rm)) .ci.is-in .ci-h2 .ln:nth-child(2) .ln-in { --k: 0.12s; }
+  :global(html.js:not(.rm)) .a-up { opacity: 0; transform: translateY(14px); transition: opacity 0.8s, transform 0.9s var(--ease-out-expo); }
+  :global(html.js:not(.rm)) .a-pop { opacity: 0; transform: translateY(10px) scale(0.92); transition: opacity 0.6s, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.3s, color 0.3s; }
+  :global(html.js:not(.rm)) .ci.is-in :is(.a-up, .a-pop) { opacity: 1; transform: none; transition-delay: var(--d); }
+  :global(html.js:not(.rm)) .ci.is-in .a-pop:hover { transition-delay: 0s; }
+  /* cajetín: el marco se traza (cuatro lados) y las celdas aparecen una por una */
+  :global(html.js:not(.rm)) .caj { border-color: transparent; background-color: transparent; transition: border-color 0.3s 1.75s, background-color 0.9s 0.8s; }
+  :global(html.js:not(.rm)) .ci.is-in .caj { background-color: rgb(0 60 95 / 0.22); }
+  :global(html.js:not(.rm)) .ci.is-in .caj { border-color: rgb(255 255 255 / 0.9); }
+  :global(html.js:not(.rm)) .caj-frame { display: block; position: absolute; inset: -1.5px; pointer-events: none; }
+  .caj-frame i { position: absolute; background: #fff; transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1); }
+  .caj-frame i:nth-child(1) { left: 0; right: 0; top: 0; height: 1.5px; transform: scaleX(0); transform-origin: 0 50%; }
+  .caj-frame i:nth-child(2) { top: 0; bottom: 0; right: 0; width: 1.5px; transform: scaleY(0); transform-origin: 50% 0; transition-delay: 0.6s; }
+  .caj-frame i:nth-child(3) { left: 0; right: 0; bottom: 0; height: 1.5px; transform: scaleX(0); transform-origin: 100% 50%; transition-delay: 1.2s; }
+  .caj-frame i:nth-child(4) { top: 0; bottom: 0; left: 0; width: 1.5px; transform: scaleY(0); transform-origin: 50% 100%; transition-delay: 1.5s; }
+  .ci.is-in .caj-frame i { transform: none; }
+  .caj-frame i:nth-child(1) { transition-delay: 0.7s; }
+  .ci.is-in .caj-frame i:nth-child(2) { transition-delay: 1.05s; }
+  .ci.is-in .caj-frame i:nth-child(3) { transition-delay: 1.3s; }
+  .ci.is-in .caj-frame i:nth-child(4) { transition-delay: 1.55s; }
+  :global(html.js:not(.rm)) .cj { opacity: 0; transform: translateY(10px); transition: opacity 0.6s, transform 0.8s var(--ease-out-expo), background-color 0.3s; }
+  :global(html.js:not(.rm)) .ci.is-in .cj { opacity: 1; transform: none; transition-delay: calc(0.85s + var(--i) * 0.12s), calc(0.85s + var(--i) * 0.12s), 0s; }
+  /* la marca al pie sube desde el borde, palabra por palabra */
+  :global(html.js:not(.rm)) .ci-word .w { translate: 0 60%; opacity: 0; transition: translate 1.2s var(--ease-out-expo), opacity 0.8s; }
+  :global(html.js:not(.rm)) .ci.is-in .ci-word .w { translate: 0 0; opacity: 1; transition-delay: calc(1s + var(--d)); }
+
+  @media (max-width: 639px) and (max-height: 760px) {
+    .ci-in { gap: 10px; }
+    .ci-sub { font-size: 0.92rem; }
+    .cj { padding: 7px 10px 8px; }
+    .cj-place .cj-soft { display: none; }
+    .btn { height: 50px; margin-top: 2px; }
+  }
+  @media (max-width: 360px) {
+    .ci-h2 { font-size: 1.95rem; }
+    .cj { font-size: 11.5px; }
+  }
+  @media (max-width: 639px) {
+    /* celular: la marca va entera sobre el cajetín (ya la nombra, así que el cajetín no repite la fila de marca) */
+    .ci-word { order: 2; margin: 4px 0 0; padding-bottom: 0; }
+    .caj { order: 3; margin-bottom: 16px; }
+    .cj-brand { display: none; }
+    .ci-block { --cut: 18px; }
+    .ci-mono { right: -30%; top: 18%; height: 80%; }
+  }
+  @media (min-width: 640px) {
+    .ci { --pad: 28px; }
+    .caj { grid-template-columns: 1.1fr 1.3fr 1fr; }
+    .cj-brand { grid-column: auto; }
+    .cj-contact { grid-column: auto; }
+    .cj-sheet { grid-column: 1 / -1; }
+  }
+  /* ---------- Escritorio ---------- */
+  @media (min-width: 1024px) {
+    .ci { --pad: max(40px, calc((100% - 1200px) / 2)); --hdr: 84px; --g: 10px; }
+    .ci-block { --cut: 30px; }
+    .ci-in { gap: clamp(16px, 2.6svh, 28px); }
+    .ci-sub { font-size: 1rem; }
+    .caj { grid-template-columns: 1fr 1.5fr 1.1fr 0.9fr; }
+    .cj { padding: 12px 14px 13px; }
+    .cj-brand { grid-column: auto; flex-direction: column; align-items: flex-start; justify-content: space-between; }
+    .cj-logo { width: 30px; }
+    .cj-sheet { grid-column: auto; grid-template-columns: 1fr; justify-content: stretch; gap: 6px; }
+    .cj-sheet > div { display: flex; justify-content: space-between; align-items: baseline; }
+    .cj-sheet .cj-l { margin: 0; }
+    .cj-legal { padding: 7px 14px; }
+    .ci-hint {
+      display: block;
+      position: absolute;
+      z-index: 2;
+      right: calc(var(--pad) + 2%);
+      top: 22%;
+      font-family: 'Architects Daughter', var(--font-sans);
+      font-size: 16px;
+      line-height: 1.25;
+      color: #bfe6fb;
+      rotate: -4deg;
+      text-align: right;
+      transition: opacity 0.6s;
+      pointer-events: none;
+    }
+    .ci-hint svg { display: block; width: 54px; height: 40px; margin: 6px 0 0 auto; overflow: visible; }
+    .ci-hint path { fill: none; stroke: #bfe6fb; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .ci-hint.is-gone { opacity: 0; }
+    /* el puntero es un lápiz blanco sobre la hoja azul */
+    .ci-block { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cg transform='rotate(-45 14 14)'%3E%3Crect x='11' y='2' width='6' height='17' fill='%23ffffff'/%3E%3Crect x='11' y='2' width='6' height='3' fill='%23bfe6fb'/%3E%3Cpath d='M11 19h6l-3 7z' fill='%23e8d2ad'/%3E%3Cpath d='M13 23.7h2l-1 2.3z' fill='%232b2f36'/%3E%3C/g%3E%3C/svg%3E") 3 25, crosshair; }
+    .ci a, .ci button { cursor: pointer; }
+  }
+
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-ci]')!;
+  const block = sec.querySelector<HTMLElement>('[data-block]')!;
+  const cv = sec.querySelector<HTMLCanvasElement>('[data-sketchpad]')!;
+  const hint = sec.querySelector<HTMLElement>('[data-hint]');
+  const ctx = cv.getContext('2d')!;
+  const reduced = document.documentElement.classList.contains('rm');
+  const fine = matchMedia('(pointer: fine)').matches;
+
+  type Pt = { x: number; y: number; t: number; w: number };
+  let strokes: Pt[][] = [];
+  let cur: Pt[] | null = null;
+  let raf = 0;
+  let dpr = 1;
+  const LIFE = 2600; // ms que dura un trazo antes de desvanecerse
+
+  const size = () => {
+    if (!fine) return;
+    dpr = Math.min(2, devicePixelRatio || 1);
+    cv.width = Math.round(block.clientWidth * dpr);
+    cv.height = Math.round(block.clientHeight * dpr);
+  };
+  size();
+  new ResizeObserver(size).observe(block);
+
+  // Trazo de grafito: línea fina con leve vibración y un segundo pase más tenue
+  const draw = (now: number) => {
+    raf = 0;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    strokes = strokes.filter((s) => s.length && now - s[s.length - 1].t < LIFE);
+    for (const s of strokes) {
+      for (let i = 1; i < s.length; i++) {
+        const a = s[i - 1];
+        const b = s[i];
+        const age = (now - b.t) / LIFE;
+        const o = Math.max(0, 1 - age) * 0.7;
+        if (o <= 0.01) continue;
+        ctx.strokeStyle = `rgba(255, 255, 255, ${o.toFixed(3)})`;
+        ctx.lineWidth = b.w;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+        ctx.strokeStyle = `rgba(255, 255, 255, ${(o * 0.35).toFixed(3)})`;
+        ctx.lineWidth = b.w * 0.6;
+        ctx.beginPath();
+        ctx.moveTo(a.x + 0.8, a.y + 0.6);
+        ctx.lineTo(b.x + 0.8, b.y + 0.6);
+        ctx.stroke();
+      }
+    }
+    if (strokes.length) raf = requestAnimationFrame(draw);
+  };
+  const kick = () => {
+    if (!raf) raf = requestAnimationFrame(draw);
+  };
+
+  // ---------- Escritorio: el puntero es el lápiz ----------
+  if (fine && !reduced) {
+    let last = { x: -1, y: -1, t: 0 };
+    sec.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
+      // no dibuja sobre los textos ni el cajetín
+      const tgt = e.target as HTMLElement;
+      if (tgt.closest('.caj, .ci-main a')) {
+        cur = null;
+        return;
+      }
+      const r = block.getBoundingClientRect();
+      const x = e.clientX - r.left;
+      const y = e.clientY - r.top;
+      const now = performance.now();
+      const v = last.t ? Math.hypot(x - last.x, y - last.y) / Math.max(1, now - last.t) : 0;
+      if (!cur || now - last.t > 120) {
+        cur = [];
+        strokes.push(cur);
+      }
+      // más rápido = trazo más fino, como un lápiz real
+      cur.push({ x, y, t: now, w: Math.max(0.6, 1.8 - v * 0.6) });
+      last = { x, y, t: now };
+      hint?.classList.add('is-gone');
+      kick();
+    });
+    sec.addEventListener('pointerleave', () => (cur = null));
+  }
+
+  // (en pantallas táctiles no hay lápiz automático: redibujaba el lienzo en cada cuadro y competía con el scroll en Safari)
+
+  // La marca se llena de tinta al ritmo del scroll (de la llegada de la sección hasta quedar completa)
+  if (!reduced) {
+    let tk = false;
+    const masks = [...sec.querySelectorAll<HTMLElement>('[data-mask]')];
+    const fills = [...sec.querySelectorAll<HTMLElement>('[data-fill]')];
+    const outs = [...sec.querySelectorAll<HTMLElement>('.w-out')];
+    const last = [-1, -1];
+    const near = () => sec.getBoundingClientRect().top < innerHeight * 1.2;
+    const ink = () => {
+      tk = false;
+      // El relleno empieza cuando la marca asoma por abajo y termina en el último píxel de scroll.
+      // Si el tramo es corto (escritorio, la marca está al fondo), se asegura un recorrido mínimo para que se note.
+      const wr = sec.querySelector<HTMLElement>('.ci-word')!.getBoundingClientRect();
+      const end = document.documentElement.scrollHeight - innerHeight;
+      let startY = Math.max(0, wr.top + scrollY - innerHeight + wr.height * 0.25);
+      startY = Math.min(startY, end - Math.min(420, innerHeight * 0.45));
+      const left = end - scrollY;
+      const p = left <= 4 ? 1 : Math.min(1, Math.max(0, (scrollY - startY) / Math.max(1, end - startY)));
+      // Galezo se llena en el primer 65 % del tramo; Studio, del 35 % al final
+      const g = Math.min(1, p / 0.65);
+      const st = Math.max(0, Math.min(1, (p - 0.35) / 0.65));
+      const ease = (t: number) => t * t * (3 - 2 * t);
+      const v = [ease(g), ease(st)];
+      for (let k = 0; k < 2; k++) {
+        if (Math.abs(v[k] - last[k]) < 0.002 && v[k] !== 0 && v[k] !== 1) continue;
+        last[k] = v[k];
+        const pc = ((1 - v[k]) * 100).toFixed(2);
+        masks[k].style.transform = `translate3d(-${pc}%,0,0)`;
+        fills[k].style.transform = `translate3d(${pc}%,0,0)`;
+        outs[k].style.opacity = (1 - v[k] * 0.9).toFixed(3);
+      }
+    };
+    const req = () => {
+      if (!tk) {
+        tk = true;
+        requestAnimationFrame(ink);
+      }
+    };
+    addEventListener('scroll', () => near() && req(), { passive: true });
+    // Al recargar en el pie, el navegador restaura el scroll y la página cambia de alto mientras carga
+    // (letra, imágenes, tamaño de la marca): se recalcula en cada uno de esos momentos.
+    addEventListener('resize', req, { passive: true });
+    addEventListener('load', req);
+    addEventListener('pageshow', req);
+    addEventListener('ci-fit', req);
+    document.fonts?.ready.then(req);
+    new ResizeObserver(req).observe(document.body);
+    // Recarga en el pie: el navegador restaura el scroll por pasos y sin aviso fiable; durante los primeros
+    // segundos se recalcula en cada cuadro (es solo leer dos medidas y mover dos capas)
+    const settle = (ms: number) => {
+      const t0 = performance.now();
+      const loop = () => {
+        ink();
+        if (performance.now() - t0 < ms) requestAnimationFrame(loop);
+      };
+      requestAnimationFrame(loop);
+    };
+    settle(2500);
+    addEventListener('load', () => settle(1500));
+    addEventListener('pageshow', () => settle(1500));
+    ink();
+  }
+  // La marca ocupa exactamente el ancho del contenido (se mide con la letra cargada)
+  const word = sec.querySelector<HTMLElement>('.ci-word')!;
+  const fitWord = () => {
+    word.style.setProperty('--fs', '100px');
+    const w = [...word.querySelectorAll<HTMLElement>('.w-out')].reduce((a, c) => a + c.offsetWidth, 0) + 16;
+    // celular: todo el ancho; escritorio: más contenida, como firma al pie
+    const pw = word.parentElement!.clientWidth;
+    const target = innerWidth < 640 ? pw : Math.min(pw, 820);
+    word.style.setProperty('--fs', `${Math.floor((100 * target) / w)}px`);
+    window.dispatchEvent(new Event('ci-fit'));
+  };
+  fitWord();
+  document.fonts?.ready.then(fitWord);
+  new ResizeObserver(fitWord).observe(word.parentElement!);
+
+  sec.querySelector('[data-top]')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+  });
+
+  // Entrada
+  const io = new IntersectionObserver(
+    ([e]) => {
+      if (!e.isIntersecting) return;
+      sec.classList.add('is-in');
+      io.disconnect();
+    },
+    { threshold: 0.25 },
+  );
+  io.observe(sec);
+</script>

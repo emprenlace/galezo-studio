@@ -1,0 +1,104 @@
+---
+import '../styles/global.css';
+import Cotizador from '../components/Cotizador.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  /** páginas que aún no deben indexarse (p. ej. el blog mientras no tenga artículos) */
+  noindex?: boolean;
+  /** imagen para compartir (1200×630), ruta pública */
+  image?: string;
+  /** JSON-LD de la página (solo si es indexable) */
+  schema?: object[];
+  /** contexto de la página para la medición */
+  pageType?: string;
+  serviceId?: string;
+}
+const { title, description, noindex = false, image = '/og/galezo-studio.jpg', schema = [], pageType = 'home', serviceId = '' } = Astro.props;
+// Mientras el dominio final no esté conectado, PUBLIC_URL apunta a donde vive el sitio hoy (si no, WhatsApp no muestra la vista previa)
+const origin = import.meta.env.PUBLIC_URL || Astro.site!.href;
+const path = Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '') || '/';
+const canonical = new URL(path, Astro.site).href;
+const ogImage = new URL(image, origin).href;
+const preview = import.meta.env.PUBLIC_PREVIEW === 'true';
+const robots = noindex || preview ? 'noindex, follow' : '';
+const gtm = import.meta.env.PUBLIC_GTM_ID || '';
+const pageContext = { event: 'page_context', page_type: pageType, content_group: pageType, service_id: serviceId };
+---
+
+<!doctype html>
+<html lang="es-CO">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {robots ? <meta name="robots" content={robots} /> : <link rel="canonical" href={canonical} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:site_name" content="Galezo Studio" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Galezo Studio · Ve tu casa terminada antes de construirla" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    {!robots && schema.map((sc) => <script type="application/ld+json" set:html={JSON.stringify(sc)} />)}
+    <!-- Medición: consentimiento por defecto y contexto de la página ANTES de GTM; GTM se carga después del primer pintado -->
+    <script is:inline define:vars={{ pageContext, gtm }}>
+      window.dataLayer = window.dataLayer || [];
+      var gtag = (window.gtag = function () { dataLayer.push(arguments); });
+      // Público en Colombia: sin aviso de cookies (no lo exige la ley local); el modo de consentimiento queda
+      // concedido por defecto y listo para ajustarse si algún día se pauta en Europa
+      gtag('consent', 'default', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' });
+      dataLayer.push(pageContext);
+      if (gtm) {
+        var load = function () {
+          if (window.__gtm) return;
+          window.__gtm = 1;
+          dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtm.js?id=' + gtm;
+          document.head.appendChild(s);
+        };
+        // nunca bloquea el primer pintado ni se dispara con el scroll: tras cargar y en un momento libre
+        addEventListener('load', function () {
+          (window.requestIdleCallback || setTimeout)(load, { timeout: 2500 });
+        });
+        ['pointerdown', 'keydown'].forEach(function (ev) { addEventListener(ev, load, { once: true, passive: true }); });
+      }
+    </script>
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preload" href="/fonts/instrument-sans.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/instrument-serif-italic.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Red de seguridad: los estados ocultos de las animaciones solo existen bajo html.js.
+         Si la app no arranca en 2,5 s o falla un módulo, se quita js y todo queda visible. -->
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('rm');
+        var t = setTimeout(function () { if (!d.classList.contains('ready')) d.classList.remove('js'); }, 2500);
+        window.addEventListener('error', function (e) {
+          var s = e && e.target && e.target.src;
+          if (s && s.indexOf('/_astro/') > -1) { clearTimeout(t); d.classList.remove('js'); }
+        }, true);
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+    <Cotizador />
+  </body>
+</html>

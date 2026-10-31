@@ -1,0 +1,277 @@
+---
+/**
+ * Sección 7 · "Preguntas": el chat con el equipo de Galezo Studio (Ulises lidera; hay un equipo detrás).
+ * Las dudas antes de cotizar contadas como la conversación real: el cliente toca una pregunta, Ulises "escribe"
+ * y responde el estudio. Ensaya el canal de contacto y desemboca en el botón, que abre ese mismo chat.
+ * Solo respuestas confirmadas. Todas las preguntas y respuestas están además en el HTML (lista para lectores y buscadores).
+ */
+import Plomada from './Plomada.astro';
+import Trazos from './Trazos.astro';
+import mono from '../assets/brand/monogram-d.txt?raw';
+
+import { faq } from '../lib/faq';
+---
+
+<section class="pq" id="preguntas" data-nav-label="Preguntas" aria-labelledby="pq-title" data-pq>
+  <Trazos left="ventana" right="detalle" />
+  <div class="pq-in">
+    <Plomada n="07" label="Preguntas" variant="chat" />
+
+    <div class="pq-body">
+      <header class="pq-head pq-rv">
+        <h2 id="pq-title" class="pq-h2">Pregúntanos <span class="accent">lo que quieras</span></h2>
+        <p class="pq-sub">Las dudas de siempre antes de diseñar una casa, respondidas por el equipo que la diseña.</p>
+        <div class="pq-actions">
+          <a href="#cotizar" class="btn btn-primary chamfer" data-open-chat data-cta="preguntas">
+            Cotiza tu diseño
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
+          </a>
+          <p class="pq-note">¿Otra pregunta? Escríbenos directo.</p>
+        </div>
+      </header>
+
+      <!-- El chat -->
+      <div class="chat pq-rv" data-chat>
+        <div class="ch-top" aria-hidden="true">
+          <span class="ch-av"><svg viewBox="0 0 1647 1914"><path transform="matrix(1 0 0 -1 0 1914)" d={mono.trim()}></path></svg></span>
+          <p><b>Galezo Studio</b><span>Ulises y su equipo · responden por WhatsApp</span></p>
+        </div>
+        <div class="ch-log" role="log" aria-live="polite" aria-label="Conversación de ejemplo" data-log>
+          <p class="msg in is-on">Hola, somos Galezo Studio. Pregúntanos lo que quieras antes de cotizar.</p>
+        </div>
+        <div class="ch-chips" role="group" aria-label="Preguntas frecuentes" data-chips>
+          {
+            faq.map((f, i) => (
+              <button type="button" class="chip" data-q={i}>
+                {f.q}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Todas las preguntas con su respuesta, en texto (lectores de pantalla y buscadores) -->
+    <dl class="sr-only">
+      {
+        faq.map((f) => (
+          <>
+            <dt>{f.q}</dt>
+            <dd>{f.a}</dd>
+          </>
+        ))
+      }
+    </dl>
+    <template data-answers>{JSON.stringify(faq)}</template>
+  </div>
+</section>
+
+<style>
+  .pq {
+    --hdr: 76px;
+    --pad: 20px;
+    position: relative;
+    background: var(--color-bone);
+    padding: calc(var(--hdr) + 8px) var(--pad) 12px;
+    min-height: 100svh;
+    display: flex;
+    overflow: hidden;
+  }
+  .pq-in { position: relative; z-index: 1; width: 100%; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .pq-in > * { flex-shrink: 0; }
+  .pq-body { margin: auto 0; display: flex; flex-direction: column; gap: 14px; }
+  .pq-head { text-align: center; display: grid; justify-items: center; gap: 6px; }
+  .pq-h2 { font-size: clamp(1.9rem, min(1.3rem + 2.6vw, 6svh), 3.6rem); line-height: 1.02; font-weight: 560; letter-spacing: -0.038em; text-wrap: balance; }
+  .pq-h2 .accent { color: var(--color-brand); font-size: 1.08em; letter-spacing: -0.012em; }
+  .pq-sub { max-width: 30rem; font-size: 0.95rem; line-height: 1.45; color: var(--color-ink-soft); text-wrap: balance; }
+  .pq-actions { display: none; }
+
+  /* ---------- El chat ---------- */
+  .chat {
+    --cut: 16px;
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    margin: 0 auto;
+    background: #fff;
+    clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+    display: flex;
+    flex-direction: column;
+    height: clamp(330px, calc(100svh - 360px), 520px);
+    filter: drop-shadow(0 18px 26px rgb(40 34 26 / 0.12));
+  }
+  .ch-top { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid rgb(40 34 26 / 0.08); }
+  .ch-av { --c: 7px; display: grid; place-items: center; width: 36px; height: 36px; flex: none; background: var(--color-brand-ink); clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c)); }
+  .ch-av svg { width: 17px; fill: #fff; }
+  .ch-top p { display: grid; line-height: 1.2; }
+  .ch-top b { font-size: 14px; font-weight: 600; }
+  .ch-top span { font-size: 12px; color: var(--color-ink-mute); }
+
+  /* Los mensajes se apilan desde abajo; los viejos suben y se desvanecen (sin scroll interno que atrape el dedo) */
+  .ch-log {
+    flex: 1;
+    min-height: 0;
+    /* orden invertido: el mensaje nuevo entra abajo y lo que sobra sale por arriba (nunca se corta el último) */
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 14px 14px 10px;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 44px);
+    mask-image: linear-gradient(180deg, transparent 0, #000 44px);
+    background: linear-gradient(180deg, #fbf9f5, #f6f3ed);
+  }
+  .ch-log :global(.msg) {
+    --c: 8px;
+    max-width: 84%;
+    padding: 9px 12px 10px;
+    font-size: 14.5px;
+    line-height: 1.4;
+    flex-shrink: 0;
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+    transition: opacity 0.35s, transform 0.5s var(--ease-out-expo);
+  }
+  .ch-log :global(.msg.is-on) { opacity: 1; transform: none; }
+  .ch-log :global(.msg.in) { align-self: flex-start; background: #fff; color: var(--color-ink); box-shadow: 0 1px 0 rgb(40 34 26 / 0.06), 0 0 0 1px rgb(40 34 26 / 0.06); clip-path: polygon(0 0, calc(100% - var(--c)) 0, 100% var(--c), 100% 100%, 0 100%); transform-origin: 0 100%; }
+  .ch-log :global(.msg.out) { align-self: flex-end; background: var(--color-brand-ink); color: #fff; clip-path: polygon(0 0, 100% 0, 100% 100%, var(--c) 100%, 0 calc(100% - var(--c))); transform-origin: 100% 100%; }
+  .ch-log :global(.msg.typing) { display: inline-flex; gap: 4px; padding: 12px 14px; }
+  .ch-log :global(.msg.typing i) { width: 6px; height: 6px; border-radius: 50%; background: var(--color-ink-mute); opacity: 0.35; animation: pq-dot 1s ease-in-out infinite; }
+  .ch-log :global(.msg.typing i:nth-child(2)) { animation-delay: 0.15s; }
+  .ch-log :global(.msg.typing i:nth-child(3)) { animation-delay: 0.3s; }
+  @keyframes pq-dot { 50% { opacity: 1; transform: translateY(-2px); } }
+
+  .ch-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px 14px; border-top: 1px solid rgb(40 34 26 / 0.08); }
+  .chip {
+    --c: 6px;
+    padding: 7px 11px 8px;
+    border: 0;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 560;
+    color: var(--color-brand-ink);
+    background: var(--color-brand-soft);
+    clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c));
+    cursor: pointer;
+    transition: background-color 0.25s, color 0.25s, opacity 0.3s;
+  }
+  .chip:hover { background: var(--color-brand-ink); color: #fff; }
+  .chip:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+  .chip.is-used { opacity: 0.45; }
+
+  .btn { --cut: 9px; display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 22px; font-size: 15px; font-weight: 560; white-space: nowrap; }
+  .btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.45s var(--ease-out-expo); }
+  .btn-primary { background: var(--color-brand-ink); color: #fff; transition: background-color 0.3s var(--ease-out-expo); }
+  .btn-primary:hover { background: var(--color-ink); }
+  .btn-primary:hover svg { transform: translateX(3px); }
+  .pq-note { font-size: 12.5px; color: var(--color-ink-mute); }
+
+  :global(html.js) .pq-rv { opacity: 0; transform: translateY(18px); transition: opacity 0.9s var(--ease-out-expo), transform 1s var(--ease-out-expo); }
+  :global(html.js) .pq.is-in .pq-rv { opacity: 1; transform: none; }
+  :global(html.js) .pq.is-in .chat { transition-delay: 0.15s; }
+  :global(html.rm) .pq-rv { opacity: 1 !important; transform: none !important; }
+
+  @media (max-width: 1023px) {
+    .pq-actions { display: flex; order: 3; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .pq-head { display: contents; }
+    .pq-h2, .pq-sub { text-align: center; justify-self: center; margin: 0 auto; }
+    .pq-body { gap: 12px; }
+    .pq-h2 { order: 0; }
+    .pq-sub { order: 1; margin-top: -6px; }
+    .chat { order: 2; }
+  }
+  @media (max-width: 639px) {
+    .chat { height: clamp(290px, calc(100svh - 380px), 480px); max-width: none; }
+    .ch-log :global(.msg) { font-size: 14px; }
+    /* preguntas en una sola fila que se desliza de lado (deja la conversación grande) */
+    .ch-chips {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+      mask-image: linear-gradient(90deg, #000 85%, transparent);
+      touch-action: pan-x pan-y;
+    }
+    .ch-chips::-webkit-scrollbar { display: none; }
+    .chip { flex: none; white-space: nowrap; }
+    .chip { font-size: 12.5px; padding: 6px 10px 7px; }
+  }
+  @media (max-width: 639px) and (max-height: 700px) {
+    .pq-sub { display: none; }
+    .chat { height: calc(100svh - 352px); }
+  }
+  @media (min-width: 640px) {
+    .pq { --pad: 28px; padding-bottom: 16px; }
+  }
+  /* ---------- Escritorio: título y botón a la izquierda, chat a la derecha ---------- */
+  @media (min-width: 1024px) {
+    .pq {
+      --pad: max(40px, calc((100% - 1200px) / 2));
+      --hdr: 84px;
+      padding: calc(var(--hdr) + clamp(14px, 3svh, 36px)) var(--pad) clamp(24px, 4svh, 48px);
+    }
+    .pq-body { display: grid; grid-template-columns: 1fr minmax(380px, 460px); gap: clamp(40px, 6vw, 100px); align-items: center; }
+    .pq-head { text-align: left; justify-items: start; gap: 14px; }
+    .pq-sub { font-size: clamp(1rem, 0.95rem + 0.3vw, 1.15rem); max-width: 26rem; }
+    .pq-actions { display: flex; align-items: center; gap: 16px; margin-top: 10px; }
+    .chat { margin: 0; height: clamp(380px, calc(100svh - var(--hdr) - 200px), 540px); }
+  }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-pq]')!;
+  const log = sec.querySelector<HTMLElement>('[data-log]')!;
+  const chips = [...sec.querySelectorAll<HTMLButtonElement>('[data-q]')];
+  const faq: { q: string; a: string }[] = JSON.parse(sec.querySelector('template[data-answers]')!.innerHTML);
+  const reduced = document.documentElement.classList.contains('rm');
+  let busy = false;
+  let touched = false;
+
+  const add = (cls: string, html: string) => {
+    const el = document.createElement('p');
+    el.className = `msg ${cls}`;
+    el.innerHTML = html;
+    log.prepend(el);
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('is-on')));
+    while (log.children.length > 9) log.lastElementChild!.remove();
+    return el;
+  };
+  const ask = (i: number) => {
+    if (busy) return;
+    busy = true;
+    chips[i].classList.add('is-used');
+    add('out', faq[i].q);
+    const wait = reduced ? 0 : 450;
+    setTimeout(() => {
+      const t = add('in typing', '<i></i><i></i><i></i>');
+      t.setAttribute('aria-label', 'Galezo Studio está escribiendo');
+      setTimeout(
+        () => {
+          t.remove();
+          add('in', faq[i].a);
+          busy = false;
+        },
+        reduced ? 0 : Math.min(1500, 600 + faq[i].a.length * 7),
+      );
+    }, wait);
+  };
+  chips.forEach((c, i) =>
+    c.addEventListener('click', () => {
+      touched = true;
+      ask(i);
+    }),
+  );
+
+  // Al entrar: aparece y, si la persona no toca nada, Ulises responde la primera pregunta como ejemplo
+  const io = new IntersectionObserver(
+    ([e]) => {
+      if (!e.isIntersecting) return;
+      sec.classList.add('is-in');
+      io.disconnect();
+      setTimeout(() => !touched && ask(0), reduced ? 0 : 1800);
+    },
+    { threshold: 0.35 },
+  );
+  io.observe(sec);
+</script>

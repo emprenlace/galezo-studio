@@ -1,0 +1,370 @@
+---
+/**
+ * Marca de sección. Va dentro de la sección, arriba y centrada; siempre baja desde la cabecera y siempre lleva el
+ * monograma, pero cada sección lo cuenta a su manera:
+ * - plomada (02 · Lo que recibes): del hilo cuelga el monograma como plomada; cae, se mece y el scroll lo vuelve a mecer.
+ *   Es la única que cuelga del hilo.
+ * - grua (03 · Qué diseñamos): el monograma se arma como maqueta: sus capas se apilan hasta formar el bloque.
+ * - obra (04 · Obras construidas): el monograma aparece como dibujo y una línea lo cruza dejándolo construido.
+ * - sello (05 · Cómo trabajamos): un sello cae, marca, sube y se desvanece; queda la huella de "aprobado".
+ * - firma (06 · Quién diseña): el monograma aparece y debajo se traza el rasgo de una firma a mano.
+ * - chat (07 · Preguntas): un globo de mensaje "escribe" (tres puntos) y la respuesta es el monograma.
+ * - trazo (08 · Tu casa): el monograma se traza a lápiz (contorno) y se llena de tinta: el último trazo.
+ * Debajo, número y nombre. Todas ocupan el mismo alto.
+ */
+import d from '../assets/brand/monogram-d.txt?raw';
+
+interface Props {
+  n: string;
+  label: string;
+  variant?: 'plomada' | 'grua' | 'obra' | 'sello' | 'firma' | 'chat' | 'trazo';
+}
+const { n, label, variant = 'plomada' } = Astro.props;
+const mono = d.trim();
+const swings = variant === 'plomada';
+---
+
+<div class={`plom pv-${variant}`} data-plom data-swings={swings ? '' : undefined} aria-hidden="true">
+  <div class="pl-swing" data-swing>
+    <span class="pl-thread"></span>
+    {
+      variant === 'plomada' && (
+        <span class="pl-bob">
+          <svg viewBox="0 0 1647 1914" focusable="false">
+            <path transform="matrix(1 0 0 -1 0 1914)" d={mono} />
+          </svg>
+        </span>
+      )
+    }
+    {
+      variant === 'grua' && (
+        <span class="pl-bob pl-crane">
+          <svg class="cr-hook" viewBox="0 0 20 22" focusable="false">
+            <path d="M10 0V9M4 9H16M10 9L4 20M10 9L16 20" />
+          </svg>
+          <span class="cr-block">
+            {[4, 3, 2, 1].map((k) => (
+              <svg class="cr-layer" style={`--k:${k}`} viewBox="0 0 1647 1914" focusable="false">
+                <path transform="matrix(1 0 0 -1 0 1914)" d={mono} />
+              </svg>
+            ))}
+            <svg class="cr-face" viewBox="0 0 1647 1914" focusable="false">
+              <path transform="matrix(1 0 0 -1 0 1914)" d={mono} />
+            </svg>
+          </span>
+        </span>
+      )
+    }
+    {
+      variant === 'obra' && (
+        <span class="pl-bob pl-obra">
+          <svg class="ob-line" viewBox="0 0 1647 1914" focusable="false">
+            <path transform="matrix(1 0 0 -1 0 1914)" d={mono} />
+          </svg>
+          <svg class="ob-built" viewBox="0 0 1647 1914" focusable="false">
+            <path transform="matrix(1 0 0 -1 0 1914)" d={mono} />
+          </svg>
+          <span class="ob-rule" />
+        </span>
+      )
+    }
+    {
+      variant === 'trazo' && (
+        <span class="pl-bob pl-trazo">
+          <svg viewBox="0 0 1647 1914" focusable="false">
+            <path class="tz-ink" transform="matrix(1 0 0 -1 0 1914)" d={mono} />
+            <path class="tz-line" transform="matrix(1 0 0 -1 0 1914)" d={mono} pathLength="1" />
+          </svg>
+        </span>
+      )
+    }
+    {
+      variant === 'chat' && (
+        <span class="pl-bob pl-chat">
+          <span class="ch-bubble">
+            <span class="ch-dots"><i /><i /><i /></span>
+            <svg class="ch-mono" viewBox="0 0 1647 1914" focusable="false">
+              <path transform="matrix(1 0 0 -1 0 1914)" d={mono} />
+            </svg>
+          </span>
+        </span>
+      )
+    }
+    {
+      variant === 'firma' && (
+        <span class="pl-bob pl-firma">
+          <svg class="fi-mono" viewBox="0 0 1647 1914" focusable="false">
+            <path transform="matrix(1 0 0 -1 0 1914)" d={mono} />
+          </svg>
+          <svg class="fi-sig" viewBox="0 0 80 18" focusable="false">
+            <path pathLength="1" d="M3 12C10 4 15 3 16 8S11 16 18 13 28 4 31 9 30 15 36 12 46 6 52 8 60 13 77 5" />
+          </svg>
+        </span>
+      )
+    }
+    {
+      variant === 'sello' && (
+        <span class="pl-bob pl-stamp">
+          <span class="st-ring" />
+          <span class="st-ink">
+            <svg viewBox="0 0 1647 1914" focusable="false">
+              <path transform="matrix(1 0 0 -1 0 1914)" d={mono} />
+            </svg>
+          </span>
+          <span class="st-body">
+            <span class="st-grip" />
+            <span class="st-face">
+              <svg viewBox="0 0 1647 1914" focusable="false">
+                <path transform="matrix(1 0 0 -1 0 1914)" d={mono} />
+              </svg>
+            </span>
+          </span>
+        </span>
+      )
+    }
+  </div>
+  <p class="pl-label"><span class="pl-n">{n}</span><span class="pl-l">{label}</span></p>
+</div>
+
+<style>
+  .plom {
+    --t: clamp(22px, 3.6svh, 40px); /* largo visible del hilo */
+    position: relative;
+    height: calc(var(--t) + 24px + 26px);
+    flex: none;
+  }
+  .pl-swing {
+    position: absolute;
+    left: 50%;
+    top: -60px; /* el hilo nace debajo de la cabecera */
+    width: 0;
+    height: calc(60px + var(--t) + 24px);
+    transform-origin: 0 0;
+    will-change: transform;
+  }
+  .pl-thread {
+    position: absolute;
+    left: -0.75px;
+    top: 0;
+    width: 1.5px;
+    height: calc(60px + var(--t));
+    background: var(--color-brand);
+    transform-origin: 0 0;
+    transform: scaleY(var(--len, 1));
+  }
+  .pl-bob {
+    position: absolute;
+    left: 0;
+    top: calc((60px + var(--t)) * var(--len, 1));
+    width: 21px;
+    transform: translateX(-50%);
+    opacity: var(--len, 1);
+  }
+  .pl-bob svg { display: block; width: 100%; height: auto; fill: var(--color-brand); }
+  .pl-label {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 7px;
+    white-space: nowrap;
+    transition: opacity 0.6s, transform 0.7s var(--ease-out-expo);
+  }
+  .pl-n { font-family: var(--font-serif); font-style: italic; font-size: 17px; color: var(--color-brand); }
+  .pl-l { font-size: 13.5px; font-weight: 560; letter-spacing: -0.01em; color: var(--color-ink-soft); }
+
+  /* Solo la plomada cuelga del hilo; las demás marcas aparecen en su sitio */
+  .plom:not(.pv-plomada) .pl-thread { display: none; }
+
+  /* ---------- 03 · Maqueta: las capas del logo se apilan hasta formar el bloque ---------- */
+  .pl-crane { width: 30px; top: calc(60px + var(--t) - 22px); opacity: 1; }
+  .cr-hook { display: none !important; width: 13px !important; margin: 0 auto -1px; fill: none !important; stroke: var(--color-ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .cr-block { position: relative; display: block; width: 28px; margin: 0 auto; }
+  /* volumen: copias desplazadas hacia abajo a la derecha, cada una más oscura (extrusión isométrica) */
+  .cr-layer { position: absolute; inset: 0; width: 100% !important; translate: calc(var(--k) * 0.55px) calc(var(--k) * 0.6px); fill: #0a4f74 !important; }
+  .plom.is-in .cr-layer { animation: pl-stack 0.55s calc(0.3s + (4 - var(--k)) * 0.11s) cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .plom.is-in .cr-face { animation: pl-stack 0.6s 0.82s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  @keyframes pl-stack { from { opacity: 0; transform: translateY(-14px); } }
+  .cr-face { position: relative; fill: var(--color-brand) !important; }
+  /* sombra sobre la mesa al llegar */
+  .pv-grua .pl-crane::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 4px);
+    width: 30px;
+    height: 6px;
+    translate: -50% 0;
+    background: radial-gradient(closest-side, rgb(30 30 30 / 0.22), transparent);
+    opacity: 0.9;
+  }
+  .plom.is-in.pv-grua .pl-crane::after { animation: pl-fade 0.8s 0.3s both; }
+  @keyframes pl-fade { from { opacity: 0; transform: scaleX(0.5); } }
+
+  /* ---------- 04 · Obra: la línea cruza el logo y lo deja construido ---------- */
+  .pl-obra { width: 28px; top: calc(60px + var(--t) - 18px); }
+  .ob-line { fill: none !important; stroke: var(--color-brand); stroke-width: 34; }
+  .ob-built { position: absolute; inset: 0; clip-path: inset(0 100% 0 0); }
+  .ob-rule { position: absolute; top: -6px; bottom: -6px; left: 0; width: 1.5px; background: var(--color-brand); box-shadow: 0 0 6px 1px rgb(0 128 193 / 0.45); opacity: 0; }
+  .plom.is-in .ob-built { animation: pl-build 1.1s 0.65s cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+  .plom.is-in .ob-rule { animation: pl-rule 1.1s 0.65s cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+  @keyframes pl-build { to { clip-path: inset(0 0 0 0); } }
+  @keyframes pl-rule {
+    0% { left: 0; opacity: 0; }
+    12% { opacity: 1; }
+    88% { opacity: 1; }
+    100% { left: 100%; opacity: 0; }
+  }
+
+  /* ---------- 05 · Sello: baja, marca y deja la huella ---------- */
+  .pl-stamp { width: 30px; height: 30px; top: calc(60px + var(--t) - 6px); opacity: 1; }
+  .st-body { position: absolute; left: 0; right: 0; bottom: 0; display: grid; justify-items: center; transform-origin: 50% 100%; opacity: 0; }
+  .st-grip { width: 10px; height: 7px; background: var(--color-ink-soft); border-radius: 3px 3px 0 0; }
+  .st-face {
+    --c: 6px;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    background: var(--color-brand-ink);
+    clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c));
+  }
+  .st-face svg { width: 15px !important; fill: #fff !important; }
+  .st-ink { --c: 6px; position: absolute; left: 50%; top: 0; width: 30px; height: 30px; translate: -50% 0; display: grid; place-items: center; opacity: 0; box-shadow: inset 0 0 0 1.5px var(--color-brand); clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c)); }
+  .st-ink svg { width: 15px !important; fill: var(--color-brand) !important; }
+  .st-ring { position: absolute; left: 50%; top: 0; width: 30px; height: 30px; translate: -50% 0; border: 1.5px solid var(--color-brand); opacity: 0; }
+  /* golpe del sello: baja, se aplasta un instante, sube un poco y deja la huella y su onda */
+  /* baja, golpea (se aplasta), sube y queda colgando sobre la huella que dejó */
+  .plom.is-in .st-body { animation: pl-stamp 1.5s 0.35s cubic-bezier(0.3, 0, 0.2, 1) both; }
+  :global(html.rm) .cr-layer, :global(html.rm) .cr-face { animation: none; }
+  .plom.is-in .st-ink { animation: pl-ink 0.5s 0.78s ease-out both; }
+  .plom.is-in .st-ring { animation: pl-ring 1s 0.78s ease-out both; }
+  @keyframes pl-stamp {
+    0% { transform: translateY(-46px); opacity: 0; }
+    12% { opacity: 1; }
+    30% { transform: translateY(0) scale(1.08, 0.86); }
+    40% { transform: translateY(0) scale(1); }
+    72% { opacity: 1; }
+    100% { transform: translateY(-26px) scale(0.9); opacity: 0; }
+  }
+  @keyframes pl-ink { from { opacity: 0; transform: scale(1.1); } to { opacity: 1; transform: none; } }
+  @keyframes pl-ring {
+    from { opacity: 0.8; transform: scale(1); }
+    to { opacity: 0; transform: scale(1.9); }
+  }
+
+  /* ---------- 08 · Trazo: el monograma se dibuja a lápiz y se llena ---------- */
+  .pl-trazo { width: 30px; top: calc(60px + var(--t) - 20px); opacity: 1; }
+  .tz-line { fill: none; stroke: var(--color-brand-ink); stroke-width: 26; stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .tz-ink { fill: var(--color-brand); opacity: 0; }
+  .plom.is-in .tz-line { animation: pl-sign 1.6s 0.3s cubic-bezier(0.45, 0.05, 0.25, 1) forwards; }
+  .plom.is-in .tz-ink { animation: pl-fill 0.7s 1.6s ease forwards; }
+  @keyframes pl-fill { to { opacity: 1; } }
+  :global(html.rm) .tz-line { stroke-dashoffset: 0; animation: none; }
+  :global(html.rm) .tz-ink { opacity: 1; animation: none; }
+
+  /* ---------- 07 · Chat: el globo escribe y responde con el monograma ---------- */
+  .pl-chat { width: 40px; top: calc(60px + var(--t) - 22px); opacity: 1; }
+  .ch-bubble {
+    --c: 7px;
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 32px;
+    background: var(--color-brand-ink);
+    clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 10px 100%, 4px calc(100% + 0px), 6px calc(100% - 6px), 0 calc(100% - 6px), 0 var(--c));
+  }
+  .ch-dots { grid-area: 1 / 1; display: flex; gap: 3px; }
+  .ch-dots i { width: 4px; height: 4px; border-radius: 50%; background: #fff; opacity: 0.4; }
+  .ch-mono { grid-area: 1 / 1; width: 15px !important; fill: #fff !important; opacity: 0; }
+  .plom.is-in .ch-bubble { animation: pl-pop 0.5s 0.25s var(--ease-out-expo) both; }
+  .plom.is-in .ch-dots i { animation: pl-dot 0.9s 0.5s ease-in-out 2; }
+  .plom.is-in .ch-dots i:nth-child(2) { animation-delay: 0.65s; }
+  .plom.is-in .ch-dots i:nth-child(3) { animation-delay: 0.8s; }
+  .plom.is-in .ch-dots { animation: pl-out 0.3s 2.3s forwards; }
+  .plom.is-in .ch-mono { animation: pl-mono 0.5s 2.4s var(--ease-out-expo) forwards; }
+  @keyframes pl-dot { 50% { opacity: 1; transform: translateY(-2px); } }
+  @keyframes pl-out { to { opacity: 0; } }
+  @keyframes pl-mono { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: none; } }
+  :global(html.rm) .ch-dots { display: none; }
+  :global(html.rm) .ch-mono { opacity: 1; }
+
+  /* ---------- 06 · Firma: el monograma y el rasgo de una firma ---------- */
+  .pl-firma { width: 46px; top: calc(60px + var(--t) - 20px); opacity: 1; display: grid; justify-items: center; }
+  .fi-mono { width: 22px !important; }
+  .fi-sig { width: 46px !important; margin-top: -3px; fill: none !important; stroke: var(--color-brand-ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .plom.is-in .fi-mono { animation: pl-pop 0.6s 0.3s var(--ease-out-expo) both; }
+  .plom.is-in .fi-sig { animation: pl-sign 1.1s 0.7s cubic-bezier(0.45, 0.05, 0.25, 1) forwards; }
+  @keyframes pl-pop { from { opacity: 0; transform: translateY(6px) scale(0.9); } }
+  @keyframes pl-sign { to { stroke-dashoffset: 0; } }
+  :global(html.rm) .fi-sig { stroke-dashoffset: 0; animation: none; }
+
+  /* Antes de entrar (solo con JS): hilo recogido y sin nombre */
+  :global(html.js:not(.rm)) .plom:not(.is-in) { --len: 0; }
+  :global(html.js:not(.rm)) .plom:not(.is-in) .pl-label { opacity: 0; transform: translate(-50%, 6px); }
+  :global(html.js:not(.rm)) .plom.is-in .pl-label { transition-delay: 0.7s; }
+  :global(html.js:not(.rm)) .pv-sello:not(.is-in) .st-body { opacity: 0; }
+  :global(html.rm) .ob-built { clip-path: none; }
+  :global(html.rm) .st-ink { opacity: 1; }
+</style>
+
+<script>
+  const els = [...document.querySelectorAll<HTMLElement>('[data-plom]')];
+  const reduced = document.documentElement.classList.contains('rm');
+  if (els.length && !reduced) {
+    type P = { el: HTMLElement; swing: HTMLElement; swings: boolean; on: boolean; len: number; a: number; v: number };
+    const ps: P[] = els.map((el) => ({ el, swing: el.querySelector<HTMLElement>('[data-swing]')!, swings: el.hasAttribute('data-swings'), on: false, len: 0, a: 0, v: 0 }));
+    let raf = 0;
+    let lastT = 0;
+    let lastY = scrollY;
+    const loop = (t: number) => {
+      raf = 0;
+      const dt = Math.min(0.05, lastT ? (t - lastT) / 1000 : 0.016);
+      lastT = t;
+      const vy = (scrollY - lastY) / Math.max(dt, 0.001);
+      lastY = scrollY;
+      let busy = false;
+      for (const p of ps) {
+        if (!p.on) continue;
+        // El hilo baja (0 → 1)
+        if (p.len < 1) {
+          p.len = Math.min(1, p.len + dt / 0.55);
+          const e = 1 - Math.pow(1 - p.len, 3);
+          p.el.style.setProperty('--len', e.toFixed(3));
+          busy = true;
+        }
+        if (!p.swings) continue;
+        // Péndulo amortiguado; el scroll lo empuja (plomada y grúa)
+        const push = Math.max(-1, Math.min(1, vy / 2600));
+        p.v += (-38 * p.a - 4.2 * p.v + push * 18) * dt;
+        p.a = Math.max(-0.2, Math.min(0.2, p.a + p.v * dt));
+        p.swing.style.transform = `rotate(${p.a.toFixed(4)}rad)`;
+        if (Math.abs(p.a) > 0.0006 || Math.abs(p.v) > 0.0006 || Math.abs(vy) > 1) busy = true;
+      }
+      if (busy) raf = requestAnimationFrame(loop);
+      else lastT = 0;
+    };
+    const kick = () => {
+      if (!raf) raf = requestAnimationFrame(loop);
+    };
+    const io = new IntersectionObserver(
+      (es) => {
+        for (const e of es) {
+          const p = ps.find((x) => x.el === e.target)!;
+          p.on = e.isIntersecting;
+          if (e.isIntersecting && !p.el.classList.contains('is-in')) {
+            p.el.classList.add('is-in');
+            p.v = p.swings ? 1.6 : 0; // al caer, arranca meciéndose
+          }
+        }
+        kick();
+      },
+      { threshold: 0, rootMargin: '0px 0px -15% 0px' },
+    );
+    ps.forEach((p) => io.observe(p.el));
+    addEventListener('scroll', kick, { passive: true });
+  }
+</script>

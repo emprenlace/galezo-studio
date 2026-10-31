@@ -1,0 +1,242 @@
+---
+/**
+ * Simbología de lámina en los márgenes de cada sección: norte, escala gráfica, cota de nivel, marca de corte,
+ * ejes estructurales y línea de cota
+ * y curvas de nivel del terreno. Línea fina, tenue, que se traza sola al entrar la sección.
+ * Se ubican en las esquinas superiores (a lado y lado de la plomada) para no tocar el contenido.
+ */
+type Sym = 'norte' | 'escala' | 'nivel' | 'corte' | 'ejes' | 'cota' | 'rosa' | 'muro' | 'puerta' | 'sube' | 'ventana' | 'detalle';
+interface Props {
+  left?: Sym;
+  right?: Sym;
+  /** curvas de nivel del terreno al fondo (centradas abajo) */
+  contours?: boolean;
+}
+const { left, right, contours = false } = Astro.props;
+
+// Curvas de nivel: anillos irregulares concéntricos (deterministas)
+const rings: string[] = [];
+if (contours) {
+  for (let k = 0; k < 7; k++) {
+    const rx = 260 + k * 120;
+    const ry = 70 + k * 34;
+    const pts: string[] = [];
+    for (let i = 0; i <= 72; i++) {
+      const a = (i / 72) * Math.PI * 2;
+      const w = 1 + 0.06 * Math.sin(a * 3 + k) + 0.04 * Math.sin(a * 5 + k * 1.7) + 0.025 * Math.sin(a * 9 + k * 0.6);
+      pts.push(`${(800 + Math.cos(a) * rx * w).toFixed(1)} ${(300 + Math.sin(a) * ry * w).toFixed(1)}`);
+    }
+    rings.push('M' + pts.join('L') + 'Z');
+  }
+}
+---
+
+<div class="trz" data-trz aria-hidden="true">
+  {
+    contours && (
+      <svg class="trz-cont" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMid slice">
+        {rings.map((d, i) => (
+          <path d={d} pathLength="1" style={`--i:${i}`} class={i === 2 || i === 5 ? 'major' : ''} />
+        ))}
+        <text x="1185" y="214">+2,0</text>
+        <text x="1300" y="160">+3,0</text>
+      </svg>
+    )
+  }
+
+  {
+    [
+      { side: 'l', sym: left },
+      { side: 'r', sym: right },
+    ].map(
+      ({ side, sym }) =>
+        sym && (
+          <svg class={`trz-sym trz-${side} trz-${sym}`} viewBox="0 0 140 90">
+            {sym === 'norte' && (
+              <g>
+                <circle class="ln" pathLength="1" cx="45" cy="45" r="30" />
+                <path class="ln" pathLength="1" d="M45 6V84M6 45H84" />
+                <path class="fill" d="M45 14L53 45H37Z" />
+                <text x="45" y="11" text-anchor="middle" class="big">N</text>
+              </g>
+            )}
+            {sym === 'escala' && (
+              <g>
+                <path class="ln" pathLength="1" d="M8 52H132" />
+                <path class="fill" d="M8 48H33V52H8ZM58 48H83V52H58Z" />
+                <path class="ln" pathLength="1" d="M8 44V56M33 46V54M58 44V56M83 46V54M132 44V56" />
+                <text x="8" y="70" text-anchor="middle">0</text>
+                <text x="33" y="70" text-anchor="middle">1</text>
+                <text x="58" y="70" text-anchor="middle">2</text>
+                <text x="132" y="70" text-anchor="middle">5 m</text>
+                <text x="8" y="34">escala 1:100</text>
+              </g>
+            )}
+            {sym === 'nivel' && (
+              <g>
+                <path class="ln" pathLength="1" d="M10 54H130" />
+                <path class="ln" pathLength="1" d="M30 54L22 42H38Z" />
+                <path class="fill" d="M30 54L26 48H34Z" />
+                <text x="46" y="46">N +0,45</text>
+                <text x="46" y="72" class="soft">nivel de piso</text>
+              </g>
+            )}
+            {sym === 'corte' && (
+              <g>
+                <path class="ax dash" d="M8 45H112" />
+                <circle class="ln" pathLength="1" cx="118" cy="45" r="12" />
+                <path class="fill" d="M118 24L124 33H112Z" />
+                <text x="118" y="49.5" text-anchor="middle" class="big">A</text>
+                <text x="8" y="34">corte A–A'</text>
+              </g>
+            )}
+            {sym === 'ventana' && (
+              <g>
+                <path class="ln" pathLength="1" d="M8 40H40M100 40H132M8 54H40M100 54H132M40 40V54M100 40V54" />
+                <path class="ln" pathLength="1" d="M40 44H100M40 47H100M40 50H100" />
+                <text x="44" y="30">ventana</text>
+                <text x="44" y="74" class="soft">1,20 × 1,50</text>
+              </g>
+            )}
+            {sym === 'detalle' && (
+              <g>
+                <circle class="ln" pathLength="1" cx="34" cy="45" r="22" />
+                <path class="ln" pathLength="1" d="M12 45H56M56 45H124" />
+                <text x="34" y="39" text-anchor="middle" class="big">1</text>
+                <text x="34" y="60" text-anchor="middle">A-201</text>
+                <text x="64" y="36">detalle</text>
+              </g>
+            )}
+            {sym === 'puerta' && (
+              <g>
+                <path class="ln" pathLength="1" d="M10 70H30M70 70H130M30 70V22" />
+                <path class="ln dash-arc" pathLength="1" d="M30 22A48 48 0 0 1 78 70" />
+                <text x="84" y="44">puerta</text>
+                <text x="84" y="60" class="soft">0,90 × 2,10</text>
+              </g>
+            )}
+            {sym === 'sube' && (
+              <g>
+                <path class="ln" pathLength="1" d="M10 76H34V62H58V48H82V34H106V20H130" />
+                <path class="ln" pathLength="1" d="M18 70L118 26M110 24L118 26L114 34" />
+                <text x="10" y="18">sube</text>
+              </g>
+            )}
+            {sym === 'rosa' && (
+              <g>
+                <circle class="ln" pathLength="1" cx="45" cy="45" r="22" />
+                <path class="ln" pathLength="1" d="M45 8L51 39L82 45L51 51L45 82L39 51L8 45L39 39Z" />
+                <path class="ln" pathLength="1" d="M45 45L62 28M45 45L28 62M45 45L62 62M45 45L28 28" />
+                <path class="fill" d="M45 8L51 39L45 45Z" />
+                <text x="96" y="40">brisa</text>
+                <text x="96" y="56" class="soft">del noreste</text>
+              </g>
+            )}
+            {sym === 'muro' && (
+              <g>
+                <path class="ln" pathLength="1" d="M20 10V80M44 10V80M8 80H132" />
+                <path class="ln" pathLength="1" d="M20 22L44 10M20 34L44 22M20 46L44 34M20 58L44 46M20 70L44 58M24 80L44 70" />
+                <path class="ln" pathLength="1" d="M44 30H70M44 30L50 26" />
+                <text x="76" y="34">muro 0,15</text>
+                <text x="76" y="50" class="soft">pañete y pintura</text>
+              </g>
+            )}
+            {sym === 'ejes' && (
+              <g>
+                <circle class="ln" pathLength="1" cx="22" cy="20" r="11" />
+                <circle class="ln" pathLength="1" cx="104" cy="20" r="11" />
+                <path class="ax dash-dot" d="M22 31V86M104 31V86" />
+                <path class="ln" pathLength="1" d="M22 70H104M18 74L26 66M100 74L108 66" />
+                <text x="22" y="24" text-anchor="middle" class="big">A</text>
+                <text x="104" y="24" text-anchor="middle" class="big">B</text>
+                <text x="63" y="64" text-anchor="middle">6,00</text>
+              </g>
+            )}
+            {sym === 'cota' && (
+              <g>
+                <path class="ln" pathLength="1" d="M8 50H132M8 38V62M132 38V62M70 44V56" />
+                <path class="ln" pathLength="1" d="M4 54L12 46M66 54L74 46M128 54L136 46" />
+                <text x="39" y="42" text-anchor="middle">3,20</text>
+                <text x="101" y="42" text-anchor="middle">3,20</text>
+                <text x="70" y="78" text-anchor="middle" class="soft">fachada</text>
+              </g>
+            )}
+          </svg>
+        ),
+    )
+  }
+</div>
+
+<style>
+  .trz { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+  .trz :global(text) { font-family: var(--font-sans); font-size: 10.5px; fill: #8a8f97; letter-spacing: 0.02em; }
+  .trz :global(text.big) { font-size: 12px; font-weight: 700; fill: #7a7f87; }
+  .trz :global(text.soft) { fill: #a3a8af; }
+  .trz :global(.ln) { fill: none; stroke: #9aa0a8; stroke-width: 1; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+  .trz :global(.ax) { fill: none; stroke: #9aa0a8; stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .trz :global(.dash) { stroke-dasharray: 6 4; }
+  .trz :global(.dash-dot) { stroke-dasharray: 10 3 2 3; }
+  .trz :global(.fill) { fill: #9aa0a8; }
+
+  /* Símbolos en las esquinas superiores, a lado y lado de la plomada */
+  .trz-sym {
+    position: absolute;
+    top: calc(var(--hdr, 76px) + clamp(10px, 2.4svh, 30px));
+    width: clamp(84px, 9vw, 130px);
+    height: auto;
+    overflow: visible;
+  }
+  .trz-l { left: var(--pad, 20px); }
+  .trz-r { right: var(--pad, 20px); }
+  .trz-norte { width: clamp(48px, 5vw, 76px); }
+
+  /* Curvas de nivel: el terreno bajo la mesa */
+  /* Detrás de la mesa, desvanecidas hacia los bordes para no cruzar los textos */
+  .trz-cont {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 34%;
+    width: 100%;
+    height: 44%;
+    -webkit-mask-image: radial-gradient(closest-side, #000 55%, transparent 100%);
+    mask-image: radial-gradient(closest-side, #000 55%, transparent 100%);
+  }
+  .trz-cont path { fill: none; stroke: #d3cab9; stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .trz-cont path.major { stroke: #c6bba7; stroke-width: 1.3; }
+  .trz-cont text { fill: #b3a893; font-size: 11px; }
+
+  /* Trazado al entrar (solo con JS) */
+  :global(html.js:not(.rm)) .trz:not(.is-in) :global(.ln),
+  :global(html.js:not(.rm)) .trz:not(.is-in) .trz-cont path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  :global(html.js:not(.rm)) .trz:not(.is-in) :global(text),
+  :global(html.js:not(.rm)) .trz:not(.is-in) :global(.fill) { opacity: 0; }
+  :global(html.js:not(.rm)) .trz.is-in :global(.ln) { stroke-dasharray: 1; animation: trz-draw 1.2s 0.3s cubic-bezier(0.6, 0, 0.3, 1) both; }
+  :global(html.js:not(.rm)) .trz:not(.is-in) :global(.ax) { opacity: 0; }
+  :global(html.js:not(.rm)) .trz.is-in :global(.ax) { animation: trz-ink 1s 0.3s both; }
+  :global(html.js:not(.rm)) .trz.is-in :global(text),
+  :global(html.js:not(.rm)) .trz.is-in :global(.fill) { animation: trz-ink 0.8s 1s both; }
+  :global(html.js:not(.rm)) .trz.is-in .trz-cont path { stroke-dasharray: 1; animation: trz-draw 2.4s cubic-bezier(0.5, 0, 0.2, 1) both; animation-delay: calc(0.2s + var(--i) * 0.14s); }
+  @keyframes trz-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes trz-ink { from { opacity: 0; } }
+
+  @media (max-width: 639px) {
+    .trz-sym { width: 70px; top: calc(var(--hdr, 76px) + 14px); }
+    .trz-norte { width: 40px; }
+    .trz-cont { top: 30%; height: 40%; }
+  }
+</style>
+
+<script>
+  const io = new IntersectionObserver(
+    (es) => {
+      for (const e of es) {
+        if (!e.isIntersecting) continue;
+        e.target.classList.add('is-in');
+        io.unobserve(e.target);
+      }
+    },
+    { threshold: 0.3 },
+  );
+  document.querySelectorAll('[data-trz]').forEach((el) => io.observe(el));
+</script>

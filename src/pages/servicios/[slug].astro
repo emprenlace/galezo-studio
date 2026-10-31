@@ -1,0 +1,63 @@
+---
+/**
+ * Página de cada servicio. Por ahora es la portada del servicio mientras armamos su contenido (noindex);
+ * el menú ya enlaza aquí. Cada una se diseñará sección por sección.
+ */
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Cierre from '../../components/Cierre.astro';
+import { servicios, type Servicio } from '../../lib/servicios';
+import mono from '../../assets/brand/monogram-d.txt?raw';
+
+export function getStaticPaths() {
+  return servicios.map((s) => ({ params: { slug: s.slug }, props: { s } }));
+}
+const { s } = Astro.props as { s: Servicio };
+const i = servicios.findIndex((x) => x.slug === s.slug);
+---
+
+<Base title={`${s.title} · Galezo Studio`} description={`${s.title}: ${s.line}. Diseño arquitectónico de Galezo Studio.`} noindex pageType="service" serviceId={s.id}>
+  <Header />
+  <main>
+    <section class="sv-p" data-nav-label={s.title} aria-labelledby="sv-title">
+      <div class="sv-in">
+        <span class="sv-mono" aria-hidden="true">
+          <svg viewBox="0 0 1647 1914"><path transform="matrix(1 0 0 -1 0 1914)" d={mono.trim()} pathLength="1"></path></svg>
+        </span>
+        <p class="sv-k"><span>{String(i + 1).padStart(2, '0')}</span> Servicios · En construcción</p>
+        <h1 id="sv-title" class="sv-h1">{s.title}</h1>
+        <p class="sv-sub">{s.line}. Estamos preparando esta página; mientras tanto, cuéntanos de tu proyecto.</p>
+        <div class="sv-act">
+          <a href="#cotizar" class="btn chamfer" data-open-chat data-cta="servicio" data-service={s.id}>
+            Cotiza tu diseño
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
+          </a>
+          <a href="/#servicios" class="sv-back">Ver todos los servicios</a>
+        </div>
+      </div>
+    </section>
+    <Cierre />
+  </main>
+</Base>
+
+<style>
+  .sv-p { min-height: 100svh; display: grid; place-items: center; padding: 110px 20px 60px; background: var(--color-bone); text-align: center; }
+  .sv-in { display: grid; justify-items: center; gap: 14px; max-width: 42rem; }
+  .sv-mono svg { width: 54px; display: block; }
+  .sv-mono path { fill: none; stroke: var(--color-brand); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: 1; animation: sv-draw 1.8s 0.2s cubic-bezier(0.45, 0.05, 0.25, 1) forwards; }
+  @keyframes sv-draw { to { stroke-dashoffset: 0; } }
+  .sv-k { font-size: 13px; font-weight: 600; color: var(--color-brand-ink); }
+  .sv-k span { font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: 16px; color: var(--color-brand); margin-right: 3px; }
+  .sv-h1 { font-size: clamp(2.3rem, 1.4rem + 3.8vw, 4.6rem); line-height: 1.02; font-weight: 560; letter-spacing: -0.04em; text-wrap: balance; }
+  .sv-sub { font-size: 1.05rem; line-height: 1.5; color: var(--color-ink-soft); text-wrap: balance; }
+  .sv-act { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+  .btn { --cut: 9px; display: inline-flex; align-items: center; gap: 8px; height: 50px; padding: 0 24px; font-size: 15px; font-weight: 560; background: var(--color-brand-ink); color: #fff; transition: background-color 0.3s; }
+  .btn:hover { background: var(--color-ink); }
+  .btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .sv-back { font-size: 14px; font-weight: 560; color: var(--color-brand-ink); }
+  :global(html.rm) .sv-mono path { animation: none; stroke-dashoffset: 0; }
+</style>
+
+<script>
+  document.documentElement.classList.add('ready');
+</script>
