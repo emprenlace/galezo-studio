@@ -1,7 +1,7 @@
 /** Datos estructurados (JSON-LD). Solo en páginas indexables. */
 import { faq } from './faq';
 
-export const SITE = 'https://galezostudio.com';
+export const SITE = 'https://www.galezostudio.com';
 export const PHONE = '+573043395726';
 const org = `${SITE}/#estudio`;
 
