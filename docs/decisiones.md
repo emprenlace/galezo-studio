@@ -244,3 +244,9 @@ Registro de lo aprobado en cada sección, para no repetir recursos y mantener el
 - ids: vivienda, remodelacion, comercial, ejecutivo (service_id en dataLayer y hoja). Slugs nuevos y redirecciones 301 en vercel.json desde los 6 anteriores.
 - Mesa de maquetas (sección 03) = los 4 servicios; se quita el bloque "También diseñamos". Maqueta nueva ejecutivo(): estructura a la vista (columnas y losas en azul).
 - Pendiente confirmar con Ulises qué ingenierías incluye el proyecto ejecutivo antes de escribir su página.
+
+## 2026-10-31 · Auditoría SEO técnico
+- Medido: versión de lanzamiento (PUBLIC_PREVIEW=false) con SEO 100, accesibilidad 100, buenas prácticas 100; sitio en vivo con rendimiento 98–99 en móvil (LCP 1,9 s, TBT 0, CLS 0–0,013). El SEO en vivo sale 66 solo por el noindex de la vista previa.
+- Corregido: el H1 se leía "terminadoantes" (faltaba espacio entre líneas); descripción del inicio de 256 a 156 caracteres; FAQ "lo levante"; alt repetido en logos de clientes (el nombre va escrito debajo).
+- Servicios con bandera ready en lib/servicios.ts: al marcarla, la página deja de ser noindex y entra sola al sitemap.
+- robots.txt se deja abierto a propósito: si se bloquea el rastreo, Google no ve el noindex.

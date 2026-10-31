@@ -5,6 +5,8 @@ export interface Servicio {
   title: string;
   short: string;
   line: string;
+  /** true cuando su página esté terminada: deja de ser noindex y entra al sitemap */
+  ready?: boolean;
 }
 export const servicios: Servicio[] = [
   { slug: 'diseno-de-vivienda', id: 'vivienda', title: 'Diseño de vivienda', short: 'Vivienda', line: 'Casas campestres y urbanas' },

@@ -16,7 +16,7 @@ const { s } = Astro.props as { s: Servicio };
 const i = servicios.findIndex((x) => x.slug === s.slug);
 ---
 
-<Base title={`${s.title} · Galezo Studio`} description={`${s.title}: ${s.line}. Diseño arquitectónico de Galezo Studio.`} noindex pageType="service" serviceId={s.id}>
+<Base title={`${s.title} · Galezo Studio`} description={`${s.title}: ${s.line}. Diseño arquitectónico de Galezo Studio.`} noindex={!s.ready} pageType="service" serviceId={s.id}>
   <Header />
   <main>
     <section class="sv-p" data-nav-label={s.title} aria-labelledby="sv-title">

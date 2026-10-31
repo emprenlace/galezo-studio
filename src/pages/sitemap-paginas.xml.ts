@@ -1,8 +1,10 @@
 import type { APIRoute } from 'astro';
 import { SITE } from '../lib/seo';
+import { servicios } from '../lib/servicios';
 
 // lastmod real: fecha de la última compilación de cada página indexable
-const paginas = [{ path: '', priority: '1.0' }];
+// Solo páginas indexables: el inicio y cada servicio marcado como listo (ready) en lib/servicios.ts
+const paginas = [{ path: '', priority: '1.0' }, ...servicios.filter((s) => s.ready).map((s) => ({ path: `/servicios/${s.slug}`, priority: '0.8' }))];
 
 export const GET: APIRoute = () => {
   const now = new Date().toISOString();
