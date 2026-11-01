@@ -98,10 +98,6 @@ const finishes = [
           Planos completos, modelo BIM, renders y cantidades de obra para que tu proyecto se construya tal como lo diseñamos.
         </p>
         <div class="hero-ctas hk-4">
-          <p class="cta-note" aria-hidden="true">
-            <span>cuéntanos de tu lote<br />y lo hablamos por WhatsApp</span>
-            <svg viewBox="0 0 54 36"><path pathLength="1" d="M2 8 C 18 2, 34 6, 48 24"></path><path pathLength="1" class="cta-note-head" d="M38 23 L49 26 L48 14"></path></svg>
-          </p>
           <a href="#cotizar" class="btn btn-primary chamfer" data-open-chat data-cta="hero">
             Cotiza tu diseño
             <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
@@ -129,7 +125,7 @@ const finishes = [
         <Image src={ulises} alt="Ulises Galezo Cifuentes" width={88} height={88} class="hf-photo chamfer" loading="eager" />
         <p>
           <strong>Ulises Galezo Cifuentes</strong>
-          <span>Arquitecto · 6 años de experiencia</span>
+          <span>Arquitecto · +10 años de experiencia</span>
         </p>
       </div>
       <dl class="cajetin hk-6" aria-hidden="true">
@@ -359,7 +355,6 @@ const finishes = [
   .btn-primary { background: var(--color-brand-ink); color: #fff; transition: background-color 0.3s var(--ease-out-expo); }
   .btn-primary:hover { background: var(--color-ink); }
   .btn-primary:hover svg { transform: translateX(3px); }
-  .cta-note { display: none; }
   /* Prueba real: fotos de obra construida, como fotos sueltas sobre la mesa */
   .hero-proof {
     margin: 18px auto 0;
@@ -474,26 +469,6 @@ const finishes = [
     .hero-who { left: var(--pad); translate: none; }
   }
 
-  @media (min-width: 900px) {
-    .cta-note {
-      display: block;
-      position: absolute;
-      right: calc(100% + 64px);
-      top: 2px;
-      width: 220px;
-      text-align: right;
-      font-family: 'Architects Daughter', var(--font-sans);
-      font-size: 15px;
-      line-height: 1.3;
-      color: var(--color-brand);
-      rotate: -3deg;
-    }
-    .cta-note svg { position: absolute; right: -60px; top: 6px; width: 54px; height: 36px; overflow: visible; }
-    .cta-note path { fill: none; stroke: var(--color-brand); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-    :global(html.js) .cta-note span { opacity: 0; animation: hero-ink 0.8s 1.9s ease forwards; }
-    :global(html.js) .cta-note path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw-line 0.8s 2.2s ease forwards; }
-    :global(html.js) .cta-note .cta-note-head { animation-delay: 2.9s; animation-duration: 0.3s; }
-  }
 
   @media (min-width: 1024px) {
     .hero { --g: 10px; --hd: 76px; --pad: max(40px, calc((100% - 1200px) / 2)); }

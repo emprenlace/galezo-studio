@@ -1,0 +1,224 @@
+---
+/**
+ * Clientes en el cajetín de un plano: la tabla de la esquina de cada lámina, donde va quién encarga el proyecto.
+ * Cada casilla lleva su rótulo ("Cliente 01"), el logo y el nombre; la última fila cierra como un cajetín real
+ * con datos del estudio. Al entrar se trazan las líneas de la tabla y cada logo entra como un sello en su casilla.
+ * Diseño distinto a la fila de clientes del inicio (Obras) para usarse en las páginas de servicio.
+ */
+import { Image } from 'astro:assets';
+import Plomada from './Plomada.astro';
+import Trazos from './Trazos.astro';
+import gobernacion from '../assets/clientes/gobernacion-cesar.png';
+import alcaldia from '../assets/clientes/alcaldia-valledupar.png';
+import aconstruir from '../assets/clientes/a-construir.png';
+import codazzi from '../assets/clientes/alcaldia-agustin-codazzi.png';
+import jagua from '../assets/clientes/municipio-la-jagua-del-pilar.png';
+import urumita from '../assets/clientes/alcaldia-urumita.png';
+import hrs from '../assets/clientes/hrs-ingenieria.png';
+import elbanco from '../assets/clientes/alcaldia-el-banco.png';
+import corpocesar from '../assets/clientes/corpocesar.png';
+import marbal from '../assets/clientes/marbal-ingenieria.png';
+
+interface Props {
+  n?: string;
+  /** solo empresas privadas (en vivienda: con las que hemos diseñado vivienda) */
+  privados?: boolean;
+  sub?: string;
+}
+const { n = '05', privados = false, sub = 'Entidades públicas y empresas que nos encargaron sus proyectos.' } = Astro.props;
+// k: ajuste óptico de cada logo (los hay anchos y altos), el mismo criterio que en el inicio
+const todos = [
+  { src: gobernacion, name: 'Gobernación del Cesar', k: 1 },
+  { src: alcaldia, name: 'Alcaldía de Valledupar', k: 0.72 },
+  { src: corpocesar, name: 'Corpocesar', k: 0.56 },
+  { src: codazzi, name: 'Alcaldía de Agustín Codazzi', k: 0.66 },
+  { src: jagua, name: 'Municipio de La Jagua del Pilar', k: 1 },
+  { src: urumita, name: 'Alcaldía de Urumita', k: 1.05 },
+  { src: elbanco, name: 'Alcaldía de El Banco, Magdalena', k: 0.62 },
+  { src: aconstruir, name: 'A Construir S.A.', k: 0.88, priv: true },
+  { src: hrs, name: 'HRS Ingeniería', k: 0.5, priv: true },
+  { src: marbal, name: 'Marbal Ingeniería', k: 0.42, priv: true },
+];
+const clientes = privados ? todos.filter((c) => c.priv) : todos;
+const N = clientes.length;
+// la casilla "Tu proyecto" completa la última fila: en escritorio hasta 5 columnas, en celular 3
+const dc = N < 5 ? N + 1 : 5;
+const tuDesk = N < 5 || N % 5 !== 0;
+const mc = Math.min(3, N);
+const tuSpan = N % mc === 0 ? mc : mc - (N % mc);
+const pad = (i: number) => String(i + 1).padStart(2, '0');
+---
+
+<section class:list={['cj', { 'is-many': N > 9 }]} id="clientes" data-nav-label="Clientes" aria-labelledby="cj-title" data-cj>
+  <Trazos left="norte" right="detalle" />
+  <div class="cj-in">
+    <Plomada n={n} label="Clientes" variant="obra" />
+    <header class="cj-head cj-rv">
+      <h2 id="cj-title" class="cj-h2">Han confiado <span class="accent">en nosotros</span></h2>
+      <p class="cj-sub">{sub}</p>
+    </header>
+
+    <!-- El cajetín -->
+    <div class="tb">
+      <p class="tb-hd"><span class="tb-l">Propietarios</span><b>Nuestros clientes</b><span class="tb-r">Galezo Studio</span></p>
+      <ul class:list={['tb-grid', { 'no-tu': !tuDesk }]} role="list" style={`--dc:${dc};--mc:${mc};--ts:${tuSpan}`}>
+        {
+          clientes.map((c, i) => (
+            <li class="cell" style={`--i:${i};--k:${c.k}`}>
+              <span class="c-l" aria-hidden="true">Cliente {pad(i)}</span>
+              <span class="c-logo">
+                <Image src={c.src} alt={c.name} height={200} densities={[1]} loading="lazy" />
+              </span>
+              <span class="c-n">{c.name}</span>
+            </li>
+          ))
+        }
+        <!-- la casilla que sigue: tu proyecto (en escritorio completa la fila de cinco) -->
+        <li class="cell cell-tu" style={`--i:${clientes.length}`}>
+          <a href="#cotizar" class="tu-a" data-open-chat data-cta="clientes">
+            <span class="c-l">Cliente {pad(clientes.length)}</span>
+            <span class="tu-mk" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 6v12M6 12h12" /></svg></span>
+            <span class="c-n tu-n">Tu proyecto</span>
+          </a>
+        </li>
+      </ul>
+      <p class="tb-ft">
+        <span class="ft-c"><span class="tb-l">Proyectos</span><b>+70 diseñados</b></span>
+        <span class="ft-c"><span class="tb-l">Experiencia</span><b>+10 años</b></span>
+        <span class="ft-c"><span class="tb-l">Estudio</span><b>Valledupar, Cesar</b></span>
+      </p>
+      <!-- líneas de la tabla que se trazan al entrar -->
+      <span class="ln ln-t" aria-hidden="true"></span>
+      <span class="ln ln-b" aria-hidden="true"></span>
+      <span class="ln ln-l" aria-hidden="true"></span>
+      <span class="ln ln-r" aria-hidden="true"></span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cj { --pad: 20px; --hd: 76px; position: relative; isolation: isolate; min-height: 100svh; display: flex; padding: calc(var(--hd) + 6px) var(--pad) 18px; overflow: hidden; background: radial-gradient(90% 55% at 50% 0%, rgb(0 128 193 / 0.08), rgb(0 128 193 / 0) 70%), #f4f8fb; }
+  .cj-in { position: relative; z-index: 1; width: 100%; max-width: 1100px; margin: auto; display: flex; flex-direction: column; align-items: center; gap: clamp(10px, 2.2svh, 26px); }
+  .cj-head { display: grid; justify-items: center; gap: 6px; text-align: center; }
+  .cj-h2 { font-size: clamp(1.6rem, min(1.15rem + 2.6vw, 5svh), 3.2rem); line-height: 1.04; font-weight: 560; letter-spacing: -0.037em; text-wrap: balance; }
+  .cj-h2 .accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.015em; color: var(--color-brand); font-size: 1.08em; }
+  .cj-sub { max-width: 30rem; font-size: clamp(0.9rem, 0.86rem + 0.25vw, 1.05rem); line-height: 1.45; color: var(--color-ink-soft); text-wrap: balance; }
+
+  /* ---------- El cajetín: tabla de líneas finas sobre papel ---------- */
+  .tb { --line: rgb(35 38 43 / 0.32); position: relative; width: 100%; background: #fffdf9; box-shadow: 0 30px 50px -40px rgb(20 40 60 / 0.5); }
+  .tb-l { display: block; font-size: 9.5px; color: #7a7f87; line-height: 1.2; }
+  .tb-hd { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 2px 12px; padding: 8px 12px 9px; border-bottom: 1px solid var(--line); }
+  .tb-hd .tb-l { grid-column: 1 / -1; }
+  .tb-hd b { font-size: 14px; font-weight: 650; letter-spacing: -0.01em; }
+  .tb-r { font-family: var(--font-serif); font-style: italic; font-size: 14px; color: var(--color-brand); }
+  .tb-grid { display: grid; grid-template-columns: repeat(var(--mc), minmax(0, 1fr)); }
+  /* rejilla de líneas: cada casilla dibuja su borde derecho e inferior; la tabla recorta lo que sobra en el canto */
+  .tb-grid { overflow: hidden; }
+  .cell { position: relative; display: grid; grid-template-rows: auto 1fr auto; justify-items: center; gap: 4px; padding: 7px 6px 8px; min-height: clamp(84px, 13svh, 128px); box-shadow: 1px 1px 0 var(--line); }
+  .tu-a { grid-template-columns: auto; }
+  .c-l { justify-self: start; font-size: 9px; color: #9097a0; }
+  .c-logo { display: grid; place-items: center; min-height: 0; }
+  .c-logo :global(img) { display: block; width: auto; height: calc(clamp(30px, 5.4svh, 52px) * var(--k)); max-width: 92%; object-fit: contain; margin: 0 auto; }
+  .c-n { font-size: 10px; font-weight: 600; line-height: 1.2; color: var(--color-ink-soft); text-align: center; text-wrap: balance; }
+  .cell-tu { grid-column: span var(--ts); }
+  .tu-a { display: grid; grid-template-rows: auto 1fr auto; justify-items: center; gap: 4px; width: 100%; height: 100%; }
+  .tu-mk { display: grid; place-items: center; align-self: center; width: 54px; height: 54px; border-radius: 50%; border: 1.5px dashed var(--color-brand); color: var(--color-brand); transition: background-color 0.3s, color 0.3s, transform 0.5s var(--ease-out-expo); }
+  .tu-mk svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+  .tu-a:hover .tu-mk { background: var(--color-brand-ink); color: #fff; border-style: solid; transform: rotate(90deg); }
+  .tu-n { color: var(--color-brand-ink); font-weight: 650; }
+  .tb-ft { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); box-shadow: inset 0 1px 0 var(--line); }
+  .ft-c { padding: 7px 10px 8px; }
+  .ft-c + .ft-c { box-shadow: inset 1px 0 0 var(--line); }
+  .ft-c b { font-size: 12.5px; font-weight: 650; white-space: nowrap; }
+  /* borde exterior grueso, como el marco de un cajetín */
+  .ln { position: absolute; background: #23262b; }
+  .ln-t, .ln-b { left: 0; right: 0; height: 1.5px; }
+  .ln-t { top: 0; }
+  .ln-b { bottom: 0; }
+  .ln-l, .ln-r { top: 0; bottom: 0; width: 1.5px; }
+  .ln-l { left: 0; }
+  .ln-r { right: 0; }
+
+  /* ---------- Entrada: se traza el marco, luego cada logo entra como un sello ---------- */
+  :global(html.js) .cj-rv { opacity: 0; transform: translateY(14px); }
+  :global(html.js) .cj.is-in .cj-rv { opacity: 1; transform: none; transition: opacity 0.8s, transform 1s var(--ease-out-expo); }
+  :global(html.js) .cj .ln-t, :global(html.js) .cj .ln-b { transform: scaleX(0); }
+  :global(html.js) .cj .ln-l, :global(html.js) .cj .ln-r { transform: scaleY(0); }
+  :global(html.js) .cj .ln-t { transform-origin: 0 50%; }
+  :global(html.js) .cj .ln-b { transform-origin: 100% 50%; }
+  :global(html.js) .cj .ln-r { transform-origin: 50% 0; }
+  :global(html.js) .cj .ln-l { transform-origin: 50% 100%; }
+  :global(html.js) .cj.is-in .ln { transform: none; transition: transform 0.7s cubic-bezier(0.6, 0, 0.3, 1); }
+  :global(html.js) .cj.is-in .ln-r { transition-delay: 0.5s; }
+  :global(html.js) .cj.is-in .ln-b { transition-delay: 0.9s; }
+  :global(html.js) .cj.is-in .ln-l { transition-delay: 1.3s; }
+  :global(html.js) .cj :is(.tb-hd, .tb-ft, .cell) { opacity: 0; }
+  :global(html.js) .cj.is-in :is(.tb-hd, .tb-ft) { opacity: 1; transition: opacity 0.6s 0.4s; }
+  :global(html.js) .cj.is-in .cell { opacity: 1; transition: opacity 0.4s; transition-delay: calc(0.5s + var(--i) * 0.12s); }
+  :global(html.js) .cj .c-logo { transform: scale(1.25); opacity: 0; }
+  :global(html.js) .cj.is-in .c-logo { transform: none; opacity: 1; transition: transform 0.45s cubic-bezier(0.3, 1.5, 0.5, 1), opacity 0.25s; transition-delay: calc(0.7s + var(--i) * 0.12s); }
+  :global(html.rm) .cj * { transition: none !important; }
+  :global(html.rm) .cj :is(.cj-rv, .tb-hd, .tb-ft, .cell, .c-logo, .ln) { opacity: 1 !important; transform: none !important; }
+
+  /* celular: cada casilla del pie toma el ancho de su dato, en una sola línea */
+  @media (max-width: 639px) {
+    .tb-ft { grid-template-columns: auto auto minmax(0, 1fr); }
+    .ft-c { padding: 6px 9px 7px; }
+    .ft-c b { font-size: 11.5px; }
+  }
+  @media (max-width: 639px) and (max-height: 700px) {
+    .cj :global(.trz) { display: none; }
+  }
+  /* celular con la lista completa (cuatro filas): casillas más bajas; en pantallas cortas, sin nombres (van en el alt) */
+  @media (max-width: 639px) {
+    .is-many .cell { min-height: clamp(62px, 11svh, 96px); padding: 5px 5px 6px; gap: 2px; }
+    .is-many .c-logo :global(img) { height: calc(clamp(26px, 4.6svh, 44px) * var(--k)); }
+    .is-many .tu-mk { width: 40px; height: 40px; }
+  }
+  @media (max-width: 639px) and (max-height: 760px) {
+    .is-many .cj-sub { display: none; }
+    .is-many .c-n:not(.tu-n) { display: none; }
+    .is-many .cell { grid-template-rows: auto 1fr; }
+    .is-many .tu-a { grid-template-rows: auto 1fr auto; }
+  }
+  /* SE: la casilla tuya en una línea (signo + texto) para que la tabla quepa */
+  @media (max-width: 639px) and (max-height: 600px) {
+    .is-many .cell { min-height: 54px; }
+    .is-many .tu-a { display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .is-many .tu-a .c-l { position: absolute; top: 5px; left: 5px; }
+    .is-many .tu-mk { width: 30px; height: 30px; }
+  }
+  @media (max-width: 639px) and (max-height: 600px) {
+    .cj-sub { display: none; }
+    .cell { min-height: 76px; padding: 5px 4px 6px; }
+    .c-n { font-size: 9px; }
+  }
+  @media (min-width: 640px) {
+    .cj { --pad: 28px; }
+  }
+  /* ---------- Escritorio: cajetín ancho, cinco casillas por fila y el rótulo de propietarios a la izquierda ---------- */
+  @media (min-width: 1024px) {
+    .cj { --pad: max(40px, calc((100% - 1100px) / 2)); --hd: 84px; padding-bottom: clamp(24px, 5svh, 52px); }
+    .tb { display: grid; grid-template-columns: 200px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
+    .tb-hd { grid-row: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 6px; padding: 16px 18px; border-bottom: none; box-shadow: inset -1px 0 0 var(--line); }
+    .tb-hd b { font-size: 20px; letter-spacing: -0.02em; margin-top: auto; }
+    .tb-r { font-size: 17px; }
+    .tb-grid { grid-template-columns: repeat(var(--dc), minmax(0, 1fr)); }
+    /* rejilla de líneas: cada casilla dibuja su borde derecho e inferior; la tabla recorta el sobrante */
+    .cell { min-height: 150px; padding: 10px 10px 12px; }
+    .cell-tu { grid-column: auto; display: grid; }
+    .no-tu .cell-tu { display: none; }
+    .c-l { font-size: 10px; }
+    .c-n { font-size: 11.5px; }
+    .c-logo :global(img) { height: calc(58px * var(--k)); }
+    .tb-ft { grid-column: 1 / -1; box-shadow: inset 0 1px 0 var(--line); }
+    .ft-c { padding: 10px 18px 12px; }
+    .ft-c b { font-size: 15px; }
+    .tb-l { font-size: 10.5px; }
+  }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-cj]');
+  if (sec) new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { sec.classList.add('is-in'); io.disconnect(); } }, { threshold: 0.25 }).observe(sec);
+</script>

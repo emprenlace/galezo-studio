@@ -15,6 +15,7 @@ import Entregable from '../../components/Entregable.astro';
 import Proceso from '../../components/Proceso.astro';
 import Estudio from '../../components/Estudio.astro';
 import Preguntas from '../../components/Preguntas.astro';
+import Clientes from '../../components/Clientes.astro';
 import Cierre from '../../components/Cierre.astro';
 import { servicios } from '../../lib/servicios';
 import { breadcrumb, servicio, faqDe } from '../../lib/seo';
@@ -42,8 +43,9 @@ const description = 'Diseñamos casas campestres y urbanas en Colombia: planos, 
     <SinDiseno n="02" />
     <Entregable n="03" variant="grua" ejemplo="casa en ladera" cta={false} />
     <Proceso n="04" cta={false} plano={habitacionesLinea} planoColor={habitaciones} />
-    <Estudio n="05" cta={false} />
-    <Preguntas n="06" items={faqVivienda} cta={false} />
-    <Cierre n="07" />
+    <Clientes n="05" privados sub="Empresas con las que hemos diseñado vivienda." />
+    <Estudio n="06" cta={false} />
+    <Preguntas n="07" items={faqVivienda} cta={false} />
+    <Cierre n="08" />
   </main>
 </Base>

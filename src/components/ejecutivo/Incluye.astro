@@ -1,0 +1,309 @@
+---
+/**
+ * Proyectos ejecutivos · 01 "Lo que incluye": la carpeta del proyecto con sus separadores.
+ * Cada pestaña es una disciplina y responde la pregunta que se hace quien va a construir. La lámina abierta trae
+ * un detalle dibujado con la simbología de esa disciplina (no planos de un proyecto: ya se ven en el resto de la web)
+ * y lo que recibes. La sección queda fija y con el scroll se pasa de pestaña; las pestañas también se pueden tocar.
+ * Entregables de ingeniería: los usuales en Colombia (NSR-10, RETIE). Por confirmar con Ulises.
+ */
+import Plomada from '../Plomada.astro';
+import Trazos from '../Trazos.astro';
+
+const { n = '01' } = Astro.props as { n?: string };
+
+const hojas = [
+  {
+    id: 'arq', code: 'A', t: 'Arquitectura', q: '¿Qué se construye y cómo queda?',
+    a: 'Plantas, cortes, fachadas y detalles con todas sus medidas, para que en obra nadie tenga que adivinar.',
+    r: ['Planos arquitectónicos', 'Modelo BIM', 'Renders', 'Cantidades de obra'],
+  },
+  {
+    id: 'est', code: 'E', t: 'Estructural', q: '¿La construcción aguanta?',
+    a: 'Cimentación, columnas, vigas y losas calculadas con la norma sismo resistente colombiana (NSR‑10).',
+    r: ['Planos estructurales', 'Memoria de cálculo'],
+  },
+  {
+    id: 'hid', code: 'HS', t: 'Hidrosanitaria', q: '¿Por dónde va el agua?',
+    a: 'Agua potable, desagües y aguas lluvias trazados antes de levantar muros, para no romper después.',
+    r: ['Planos hidrosanitarios', 'Isométricos de redes'],
+  },
+  {
+    id: 'ele', code: 'EL', t: 'Eléctrica', q: '¿Dónde van tomas y luces?',
+    a: 'Circuitos, tomas, iluminación y tablero, diseñados con el reglamento eléctrico colombiano (RETIE).',
+    r: ['Planos eléctricos', 'Cuadro de cargas'],
+  },
+];
+const N = hojas.length;
+---
+
+<section class="ic" id="incluye" data-nav-label="Lo que incluye" aria-labelledby="ic-title" data-ic>
+  <div class="ic-pin">
+    <Trazos left="detalle" right="corte" />
+    <div class="ic-in">
+      <Plomada n={n} label="Lo que incluye" variant="grua" />
+      <header class="ic-head">
+        <h2 id="ic-title" class="ic-h2">Cuatro respuestas <span class="accent">antes de construir</span></h2>
+        <p class="ic-sub">Cada disciplina del proyecto responde una pregunta de la obra.</p>
+      </header>
+
+      <!-- La carpeta: pestañas (separadores) y la lámina abierta -->
+      <div class="fd">
+        <div class="tabs" role="tablist" aria-label="Disciplinas del proyecto ejecutivo">
+          {
+            hojas.map((h, i) => (
+              <button type="button" role="tab" class:list={['tab', { 'is-on': i === 0 }]} id={`ic-tab-${h.id}`} aria-controls={`ic-pg-${h.id}`} aria-selected={i === 0 ? 'true' : 'false'} data-tab={i}>
+                <span class="tab-c">{h.code}</span>
+                <span class="tab-t">{h.t}</span>
+              </button>
+            ))
+          }
+        </div>
+
+        <div class="sheet chamfer">
+          {
+            hojas.map((h, i) => (
+              <article class:list={['pg', `pg-${h.id}`, { 'is-on': i === 0 }]} id={`ic-pg-${h.id}`} role="tabpanel" aria-labelledby={`ic-tab-${h.id}`} data-pg={i}>
+                <figure class="det" aria-hidden="true">
+                  <svg viewBox="0 0 240 170">
+                    {h.id === 'arq' && (
+                      <g>
+                        <path class="d-wall" pathLength="1" d="M28 24H212M28 24V150" />
+                        <path class="d-wall" pathLength="1" d="M40 36H212M40 36V150" />
+                        <path class="d-fill" d="M28 24H212V36H40V150H28Z" />
+                        <path class="d-win" pathLength="1" d="M120 24V36M168 24V36M120 28H168M120 32H168" />
+                        <path class="d-gap" d="M29 96H39V134H29Z" />
+                        <path class="d-door" pathLength="1" d="M40 96L78 96" />
+                        <path class="d-arc" pathLength="1" d="M78 96A38 38 0 0 1 40 134" />
+                        <path class="d-dim" pathLength="1" d="M120 50H168M120 45V55M168 45V55" />
+                        <path class="d-dim" pathLength="1" d="M58 96V134M53 96H63M53 134H63" />
+                      </g>
+                    )}
+                    {h.id === 'est' && (
+                      <g>
+                        <path class="d-ground" pathLength="1" d="M14 104H226" />
+                        <path class="d-hatch" d="M20 112l8-8M40 112l8-8M60 112l8-8M172 112l8-8M192 112l8-8M212 112l8-8" />
+                        <path class="d-conc" pathLength="1" d="M104 14H136V128H104Z" />
+                        <path class="d-conc" pathLength="1" d="M62 128H178V156H62Z" />
+                        <path class="d-bar" pathLength="1" d="M111 18V150H96M129 18V150H144" />
+                        <path class="d-bar" pathLength="1" d="M68 150H172" />
+                        <path class="d-stir" d="M108 30H132M108 44H132M108 58H132M108 72H132M108 86H132M108 100H132M108 114H132" />
+                        <path class="d-load" pathLength="1" d="M120 -6V10M114 4L120 10L126 4" />
+                        <path class="d-load" pathLength="1" d="M78 -2V12M72 6L78 12L84 6M162 -2V12M156 6L162 12L168 6" />
+                      </g>
+                    )}
+                    {h.id === 'hid' && (
+                      <g>
+                        <path class="d-pipe" pathLength="1" d="M20 128H96V62H186V82" />
+                        <path class="d-flow" pathLength="100" d="M20 128H96V62H186V82" />
+                        <path class="d-valve" d="M54 120L70 136V120L54 136Z" />
+                        <path class="d-tap" pathLength="1" d="M178 82H194M186 82V90" />
+                        <path class="d-drop" d="M186 100c-3 5-5 7-5 9a5 5 0 0 0 10 0c0-2-2-4-5-9Z" />
+                        <path class="d-sink" pathLength="1" d="M160 120H212L204 140H168Z" />
+                        <path class="d-drain" pathLength="1" d="M186 140V156H28" />
+                      </g>
+                    )}
+                    {h.id === 'ele' && (
+                      <g>
+                        <path class="d-panel" d="M22 62H48V104H22Z" />
+                        <path class="d-panel-l" d="M27 72H43M27 80H43M27 88H43M27 96H43" />
+                        <path class="d-circ" d="M48 74Q88 30 120 50" />
+                        <path class="d-circ" d="M120 50Q168 66 196 112" />
+                        <path class="d-circ" d="M48 92Q90 128 130 126" />
+                        <path class="d-pulse" pathLength="100" d="M48 74Q88 30 120 50Q168 66 196 112" />
+                        <g class="d-sym" transform="translate(120 50)"><circle r="9" /><path d="M-6.4 -6.4L6.4 6.4M6.4 -6.4L-6.4 6.4" /></g>
+                        <g class="d-sym" transform="translate(196 112)"><circle r="9" /><path d="M-6.4 -6.4L6.4 6.4M6.4 -6.4L-6.4 6.4" /></g>
+                        <g class="d-sym d-out" transform="translate(130 126)"><circle r="8" /><path d="M-3 -4V4M3 -4V4" /></g>
+                      </g>
+                    )}
+                  </svg>
+                </figure>
+                <div class="tx">
+                  <h3 class="q">{h.q}</h3>
+                  <p class="a">{h.a}</p>
+                  <ul class="rc" role="list" aria-label="Recibes">
+                    {h.r.map((r, j) => <li style={`--j:${j}`}><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.4 6.6 11.3 12.5 4.9" /></svg>{r}</li>)}
+                  </ul>
+                </div>
+                <p class="code" aria-hidden="true">Lámina <b>{h.code}-01</b> · {h.t}</p>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+      <div class="ic-dots" aria-hidden="true">{hojas.map((_, i) => <i class:list={{ 'is-on': i === 0 }} data-dot={i} />)}</div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ic { --pad: 20px; --hd: 76px; position: relative; height: 440svh; background: #fff; }
+  .ic-pin { isolation: isolate; position: sticky; top: 0; height: 100svh; overflow: hidden; display: flex; padding: calc(var(--hd) + 6px) var(--pad) 14px; }
+  .ic-in { position: relative; z-index: 1; width: 100%; max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: clamp(8px, 1.6svh, 18px); min-height: 0; }
+  .ic-head { display: grid; justify-items: center; gap: 6px; text-align: center; }
+  .ic-h2 { font-size: clamp(1.5rem, min(1.1rem + 2.5vw, 4.8svh), 3.1rem); line-height: 1.05; font-weight: 560; letter-spacing: -0.035em; text-wrap: balance; }
+  .ic-h2 .accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.015em; color: var(--color-brand); font-size: 1.08em; }
+  .ic-sub { max-width: 30rem; font-size: clamp(0.9rem, 0.86rem + 0.25vw, 1.05rem); line-height: 1.45; color: var(--color-ink-soft); text-wrap: balance; }
+
+  /* ---------- La carpeta ---------- */
+  .fd { flex: 1; min-height: 0; width: 100%; display: flex; flex-direction: column; }
+  /* separadores: en celular, pestañas arriba de la lámina */
+  .tabs { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 0 10px; }
+  .tab { position: relative; display: grid; justify-items: center; gap: 1px; padding: 7px 4px 8px; border-radius: 8px 8px 0 0; background: var(--color-bone); color: var(--color-ink-soft); cursor: pointer; transform: translateY(5px); transition: transform 0.45s var(--ease-out-expo), background-color 0.35s, color 0.35s; }
+  .tab:hover { color: var(--color-brand-ink); }
+  .tab.is-on { background: var(--color-brand-ink); color: #fff; transform: none; }
+  .tab-c { font-family: var(--font-serif); font-style: italic; font-size: 15px; line-height: 1; }
+  .tab-t { font-size: 10.5px; font-weight: 620; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .sheet { --cut: 16px; position: relative; flex: 1; min-height: 0; background: #fff; border-top: 3px solid var(--color-brand-ink); box-shadow: 0 0 0 1px rgb(11 13 16 / 0.08), 0 30px 50px -38px rgb(20 40 60 / 0.55); }
+  .sheet::before { content: ''; position: absolute; inset: 8px; border: 1px solid rgb(35 38 43 / 0.12); pointer-events: none; }
+
+  .pg { position: absolute; inset: 0; display: grid; grid-template-rows: minmax(0, 1fr) auto auto; gap: 8px; padding: 16px 18px 12px; opacity: 0; visibility: hidden; transform: translateX(14px); transition: opacity 0.4s, transform 0.6s var(--ease-out-expo), visibility 0s 0.4s; }
+  .pg.is-on { opacity: 1; visibility: inherit; transform: none; transition: opacity 0.45s 0.08s, transform 0.7s 0.08s var(--ease-out-expo); }
+  .det { position: relative; min-height: 0; margin: 0; }
+  .det svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .tx { display: grid; gap: 4px; }
+  .q { font-size: 1.15rem; font-weight: 620; letter-spacing: -0.02em; line-height: 1.2; }
+  .a { font-size: 0.9rem; line-height: 1.42; color: var(--color-ink-soft); }
+  .rc { display: flex; flex-wrap: wrap; gap: 5px 12px; margin-top: 4px; }
+  .rc li { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 640; color: var(--color-brand-ink); }
+  .rc svg { width: 15px; height: 15px; padding: 2px; border-radius: 50%; background: var(--color-brand-ink); fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .code { justify-self: end; font-size: 10.5px; color: var(--color-ink-mute); }
+  .code b { font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: 13px; color: var(--color-brand); }
+  .ic-dots { display: none; }
+
+  /* ---------- Los detalles dibujados ---------- */
+  .det path, .det circle { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .d-wall { stroke: var(--color-brand-ink); stroke-width: 1.3; }
+  .d-fill { fill: rgb(0 128 193 / 0.1) !important; stroke: none; }
+  .d-win { stroke: var(--color-brand); stroke-width: 0.8; }
+  .d-gap { fill: #fff !important; stroke: none; }
+  .d-door { stroke: var(--color-brand-ink); stroke-width: 1.3; }
+  .d-arc { stroke: var(--color-brand); stroke-width: 0.7; }
+  .d-dim { stroke: var(--color-ink-mute); stroke-width: 0.6; }
+  .d-ground { stroke: var(--color-ink-soft); stroke-width: 0.8; }
+  .d-hatch { stroke: rgb(35 38 43 / 0.35); stroke-width: 0.6; }
+  .d-conc { stroke: var(--color-ink); stroke-width: 1.2; fill: rgb(35 38 43 / 0.05) !important; }
+  .d-bar { stroke: var(--color-brand); stroke-width: 1.1; }
+  .d-stir { stroke: var(--color-brand); stroke-width: 0.7; }
+  .d-load { stroke: var(--color-brand-ink); stroke-width: 1.1; }
+  .d-pipe { stroke: var(--color-brand); stroke-width: 2.8; }
+  .d-flow { stroke: #fff; stroke-width: 1.1; stroke-dasharray: 0.1 4; }
+  .d-valve { fill: var(--color-brand-ink) !important; stroke: none; }
+  .d-tap { stroke: var(--color-brand-ink); stroke-width: 1.5; }
+  .d-drop { fill: var(--color-brand) !important; stroke: none; }
+  .d-sink { stroke: var(--color-ink); stroke-width: 1.1; }
+  .d-drain { stroke: rgb(0 90 140 / 0.6); stroke-width: 1.1; }
+  .d-panel { fill: var(--color-ink) !important; stroke: none; }
+  .d-panel-l { stroke: rgb(255 255 255 / 0.55); stroke-width: 0.7; }
+  .d-circ { stroke: var(--color-ink-soft); stroke-width: 0.8; stroke-dasharray: 4 2.5; }
+  .d-pulse { stroke: var(--color-brand); stroke-width: 2; stroke-dasharray: 5 95; }
+  .d-sym circle { fill: #fff; stroke: var(--color-ink); stroke-width: 1; }
+  .d-sym path { stroke: var(--color-ink); stroke-width: 0.9; }
+
+  /* cada vez que se abre una lámina, su detalle se dibuja */
+  .pg [pathLength='1'] { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .pg.is-on [pathLength='1'] { stroke-dashoffset: 0; transition: stroke-dashoffset 1.1s 0.15s cubic-bezier(0.5, 0, 0.2, 1); }
+  .pg :is(.d-fill, .d-hatch, .d-stir, .d-valve, .d-drop, .d-sym, .d-panel, .d-panel-l, .d-circ, .d-flow, .d-pulse) { opacity: 0; }
+  .pg.is-on :is(.d-fill, .d-hatch, .d-stir, .d-valve, .d-sym, .d-panel, .d-panel-l, .d-circ) { opacity: 1; transition: opacity 0.6s 0.7s; }
+  .pg.is-on :is(.d-flow, .d-pulse) { opacity: 1; transition: opacity 0.4s 1.1s; animation: ic-flow 2.6s 1.1s linear infinite; }
+  .pg.is-on .d-drop { animation: ic-drop 1.6s 1.2s ease-in infinite; }
+  @keyframes ic-flow { to { stroke-dashoffset: -100; } }
+  @keyframes ic-drop { 0% { opacity: 0; transform: translateY(-6px); } 20% { opacity: 1; } 80% { opacity: 1; transform: translateY(8px); } 100% { opacity: 0; transform: translateY(12px); } }
+  .pg .rc li { opacity: 0; transform: translateY(6px); }
+  .pg.is-on .rc li { opacity: 1; transform: none; transition: opacity 0.4s, transform 0.5s var(--ease-out-expo); transition-delay: calc(0.35s + var(--j) * 0.08s); }
+
+  /* Entrada de la sección */
+  :global(html.js) .ic :is(.ic-head, .fd) { opacity: 0; transform: translateY(16px); }
+  :global(html.js) .ic.is-in :is(.ic-head, .fd) { opacity: 1; transform: none; transition: opacity 0.8s, transform 1s var(--ease-out-expo); }
+  :global(html.js) .ic.is-in .fd { transition-delay: 0.15s; }
+  :global(html.rm) .ic * { transition: none !important; animation: none !important; }
+  :global(html.rm) .ic :is(.ic-head, .fd, .rc li) { opacity: 1 !important; transform: none !important; }
+  :global(html.rm) .pg [pathLength='1'] { stroke-dashoffset: 0; }
+  :global(html.rm) .pg :is(.d-fill, .d-hatch, .d-stir, .d-valve, .d-drop, .d-sym, .d-panel, .d-panel-l, .d-circ) { opacity: 1; }
+
+  @media (max-width: 639px) and (max-height: 700px) {
+    .ic :global(.trz) { display: none; }
+    .a { font-size: 0.86rem; }
+  }
+  @media (max-width: 639px) and (max-height: 600px) {
+    .ic-sub { display: none; }
+    .ic-h2 { font-size: 1.4rem; }
+    .q { font-size: 1.02rem; }
+    .a { font-size: 0.8rem; line-height: 1.35; }
+    .pg { padding: 12px 14px 8px; gap: 6px; }
+    .code { display: none; }
+  }
+  @media (min-width: 640px) {
+    .ic { --pad: 28px; }
+    .tab-t { font-size: 12px; }
+  }
+
+  /* ---------- Escritorio: la carpeta abierta de lado, pestañas en el canto derecho ---------- */
+  @media (min-width: 1024px) {
+    .ic { --pad: max(40px, calc((100% - 1100px) / 2)); --hd: 84px; }
+    .ic-pin { padding-top: calc(var(--hd) + clamp(12px, 3svh, 36px)); padding-bottom: clamp(24px, 5svh, 52px); }
+    .fd { flex-direction: row-reverse; max-height: 540px; }
+    .tabs { grid-template-columns: none; grid-auto-rows: minmax(0, 1fr); gap: 6px; padding: 18px 0; width: 150px; flex: none; }
+    .tab { justify-items: start; align-content: center; padding: 10px 14px; border-radius: 0 10px 10px 0; transform: translateX(-10px); }
+    .tab.is-on { transform: none; }
+    .tab-c { font-size: 18px; }
+    .tab-t { font-size: 13.5px; }
+    .sheet { --cut: 22px; border-top: none; border-right: 3px solid var(--color-brand-ink); }
+    .sheet::before { inset: 12px; }
+    .pg { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; align-items: center; gap: 12px 36px; padding: 34px 40px 22px; }
+    .det { grid-row: 1; height: 100%; }
+    .tx { gap: 10px; }
+    .q { font-size: 1.7rem; letter-spacing: -0.03em; }
+    .a { font-size: 1.04rem; }
+    .rc { flex-direction: column; gap: 8px; margin-top: 8px; }
+    .rc li { font-size: 14.5px; }
+    .rc svg { width: 18px; height: 18px; }
+    .code { grid-column: 1 / -1; font-size: 12px; }
+    .code b { font-size: 15px; }
+  }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-ic]');
+  if (sec) {
+    const pgs = [...sec.querySelectorAll<HTMLElement>('[data-pg]')];
+    const tabs = [...sec.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+    const pin = sec.querySelector<HTMLElement>('.ic-pin')!;
+    const N = pgs.length;
+    let cur = -1;
+
+    const show = (i: number) => {
+      if (i === cur) return;
+      cur = i;
+      pgs.forEach((p, k) => p.classList.toggle('is-on', k === i));
+      tabs.forEach((t, k) => { t.classList.toggle('is-on', k === i); t.setAttribute('aria-selected', k === i ? 'true' : 'false'); });
+    };
+    show(0);
+
+    // el avance depende de cuánto se ha bajado dentro de la sección (con histéresis para no saltar en los bordes)
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const r = sec.getBoundingClientRect();
+        const range = sec.offsetHeight - pin.offsetHeight;
+        const p = Math.min(1, Math.max(0, -r.top / range));
+        const f = p * N;
+        const target = Math.min(N - 1, Math.floor(f));
+        if (target !== cur && Math.abs(f - (target > cur ? target : cur)) > 0.05) show(target);
+      });
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // tocar una pestaña lleva el scroll hasta su tramo
+    tabs.forEach((t, i) =>
+      t.addEventListener('click', () => {
+        const range = sec.offsetHeight - pin.offsetHeight;
+        const top = sec.getBoundingClientRect().top + scrollY;
+        scrollTo({ top: top + range * ((i + 0.5) / N), behavior: document.documentElement.classList.contains('rm') ? 'auto' : 'smooth' });
+      }),
+    );
+
+    new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { sec.classList.add('is-in'); io.disconnect(); } }, { threshold: 0.05 }).observe(sec);
+  }
+</script>

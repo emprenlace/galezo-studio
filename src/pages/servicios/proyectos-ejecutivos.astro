@@ -1,0 +1,47 @@
+---
+/**
+ * Servicio · Proyectos ejecutivos. Landing de pauta para quien ya va a construir y necesita el proyecto completo:
+ * arquitectura e ingenierías estructural, hidrosanitaria y eléctrica (ingenieros aliados que coordina Galezo),
+ * listo para radicar la licencia (la tramita el cliente). Se arma sección por sección:
+ * Hero (¿es lo que busco?) · 01 Lo que incluye · 02 Un solo responsable · 03 Así llega a la obra · 04 Proyectos y
+ * clientes (¿lo que diseñan se construye?) · 05 Quién diseña · Cierre. Pendiente: Preguntas (faltan datos de Ulises).
+ * Mientras no esté lista (ready en lib/servicios.ts) sigue en noindex.
+ */
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import HeroEjecutivo from '../../components/ejecutivo/HeroEjecutivo.astro';
+import Incluye from '../../components/ejecutivo/Incluye.astro';
+import Responsable from '../../components/ejecutivo/Responsable.astro';
+import Ruta from '../../components/ejecutivo/Ruta.astro';
+import Obras from '../../components/Obras.astro';
+import Estudio from '../../components/Estudio.astro';
+import Clientes from '../../components/Clientes.astro';
+import Cierre from '../../components/Cierre.astro';
+import { servicios } from '../../lib/servicios';
+import { breadcrumb, servicio } from '../../lib/seo';
+
+const s = servicios.find((x) => x.id === 'ejecutivo')!;
+const path = `/servicios/${s.slug}`;
+const description = 'Proyecto ejecutivo completo: arquitectura e ingenierías estructural, hidrosanitaria y eléctrica coordinadas en un solo paquete, listo para radicar la licencia y construir.';
+---
+
+<Base
+  title="Proyecto ejecutivo de arquitectura e ingenierías · Galezo Studio"
+  description={description}
+  noindex={!s.ready}
+  pageType="service"
+  serviceId={s.id}
+  schema={[servicio('Proyecto ejecutivo de arquitectura e ingenierías', description, path, 'Proyecto ejecutivo'), breadcrumb([['Inicio', '/'], ['Servicios', '/#servicios'], [s.title, path]])]}
+>
+  <Header />
+  <main>
+    <HeroEjecutivo />
+    <Incluye n="01" />
+    <Responsable n="02" />
+    <Ruta n="03" />
+    <Obras n="04" cta={false} conClientes={false} />
+    <Clientes n="05" />
+    <Estudio n="06" cta={false} />
+    <Cierre n="07" />
+  </main>
+</Base>

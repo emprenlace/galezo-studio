@@ -1,0 +1,247 @@
+---
+/**
+ * Proyectos ejecutivos · 03 "Así llega tu proyecto a la obra": qué pasa después y quién hace qué.
+ * Una ruta dibujada con cuatro paradas (diseñamos, calculamos, radicas, construyes). La carpeta del proyecto
+ * recorre la ruta con el scroll; en cada parada se enciende su dibujo y la ficha dice qué pasa y quién lo hace.
+ * En la tercera la carpeta pasa de Galezo a ti: la licencia la radica el cliente (dato confirmado).
+ */
+import Plomada from '../Plomada.astro';
+import Trazos from '../Trazos.astro';
+
+const { n = '03' } = Astro.props as { n?: string };
+
+const paradas = [
+  { t: 'Diseñamos', d: 'La arquitectura de tu proyecto, revisada contigo por etapas.', who: 'gz', x: 50, y: 150 },
+  { t: 'Calculamos', d: 'Estructura, redes de agua y electricidad sobre el mismo diseño, con ingenieros aliados.', who: 'gz', x: 220, y: 70 },
+  { t: 'Radicas', d: 'Te entregamos el paquete listo para la curaduría. Tú lo radicas y tramitas la licencia.', who: 'tu', x: 390, y: 150 },
+  { t: 'Construyes', d: 'Con planos que coinciden y cantidades de obra para cotizar con tu constructor.', who: 'tu', x: 560, y: 70 },
+];
+const ruta = 'M50 150C135 150 135 70 220 70S305 150 390 150S475 70 560 70';
+const N = paradas.length;
+---
+
+<section class="ru" id="ruta" data-nav-label="Después del diseño" aria-labelledby="ru-title" data-ru>
+  <div class="ru-pin">
+    <Trazos left="norte" right="escala" />
+    <div class="ru-in">
+      <Plomada n={n} label="Después del diseño" variant="sello" />
+      <header class="ru-head">
+        <h2 id="ru-title" class="ru-h2">Así llega tu proyecto <span class="accent">a la obra</span></h2>
+        <p class="ru-sub">Nosotros diseñamos y calculamos; tú radicas en la curaduría y construyes.</p>
+      </header>
+
+      <figure class="map" aria-hidden="true">
+        <svg viewBox="0 -10 610 230">
+          <path class="rt-base" d={ruta} />
+          <path class="rt-done" d={ruta} pathLength="1" data-done />
+
+          <!-- 1 · Diseñamos: escuadra y lápiz -->
+          <g class="st" data-st="0" transform="translate(50 150)">
+            <circle class="st-dot" r="7" />
+            <g class="ic" transform="translate(-22 18)">
+              <path d="M2 40L2 4L38 40Z" />
+              <path d="M9 33L9 21L21 33Z" />
+              <path d="M30 2L42 14L20 36L8 38L10 26Z" />
+              <path d="M27 5L39 17" />
+            </g>
+          </g>
+          <!-- 2 · Calculamos: columna, gota y rayo -->
+          <g class="st" data-st="1" transform="translate(220 70)">
+            <circle class="st-dot" r="7" />
+            <g class="ic" transform="translate(-34 -62)">
+              <path d="M4 6H20V44H4Z" />
+              <path d="M8 6V44M16 6V44M4 16H20M4 26H20M4 36H20" class="thin" />
+              <path d="M36 10C31 18 28 22 28 26A8 8 0 0 0 44 26C44 22 41 18 36 10Z" />
+              <path d="M58 4L50 24H58L52 44L66 18H58L64 4Z" />
+            </g>
+          </g>
+          <!-- 3 · Radicas: la curaduría (edificio público) -->
+          <g class="st" data-st="2" transform="translate(390 150)">
+            <circle class="st-dot" r="7" />
+            <g class="ic" transform="translate(-24 18)">
+              <path d="M2 14L24 2L46 14Z" />
+              <path d="M6 18V36M18 18V36M30 18V36M42 18V36" />
+              <path d="M0 40H48M3 16H45" />
+            </g>
+          </g>
+          <!-- 4 · Construyes: grúa -->
+          <g class="st" data-st="3" transform="translate(560 70)">
+            <circle class="st-dot" r="7" />
+            <g class="ic" transform="translate(-26 -64)">
+              <path d="M14 48V6M20 48V6M14 12L20 18M20 12L14 18M14 24L20 30M20 24L14 30M14 36L20 42M20 36L14 42" class="thin" />
+              <path d="M2 6H50M8 6L17 0L26 6" />
+              <path d="M42 6V22" class="thin" />
+              <path d="M37 22H47V30H37Z" />
+              <path d="M6 48H28" />
+            </g>
+          </g>
+
+          <!-- la carpeta del proyecto -->
+          <g class="fol" data-fol>
+            <g class="fol-in">
+              <path class="fol-b" d="M-14 -8H-4L-1 -11H14V10H-14Z" />
+              <path class="fol-f" d="M-14 -4H14V10H-14Z" />
+            </g>
+          </g>
+        </svg>
+      </figure>
+
+      <div class="cards" aria-live="polite">
+        {
+          paradas.map((p, i) => (
+            <article class:list={['cd', { 'is-on': i === 0 }]} data-cd={i}>
+              <p class="cd-k">
+                <span class="cd-n">{String(i + 1).padStart(2, '0')}</span>
+                <span class:list={['who', `who-${p.who}`]}>{p.who === 'gz' ? 'Lo hace Galezo' : 'Lo haces tú'}</span>
+              </p>
+              <h3 class="cd-t">{p.t}</h3>
+              <p class="cd-d">{p.d}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ru { --pad: 20px; --hd: 76px; position: relative; height: 420svh; background: #fff; }
+  .ru-pin { isolation: isolate; position: sticky; top: 0; height: 100svh; overflow: hidden; display: flex; padding: calc(var(--hd) + 6px) var(--pad) 18px; }
+  .ru-in { position: relative; z-index: 1; width: 100%; max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: clamp(8px, 1.8svh, 20px); min-height: 0; }
+  .ru-head { display: grid; justify-items: center; gap: 6px; text-align: center; }
+  .ru-h2 { font-size: clamp(1.5rem, min(1.1rem + 2.5vw, 4.8svh), 3.1rem); line-height: 1.05; font-weight: 560; letter-spacing: -0.035em; text-wrap: balance; }
+  .ru-h2 .accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.015em; color: var(--color-brand); font-size: 1.08em; }
+  .ru-sub { max-width: 32rem; font-size: clamp(0.9rem, 0.86rem + 0.25vw, 1.05rem); line-height: 1.45; color: var(--color-ink-soft); text-wrap: balance; }
+
+  /* la ruta */
+  .map { flex: 1; min-height: 0; width: 100%; margin: 0; position: relative; }
+  .map svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .rt-base { fill: none; stroke: rgb(11 13 16 / 0.16); stroke-width: 2; stroke-dasharray: 2 6; stroke-linecap: round; }
+  .rt-done { fill: none; stroke: var(--color-brand); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--p, 0)); }
+  .st-dot { fill: #fff; stroke: rgb(11 13 16 / 0.3); stroke-width: 2; transition: fill 0.4s, stroke 0.4s; }
+  .ic path { fill: none; stroke: rgb(11 13 16 / 0.32); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.5s; }
+  .ic .thin { stroke-width: 1.1; }
+  .st.is-past .st-dot { fill: var(--color-brand); stroke: var(--color-brand); }
+  .st.is-on .st-dot { fill: var(--color-brand); stroke: rgb(0 128 193 / 0.25); stroke-width: 8; }
+  .st.is-on .ic path, .st.is-past .ic path { stroke: var(--color-brand-ink); }
+  .st.is-on .ic { animation: ru-pop 0.6s var(--ease-out-expo); }
+  @keyframes ru-pop { from { translate: 0 4px; opacity: 0.4; } }
+  .ic, .fol-in, .st-dot { transform-box: fill-box; transform-origin: center; }
+
+  /* la carpeta: azul mientras está en el estudio, oscura cuando pasa a tus manos */
+  .fol-in { animation: ru-bob 2.4s ease-in-out infinite; }
+  @keyframes ru-bob { 50% { transform: translateY(-3px); } }
+  .fol-b { fill: var(--color-brand-ink); transition: fill 0.5s; }
+  .fol-f { fill: var(--color-brand); transition: fill 0.5s; }
+  .ru.is-tu .fol-b { fill: #23262b; }
+  .ru.is-tu .fol-f { fill: #4a4f57; }
+
+  /* la ficha de la parada */
+  .cards { display: grid; width: 100%; max-width: 32rem; }
+  .cd { grid-area: 1 / 1; display: grid; gap: 4px; justify-items: center; text-align: center; opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity 0.35s, transform 0.5s var(--ease-out-expo), visibility 0s 0.35s; }
+  .cd.is-on { opacity: 1; visibility: inherit; transform: none; transition: opacity 0.45s, transform 0.6s var(--ease-out-expo); }
+  .cd-k { display: flex; align-items: center; gap: 10px; }
+  .cd-n { font-family: var(--font-serif); font-style: italic; font-size: 1.3rem; color: var(--color-brand); }
+  .who { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 650; }
+  .who-gz { background: rgb(0 128 193 / 0.12); color: var(--color-brand-ink); }
+  .who-tu { background: var(--color-ink); color: #fff; }
+  .cd-t { font-size: 1.35rem; font-weight: 620; letter-spacing: -0.025em; }
+  .cd-d { font-size: 0.95rem; line-height: 1.45; color: var(--color-ink-soft); text-wrap: balance; }
+
+  :global(html.js) .ru :is(.ru-head, .map, .cards) { opacity: 0; transform: translateY(16px); }
+  :global(html.js) .ru.is-in :is(.ru-head, .map, .cards) { opacity: 1; transform: none; transition: opacity 0.8s, transform 1s var(--ease-out-expo); }
+  :global(html.js) .ru.is-in .map { transition-delay: 0.15s; }
+  :global(html.js) .ru.is-in .cards { transition-delay: 0.3s; }
+  :global(html.rm) .ru * { transition: none !important; animation: none !important; }
+  :global(html.rm) .ru :is(.ru-head, .map, .cards) { opacity: 1 !important; transform: none !important; }
+
+  /* celular: la ruta se ve a poco más de la mitad de su tamaño; dibujos, paradas y carpeta más grandes */
+  @media (max-width: 639px) {
+    .ic { scale: 1.35; }
+    .fol-in { scale: 1.6; }
+    .st-dot { scale: 1.3; }
+    .rt-base { stroke-width: 3; }
+    .rt-done { stroke-width: 3.5; }
+  }
+  @media (max-width: 639px) and (max-height: 700px) {
+    .ru :global(.trz) { display: none; }
+    .cd-d { font-size: 0.9rem; }
+  }
+  @media (max-width: 639px) and (max-height: 600px) {
+    .ru-sub { display: none; }
+    .ru-h2 { font-size: 1.4rem; }
+    .cd-t { font-size: 1.15rem; }
+    .cd-d { font-size: 0.84rem; line-height: 1.36; }
+  }
+  @media (min-width: 640px) {
+    .ru { --pad: 28px; }
+  }
+  @media (min-width: 1024px) {
+    .ru { --pad: max(40px, calc((100% - 1100px) / 2)); --hd: 84px; }
+    .ru-pin { padding-top: calc(var(--hd) + clamp(12px, 3svh, 36px)); padding-bottom: clamp(24px, 5svh, 52px); }
+    .map { max-height: 400px; }
+    .cd-t { font-size: 1.7rem; }
+    .cd-d { font-size: 1.06rem; }
+  }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-ru]');
+  if (sec) {
+    const pin = sec.querySelector<HTMLElement>('.ru-pin')!;
+    const path = sec.querySelector<SVGPathElement>('[data-done]')!;
+    const fol = sec.querySelector<SVGGElement>('[data-fol]')!;
+    const sts = [...sec.querySelectorAll<SVGGElement>('[data-st]')];
+    const cds = [...sec.querySelectorAll<HTMLElement>('[data-cd]')];
+    const N = sts.length;
+    const L = path.getTotalLength();
+    // dónde cae cada parada sobre la ruta (0–1): se mide para no depender de la forma de la curva
+    const stopAt = sts.map((s) => {
+      const m = s.transform.baseVal.consolidate()!.matrix;
+      let best = 0;
+      let bd = Infinity;
+      for (let k = 0; k <= 200; k++) {
+        const q = path.getPointAtLength((L * k) / 200);
+        const d = (q.x - m.e) ** 2 + (q.y - m.f) ** 2;
+        if (d < bd) { bd = d; best = k / 200; }
+      }
+      return best;
+    });
+    let cur = -1;
+    const show = (i: number) => {
+      if (i === cur) return;
+      cur = i;
+      sts.forEach((s, k) => { s.classList.toggle('is-on', k === i); s.classList.toggle('is-past', k < i); });
+      cds.forEach((c, k) => c.classList.toggle('is-on', k === i));
+      sec.classList.toggle('is-tu', i >= 2);
+    };
+    show(0);
+
+    // la carpeta recorre la ruta con el scroll; cada tramo se detiene un rato en su parada
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const r = sec.getBoundingClientRect();
+        const range = sec.offsetHeight - pin.offsetHeight;
+        const p = Math.min(1, Math.max(0, -r.top / range));
+        const f = p * (N - 1); // 0 → 3
+        const i = Math.min(N - 2, Math.floor(f));
+        const local = f - i;
+        // quieto en la parada el primer y último 30 % de cada tramo, viaja en el medio
+        const e = local < 0.3 ? 0 : local > 0.7 ? 1 : (1 - Math.cos(((local - 0.3) / 0.4) * Math.PI)) / 2;
+        const t = stopAt[i] + (stopAt[i + 1] - stopAt[i]) * e;
+        const q = path.getPointAtLength(L * t);
+        fol.setAttribute('transform', `translate(${q.x.toFixed(1)} ${(q.y - 16).toFixed(1)})`);
+        path.style.setProperty('--p', t.toFixed(4));
+        // la ficha cambia cuando la carpeta llega a la parada
+        show(e > 0.9 ? i + 1 : i);
+      });
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll);
+    onScroll();
+
+    new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { sec.classList.add('is-in'); io.disconnect(); } }, { threshold: 0.05 }).observe(sec);
+  }
+</script>

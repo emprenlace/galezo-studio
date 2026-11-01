@@ -1,0 +1,260 @@
+---
+/**
+ * Proyectos ejecutivos · 02 "Tú hablas con uno, nosotros con todos": por qué contratar el paquete y no a cada
+ * ingeniero por aparte. Un diagrama de quién habla con quién con un interruptor:
+ * - Por tu cuenta: tú en el centro de cuatro hilos enredados y choques entre disciplinas (el tubo contra la viga).
+ * - Con Galezo: una sola línea tuya hacia el estudio y del estudio, en orden, a las cuatro disciplinas; los choques
+ *   se vuelven revisados.
+ * Arranca en "por tu cuenta" y pasa solo a "con Galezo" al entrar; se puede cambiar tocando.
+ */
+import Plomada from '../Plomada.astro';
+import Trazos from '../Trazos.astro';
+import mono from '../../assets/brand/monogram-d.txt?raw';
+
+const { n = '02' } = Astro.props as { n?: string };
+
+const nodos = [
+  { c: 'A', t: 'Arquitectura', x: 52, y: 58 },
+  { c: 'E', t: 'Estructural', x: 138, y: 34 },
+  { c: 'HS', t: 'Hidrosanitaria', x: 222, y: 34 },
+  { c: 'EL', t: 'Eléctrica', x: 308, y: 58 },
+];
+const TU = { x: 180, y: 236 };
+const GZ = { x: 180, y: 146 };
+// por tu cuenta: hilos que se cruzan desde ti hasta cada profesional
+const hilos = [
+  `M${TU.x} ${TU.y - 18}C300 200 10 150 ${nodos[0].x} ${nodos[0].y + 22}`,
+  `M${TU.x} ${TU.y - 18}C30 210 270 110 ${nodos[1].x} ${nodos[1].y + 22}`,
+  `M${TU.x} ${TU.y - 18}C330 214 90 116 ${nodos[2].x} ${nodos[2].y + 22}`,
+  `M${TU.x} ${TU.y - 18}C50 196 350 160 ${nodos[3].x} ${nodos[3].y + 22}`,
+];
+// con Galezo: tú → estudio → cada disciplina
+const orden = nodos.map((d) => `M${GZ.x} ${GZ.y - 28}L${d.x} ${d.y + 22}`);
+const choques = [
+  { x: 180, y: 34, t: 'el tubo atraviesa la viga', tx: 180, ty: 78 },
+  { x: 236, y: 104, t: 'la caja cae en la columna', tx: 236, ty: 124 },
+];
+
+const puntos = {
+  solo: [
+    'Buscas, contratas y persigues a cuatro profesionales.',
+    'Cada uno dibuja por su lado y los choques aparecen en obra.',
+    'Si algo falla, cada uno le echa la culpa al otro.',
+  ],
+  gz: [
+    'Un solo contacto: nosotros hablamos con los ingenieros.',
+    'Revisamos que los planos coincidan antes de entregártelos.',
+    'Un responsable para cualquier ajuste.',
+  ],
+};
+---
+
+<section class="rs" id="responsable" data-nav-label="Un solo responsable" aria-labelledby="rs-title" data-rs>
+  <Trazos left="ejes" right="cota" />
+  <div class="rs-in">
+    <Plomada n={n} label="Un solo responsable" variant="firma" />
+    <header class="rs-head rs-rv">
+      <h2 id="rs-title" class="rs-h2">Tú hablas con uno, <span class="accent">nosotros con todos</span></h2>
+      <p class="rs-sub">Coordinamos a los ingenieros aliados para que los planos de todas las disciplinas coincidan.</p>
+    </header>
+
+    <div class="rs-body rs-rv">
+      <div class="sw" role="group" aria-label="Comparar">
+        <button type="button" class="sw-b is-on" data-mode="solo" aria-pressed="true">Por tu cuenta</button>
+        <button type="button" class="sw-b" data-mode="gz" aria-pressed="false">Con Galezo</button>
+        <span class="sw-k" aria-hidden="true"></span>
+      </div>
+
+      <figure class="net" aria-hidden="true">
+        <svg viewBox="0 0 360 262">
+          <!-- por tu cuenta -->
+          <g class="m-solo">
+            {hilos.map((d, i) => <path class="hilo" d={d} pathLength="1" style={`--i:${i}`} />)}
+            <path class="roce" d="M160 34H200" />
+            <path class="roce" d="M150 52Q200 112 292 72" />
+            {
+              choques.map((c, i) => (
+                <g class="choque" style={`--i:${i}`}>
+                  <circle cx={c.x} cy={c.y} r="8" />
+                  <text class="ch-i" x={c.x} y={c.y + 4}>!</text>
+                  <text class="ch-t" x={c.tx} y={c.ty}>{c.t}</text>
+                </g>
+              ))
+            }
+          </g>
+          <!-- con Galezo -->
+          <g class="m-gz">
+            <path class="via" d={`M${TU.x} ${TU.y - 18}V${GZ.y + 28}`} pathLength="1" />
+            {orden.map((d, i) => <path class="via" d={d} pathLength="1" style={`--i:${i + 1}`} />)}
+            <g class="gz">
+              <circle cx={GZ.x} cy={GZ.y} r="28" />
+              <svg x={GZ.x - 12} y={GZ.y - 14} width="24" height="28" viewBox="0 0 1647 1914"><path transform="matrix(1 0 0 -1 0 1914)" d={mono.trim()} /></svg>
+            </g>
+            <text class="gz-t" x={GZ.x + 38} y={GZ.y + 4}>Galezo Studio</text>
+          </g>
+
+          <!-- las cuatro disciplinas y tú -->
+          {
+            nodos.map((d, i) => (
+              <g class="nodo" style={`--i:${i}`}>
+                <circle cx={d.x} cy={d.y} r="20" />
+                <text class="nd-c" x={d.x} y={d.y + 5}>{d.c}</text>
+                <text class="nd-t" x={d.x} y={d.y - 28}>{d.t}</text>
+                <g class="ok" transform={`translate(${d.x + 15} ${d.y - 15})`}>
+                  <circle r="7" />
+                  <path d="M-3.2 0.2L-0.8 2.6L3.4 -2.4" />
+                </g>
+              </g>
+            ))
+          }
+          <g class="tu">
+            <circle cx={TU.x} cy={TU.y} r="18" />
+            <path d={`M${TU.x - 8} ${TU.y + 9}c0-6 3.6-9 8-9s8 3 8 9M${TU.x} ${TU.y - 2}a5 5 0 1 1 0.01 0`} />
+            <text class="tu-t" x={TU.x + 26} y={TU.y + 4}>Tú</text>
+          </g>
+        </svg>
+      </figure>
+
+      <div class="pts" aria-live="polite">
+        {
+          (['solo', 'gz'] as const).map((m) => (
+            <ul class:list={['pt-l', `pt-${m}`, { 'is-on': m === 'solo' }]} role="list" data-list={m}>
+              {puntos[m].map((p, j) => (
+                <li style={`--j:${j}`}>
+                  <span class="pt-i" aria-hidden="true">{m === 'solo' ? '×' : '✓'}</span>
+                  {p}
+                </li>
+              ))}
+            </ul>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .rs { --pad: 20px; --hd: 76px; position: relative; isolation: isolate; background: var(--color-bone); min-height: 100svh; display: flex; padding: calc(var(--hd) + 6px) var(--pad) 18px; overflow: hidden; }
+  .rs-in { position: relative; z-index: 1; width: 100%; max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: clamp(8px, 1.6svh, 18px); }
+  .rs-head { display: grid; justify-items: center; gap: 6px; text-align: center; }
+  .rs-h2 { font-size: clamp(1.5rem, min(1.1rem + 2.5vw, 4.8svh), 3.1rem); line-height: 1.05; font-weight: 560; letter-spacing: -0.035em; text-wrap: balance; }
+  .rs-h2 .accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.015em; color: var(--color-brand); font-size: 1.08em; }
+  .rs-sub { max-width: 32rem; font-size: clamp(0.9rem, 0.86rem + 0.25vw, 1.05rem); line-height: 1.45; color: var(--color-ink-soft); text-wrap: balance; }
+
+  .rs-body { flex: 1; min-height: 0; width: 100%; display: flex; flex-direction: column; align-items: center; gap: clamp(8px, 1.6svh, 16px); }
+
+  /* interruptor */
+  .sw { position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px rgb(11 13 16 / 0.1); }
+  .sw-b { position: relative; z-index: 1; height: 38px; padding: 0 18px; border-radius: 999px; font-size: 14px; font-weight: 620; color: var(--color-ink-soft); cursor: pointer; transition: color 0.35s; }
+  .sw-b.is-on { color: #fff; }
+  .sw-k { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 999px; background: var(--color-ink); transition: transform 0.55s var(--ease-out-expo), background-color 0.4s; }
+  .rs.is-gz .sw-k { transform: translateX(100%); background: var(--color-brand-ink); }
+
+  /* el diagrama */
+  .net { flex: 1; min-height: 0; width: 100%; max-width: 560px; margin: 0; position: relative; }
+  .net svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .net text { font-family: var(--font-sans); text-anchor: middle; }
+  .nodo circle { fill: #fff; stroke: var(--color-ink); stroke-width: 1.3; transition: stroke 0.4s; }
+  .nd-c { font-family: var(--font-serif) !important; font-style: italic; font-size: 15px; fill: var(--color-ink); }
+  .nd-t { font-size: 10.5px; font-weight: 620; fill: var(--color-ink-soft); }
+  .rs.is-gz .nodo circle { stroke: var(--color-brand); }
+  .ok { opacity: 0; transform-box: fill-box; transition: opacity 0.4s; }
+  .ok circle { fill: var(--color-brand); stroke: none; }
+  .ok path { fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .rs.is-gz .ok { opacity: 1; transition-delay: calc(0.7s + var(--i) * 0.12s); }
+  .tu circle { fill: var(--color-ink); }
+  .tu path { fill: none; stroke: #fff; stroke-width: 1.5; stroke-linecap: round; }
+  .tu-t { font-family: var(--font-serif) !important; font-style: italic; font-size: 17px; fill: var(--color-ink); text-anchor: start !important; }
+
+  .hilo { fill: none; stroke: var(--color-ink-soft); stroke-width: 1.2; stroke-dasharray: 1; stroke-dashoffset: 0; opacity: 0.75; transition: stroke-dashoffset 0.6s, opacity 0.5s; }
+  .roce { fill: none; stroke: var(--color-ink); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.55; transition: opacity 0.4s; }
+  .choque circle { fill: var(--color-ink); }
+  .ch-i { font-size: 12px; font-weight: 800; fill: #fff; }
+  .ch-t { font-family: 'Architects Daughter', var(--font-sans) !important; font-size: 11.5px; fill: var(--color-ink); }
+  .choque { transition: opacity 0.4s; }
+  .rs.is-gz .m-solo .hilo { stroke-dashoffset: 1; opacity: 0; }
+  .rs.is-gz .m-solo :is(.roce, .choque) { opacity: 0; }
+
+  .via { fill: none; stroke: var(--color-brand); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.3s; }
+  .rs.is-gz .via { stroke-dashoffset: 0; transition: stroke-dashoffset 0.6s cubic-bezier(0.5, 0, 0.2, 1); transition-delay: calc(0.25s + var(--i, 0) * 0.12s); }
+  .gz { opacity: 0; transform: scale(0.6); transform-origin: 180px 146px; transition: opacity 0.3s, transform 0.3s; }
+  .gz circle { fill: #fff; stroke: var(--color-brand); stroke-width: 2; }
+  .gz path { fill: var(--color-brand); }
+  .gz-t { font-family: var(--font-serif) !important; font-style: italic; font-size: 15px; fill: var(--color-brand-ink); text-anchor: start !important; opacity: 0; transition: opacity 0.3s; }
+  .rs.is-gz .gz { opacity: 1; transform: none; transition: opacity 0.4s 0.2s, transform 0.7s 0.2s var(--ease-out-expo); }
+  .rs.is-gz .gz-t { opacity: 1; transition-delay: 0.5s; }
+
+  /* los puntos */
+  .pts { display: grid; width: 100%; max-width: 30rem; }
+  .pt-l { grid-area: 1 / 1; display: grid; gap: 7px; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0s 0.3s; }
+  .pt-l.is-on { opacity: 1; visibility: inherit; transition: opacity 0.4s; }
+  .pt-l li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; font-size: 0.93rem; line-height: 1.4; color: var(--color-ink); }
+  .pt-l.is-on li { animation: rs-in 0.5s calc(var(--j) * 0.08s) var(--ease-out-expo) both; }
+  @keyframes rs-in { from { opacity: 0; transform: translateY(6px); } }
+  .pt-i { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; font-size: 13px; font-weight: 800; line-height: 1; }
+  .pt-solo .pt-i { background: rgb(11 13 16 / 0.08); color: var(--color-ink); }
+  .pt-solo li { color: var(--color-ink-soft); }
+  .pt-gz .pt-i { background: var(--color-brand-ink); color: #fff; font-size: 12px; }
+
+  /* entrada: el diagrama de "por tu cuenta" se traza */
+  :global(html.js) .rs-rv { opacity: 0; transform: translateY(16px); }
+  :global(html.js) .rs.is-in .rs-rv { opacity: 1; transform: none; transition: opacity 0.8s, transform 1s var(--ease-out-expo); }
+  :global(html.js) .rs.is-in .rs-body { transition-delay: 0.15s; }
+  :global(html.js) .rs:not(.is-in) .hilo { stroke-dashoffset: 1; }
+  :global(html.js) .rs.is-in:not(.is-gz) .hilo { transition: stroke-dashoffset 1s cubic-bezier(0.5, 0, 0.2, 1); transition-delay: calc(0.4s + var(--i) * 0.15s); }
+  :global(html.js) .rs:not(.is-in) .choque { opacity: 0; }
+  :global(html.js) .rs.is-in:not(.is-gz) .choque { transition-delay: calc(1.3s + var(--i) * 0.25s); }
+  :global(html.rm) .rs * { transition: none !important; animation: none !important; }
+  :global(html.rm) .rs-rv { opacity: 1 !important; transform: none !important; }
+
+  @media (max-width: 639px) and (max-height: 700px) {
+    .rs :global(.trz) { display: none; }
+    .pt-l li { font-size: 0.88rem; }
+    .pt-l { gap: 5px; }
+  }
+  @media (max-width: 639px) and (max-height: 600px) {
+    .rs-sub { display: none; }
+    .rs-h2 { font-size: 1.4rem; }
+    .sw-b { height: 34px; font-size: 13px; }
+    .pt-l li { font-size: 0.82rem; line-height: 1.32; }
+  }
+  @media (min-width: 640px) {
+    .rs { --pad: 28px; }
+  }
+
+  /* ---------- Escritorio: diagrama a la izquierda, interruptor y puntos a la derecha ---------- */
+  @media (min-width: 1024px) {
+    .rs { --pad: max(40px, calc((100% - 1100px) / 2)); --hd: 84px; padding-bottom: clamp(24px, 5svh, 52px); }
+    .rs-body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); grid-template-rows: auto auto; align-content: center; gap: 22px 56px; }
+    .net { grid-column: 1; grid-row: 1 / span 2; height: min(440px, 52svh); max-width: none; }
+    .sw { grid-column: 2; grid-row: 1; justify-self: start; align-self: end; }
+    .sw-b { height: 44px; padding: 0 24px; font-size: 15px; }
+    .pts { grid-column: 2; grid-row: 2; align-self: start; max-width: none; }
+    .pt-l { gap: 14px; }
+    .pt-l li { font-size: 1.08rem; grid-template-columns: 26px 1fr; gap: 12px; }
+    .pt-i { width: 26px; height: 26px; }
+  }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-rs]');
+  if (sec) {
+    const btns = [...sec.querySelectorAll<HTMLButtonElement>('[data-mode]')];
+    const lists = [...sec.querySelectorAll<HTMLElement>('[data-list]')];
+    let auto = 0;
+    const set = (m: string) => {
+      sec.classList.toggle('is-gz', m === 'gz');
+      btns.forEach((b) => { const on = b.dataset.mode === m; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+      lists.forEach((l) => l.classList.toggle('is-on', l.dataset.list === m));
+    };
+    btns.forEach((b) => b.addEventListener('click', () => { clearTimeout(auto); set(b.dataset.mode!); }));
+    // al entrar se ve el enredo; luego pasa solo a "con Galezo" (si la persona no ha tocado nada)
+    new IntersectionObserver((es, io) => {
+      if (!es[0].isIntersecting) return;
+      io.disconnect();
+      sec.classList.add('is-in');
+      const reduced = document.documentElement.classList.contains('rm');
+      auto = window.setTimeout(() => set('gz'), reduced ? 2500 : 4200);
+    }, { threshold: 0.35 }).observe(sec);
+  }
+</script>

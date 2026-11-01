@@ -12,7 +12,6 @@ import plantaColor from '../assets/planos/planta1-color.jpg';
 import plantaLinea from '../assets/planos/planta1-linea.jpg';
 import corte from '../assets/planos/corte.jpg';
 import fachada from '../assets/planos/fachada.jpg';
-import modelo3d from '../assets/planos/modelo-3d.jpg';
 import Plomada from './Plomada.astro';
 import Trazos from './Trazos.astro';
 
@@ -64,12 +63,11 @@ const q = [
   { k: 'Cocina', v: '13,55 m²', a: [760, 440], t: [700, 500] },
 ].map((it) => ({ ...it, w: 26 + (it.k.length + it.v.length) * 8.6 }));
 const sizesPlan = '(min-width: 1024px) 760px, 92vw';
-// Lámina "Planos": un mini juego que pasa solo (planta → corte → fachada → modelo 3D) y se puede elegir
+// Lámina "Planos": un mini juego que pasa solo (planta → corte → fachada; el modelo 3D tiene su propia sección) y se puede elegir
 const laminas = [
   { k: 'Planta', note: 'planta general' },
   { k: 'Corte', note: 'corte', src: corte },
   { k: 'Fachada', note: 'fachada', src: fachada },
-  { k: 'Modelo 3D', note: 'modelo 3D' },
 ];
 // número de la sección (cambia cuando se reutiliza en otra página)
 // cta: false en páginas donde el botón de la cabecera basta
@@ -110,7 +108,6 @@ const { n = '02', variant = 'plomada', ejemplo = 'proyecto de ejemplo', cta = tr
                     </div>
                     <div class="rp-sl" data-sl="1"><Image src={corte} alt="Corte arquitectónico" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-full" loading="lazy" /></div>
                     <div class="rp-sl" data-sl="2"><Image src={fachada} alt="Fachada" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-full" loading="lazy" /></div>
-                    <div class="rp-sl" data-sl="3"><Image src={modelo3d} alt="Modelo 3D BIM en Revit" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-full" loading="lazy" /></div>
                   </div>
                   <div class="rp-chips" role="group" aria-label="Láminas del juego de planos">
                     {laminas.map((l, i) => (
@@ -557,7 +554,7 @@ const { n = '02', variant = 'plomada', ejemplo = 'proyecto de ejemplo', cta = tr
   const reduced = document.documentElement.classList.contains('rm');
   const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
 
-  // Lámina "Planos": planta → corte → fachada → modelo 3D, pasan solas mientras la lámina está a la vista
+  // Lámina "Planos": planta → corte → fachada, pasan solas mientras la lámina está a la vista
   const rpSet = sec.querySelector<HTMLElement>('[data-rp-set]');
   if (rpSet) {
     const slides = [...rpSet.querySelectorAll<HTMLElement>('[data-sl]')];

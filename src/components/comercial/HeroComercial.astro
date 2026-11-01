@@ -5,6 +5,7 @@
  * La pieza visual son fotos reales de obra pública construida (no renders): pasan solas y se cambian arrastrando.
  */
 import { Image } from 'astro:assets';
+import Cifra from '../Cifra.astro';
 import instpecam from '../../assets/obras/ln/instpecam.jpg';
 import mirador from '../../assets/obras/ln/mirador.jpg';
 import alfonso from '../../assets/obras/ln/alfonso-lopez.jpg';
@@ -34,7 +35,7 @@ const vistas = [
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
         </a>
       </div>
-      <p class="vh-proof"><b>+70</b> proyectos diseñados<span class="pr-more"><span aria-hidden="true">·</span>para gobernación, alcaldías y empresas</span></p>
+      <p class="vh-proof"><Cifra v={70} /> proyectos diseñados<span class="pr-more"><span aria-hidden="true">·</span>para gobernación, alcaldías y empresas</span></p>
     </div>
 
     <!-- Las obras: fotos reales -->
@@ -116,7 +117,7 @@ const vistas = [
   .btn:hover svg { transform: translateX(3px); }
   /* respaldo: una sola línea discreta bajo el botón */
   .vh-proof { font-size: 13px; color: var(--color-ink-mute); }
-  .vh-proof b { font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: 1.35em; color: var(--color-brand); margin-right: 2px; }
+  .vh-proof :global(.cf) { font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: 1.35em; color: var(--color-brand); margin: 0 0.5em 0 0.3em; }
   .vh-proof .pr-more span { margin: 0 6px; }
   /* celular: solo la cifra, en una línea */
   @media (max-width: 639px) { .vh-proof .pr-more { display: none; } }

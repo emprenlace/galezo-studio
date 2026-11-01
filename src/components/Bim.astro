@@ -1,0 +1,265 @@
+---
+/**
+ * Inicio · "Diseñamos en BIM": qué es el modelo BIM en Revit y para qué le sirve al cliente.
+ * La sección queda fija y con el scroll se le da la vuelta al modelo real de la casa en ladera (cuatro vistas de
+ * Revit: noreste, sureste, suroeste, noroeste). En la primera, el modelo pasa de línea a materiales.
+ * Cada vista acompaña una razón concreta; la brújula del cajetín gira con la vista.
+ * Las vistas del modelo solo se usan aquí (no se repiten en otras secciones).
+ */
+import { Image } from 'astro:assets';
+import Plomada from './Plomada.astro';
+import Trazos from './Trazos.astro';
+import neLinea from '../assets/vivienda/modelo-ne-linea.jpg';
+import ne from '../assets/vivienda/modelo-ne.jpg';
+import se from '../assets/vivienda/modelo-se.jpg';
+import so from '../assets/vivienda/modelo-so.jpg';
+import no from '../assets/vivienda/modelo-no.jpg';
+
+const { n = '06', cta = true } = Astro.props as { n?: string; cta?: boolean };
+
+const pasos = [
+  { t: 'Un modelo, no dibujos sueltos', d: 'Muros, losas, ventanas y escaleras se modelan con sus medidas reales.', v: 'noreste', a: 45, img: ne },
+  { t: 'Todos los planos coinciden', d: 'Plantas, cortes y fachadas salen del mismo modelo. Si algo cambia, cambia en todos.', v: 'sureste', a: 135, img: se },
+  { t: 'Cantidades medidas en el modelo', d: 'Los metros de muro, piso y cubierta se miden en el modelo, no a ojo.', v: 'suroeste', a: 225, img: so },
+  { t: 'Lo ves antes de construirlo', d: 'Lo giras por todos sus lados y corriges en pantalla lo que en obra costaría plata.', v: 'noroeste', a: 315, img: no },
+];
+const N = pasos.length;
+const sizes = '(min-width: 1024px) 640px, 92vw';
+---
+
+<section class="bm" id="bim" data-nav-label="Modelo BIM" aria-labelledby="bm-title" data-bm>
+  <div class="bm-pin">
+    <Trazos left="ejes" right="nivel" />
+    <div class="bm-in">
+      <Plomada n={n} label="Cómo diseñamos" variant="giro" />
+
+      <div class="bm-body">
+        <div class="bm-copy">
+          <header class="bm-head">
+            <h2 id="bm-title" class="bm-h2">Tu proyecto se construye primero <span class="accent">en el computador</span></h2>
+            <p class="bm-sub">Diseñamos en BIM con Revit: todo el proyecto en un modelo 3D.</p>
+          </header>
+
+          <ol class="bm-steps" role="list">
+            {
+              pasos.map((p, i) => (
+                <li class:list={['bm-step', { 'is-on': i === 0 }]} data-step={i}>
+                  <span class="st-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                  <div class="st-tx">
+                    <h3 class="st-t">{p.t}</h3>
+                    <div class="st-dw"><p class="st-d">{p.d}</p></div>
+                  </div>
+                </li>
+              ))
+            }
+          </ol>
+
+          {
+            cta && (
+              <div class="bm-act">
+                <a href="#cotizar" class="btn chamfer" data-open-chat data-cta="bim">
+                  Cotiza tu diseño
+                  <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
+                </a>
+              </div>
+            )
+          }
+        </div>
+
+        <!-- El modelo real: cuatro vistas de Revit alrededor de la casa -->
+        <figure class="bm-fig" aria-label="Modelo BIM en Revit de una casa en ladera diseñada por Galezo Studio">
+          <div class="bm-sheet chamfer">
+            <div class="bm-views">
+              <div class="bm-v is-on" data-v="0">
+                <Image src={neLinea} alt="Modelo BIM de la casa en ladera, vista noreste en línea" widths={[640, 960, 1300]} sizes={sizes} class="bm-img" loading="lazy" />
+                <div class="bm-wipe" aria-hidden="true">
+                  <Image src={ne} alt="" widths={[640, 960, 1300]} sizes={sizes} class="bm-img" loading="lazy" />
+                </div>
+              </div>
+              {
+                pasos.slice(1).map((p, k) => (
+                  <div class="bm-v" data-v={k + 1}>
+                    <Image src={p.img} alt={`Modelo BIM de la casa en ladera, vista ${p.v}`} widths={[640, 960, 1300]} sizes={sizes} class="bm-img" loading="lazy" />
+                  </div>
+                ))
+              }
+            </div>
+
+            <!-- Brújula: el norte gira con la vista -->
+            <span class="bm-north" aria-hidden="true">
+              <svg viewBox="0 0 40 40">
+                <circle cx="20" cy="20" r="17"></circle>
+                <g class="nn" data-north style={`--a:${-pasos[0].a}deg`}>
+                  <path class="nn-n" d="M20 5 24 20H16Z"></path>
+                  <path class="nn-s" d="M20 35 24 20H16Z"></path>
+                  <text x="20" y="3.6">N</text>
+                </g>
+              </svg>
+            </span>
+
+            <figcaption class="bm-caj" aria-live="polite">
+              <span class="caj-l">Modelo BIM · Revit</span>
+              <b>Vista <span data-view>{pasos[0].v}</span></b>
+            </figcaption>
+          </div>
+          <div class="bm-dots" aria-hidden="true">{pasos.map((_, i) => <i class:list={{ 'is-on': i === 0 }} data-dot={i} />)}</div>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bm { --pad: 20px; --hd: 76px; position: relative; height: 440svh; background: radial-gradient(90% 55% at 50% 0%, rgb(0 128 193 / 0.09), rgb(0 128 193 / 0) 70%), #f4f8fb; }
+  .bm-pin { isolation: isolate; position: sticky; top: 0; height: 100svh; overflow: hidden; display: flex; padding: calc(var(--hd) + 6px) var(--pad) 14px; }
+  .bm-in { position: relative; z-index: 1; width: 100%; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: clamp(8px, 1.6svh, 18px); min-height: 0; }
+  .bm-body { flex: 1; min-height: 0; width: 100%; display: flex; flex-direction: column; gap: clamp(10px, 1.8svh, 18px); }
+  .bm-copy { display: contents; }
+
+  .bm-head { display: grid; justify-items: center; gap: 6px; text-align: center; }
+  .bm-h2 { font-size: clamp(1.5rem, min(1.1rem + 2.5vw, 4.8svh), 3.1rem); line-height: 1.05; font-weight: 560; letter-spacing: -0.035em; text-wrap: balance; }
+  .bm-h2 .accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.015em; color: var(--color-brand); font-size: 1.08em; }
+  .bm-sub { max-width: 30rem; font-size: clamp(0.9rem, 0.86rem + 0.25vw, 1.05rem); line-height: 1.45; color: var(--color-ink-soft); text-wrap: balance; }
+
+  /* ---------- El modelo ---------- */
+  .bm-fig { order: 2; flex: 1; min-height: 0; margin: 0; display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 8px; justify-items: center; container-type: size; }
+  .bm-sheet { --cut: 16px; position: relative; width: min(100cqw, calc((100cqh - 16px) * 1.41)); aspect-ratio: 1600 / 1136; align-self: center; background: #fff; box-shadow: 0 28px 48px -36px rgb(20 40 60 / 0.55); overflow: hidden; }
+  .bm-views { position: absolute; inset: 0; }
+  .bm-v { position: absolute; inset: 0; opacity: 0; transform: translateX(4%) scale(0.97); transition: opacity 0.6s, transform 0.9s var(--ease-out-expo); }
+  .bm-v.is-past { transform: translateX(-4%) scale(0.97); }
+  .bm-v.is-on { opacity: 1; transform: none; }
+  .bm-v :global(.bm-img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: none; }
+  /* línea → materiales: el color entra de izquierda a derecha con el scroll (dos traslaciones opuestas, sin clip) */
+  .bm-wipe { position: absolute; inset: 0; overflow: hidden; transform: translateX(calc((var(--w, 0) - 1) * 100%)); }
+  .bm-wipe :global(.bm-img) { transform: translateX(calc((1 - var(--w, 0)) * 100%)); }
+  .bm-wipe::after { content: ''; position: absolute; top: 0; bottom: 0; right: 0; width: 2px; background: var(--color-brand); box-shadow: 0 0 10px 2px rgb(0 128 193 / 0.35); opacity: calc(var(--w, 0) * (1 - var(--w, 0)) * 4); }
+
+  .bm-north { position: absolute; top: 10px; right: 12px; width: 38px; height: 38px; }
+  .bm-north svg { width: 100%; height: 100%; overflow: visible; }
+  .bm-north circle { fill: rgb(255 255 255 / 0.9); stroke: rgb(35 38 43 / 0.35); stroke-width: 1; }
+  .nn { transform-origin: 20px 20px; transform: rotate(var(--a)); transition: transform 0.9s var(--ease-out-expo); }
+  .nn-n { fill: var(--color-brand); }
+  .nn-s { fill: none; stroke: var(--color-brand); stroke-width: 1; }
+  .nn text { font-size: 6px; font-weight: 700; text-anchor: middle; fill: var(--color-brand-ink); }
+
+  .bm-caj { position: absolute; left: 10px; bottom: 10px; display: grid; gap: 1px; padding: 5px 10px 6px; border: 1px solid rgb(35 38 43 / 0.35); background: rgb(255 253 249 / 0.94); font-size: 12px; line-height: 1.2; color: #23262b; }
+  .bm-caj .caj-l { font-size: 9.5px; color: #7a7f87; }
+  .bm-caj b { font-weight: 650; }
+  .bm-dots { display: flex; gap: 6px; }
+  .bm-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgb(11 13 16 / 0.18); transition: background-color 0.3s, width 0.4s var(--ease-out-expo); }
+  .bm-dots i.is-on { width: 18px; border-radius: 3px; background: var(--color-brand); }
+
+  /* ---------- Las razones: en celular una a la vez, bajo el modelo ---------- */
+  .bm-steps { order: 3; position: relative; display: grid; width: 100%; max-width: 30rem; margin: 0 auto; }
+  .bm-step { grid-area: 1 / 1; display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: baseline; opacity: 0; transform: translateY(8px); transition: opacity 0.45s, transform 0.6s var(--ease-out-expo); pointer-events: none; }
+  .bm-step.is-on { opacity: 1; transform: none; pointer-events: auto; }
+  .st-n { font-family: var(--font-serif); font-style: italic; font-size: 1.25rem; color: var(--color-brand); }
+  .st-tx { display: grid; gap: 3px; }
+  .st-t { font-size: 1.06rem; font-weight: 620; letter-spacing: -0.02em; }
+  .st-d { font-size: 0.9rem; line-height: 1.42; color: var(--color-ink-soft); }
+  .bm-act { display: none; }
+  .btn { --cut: 9px; display: inline-flex; align-items: center; gap: 8px; height: 50px; padding: 0 24px; font-size: 15px; font-weight: 560; background: var(--color-brand-ink); color: #fff; transition: background-color 0.3s; }
+  .btn:hover { background: var(--color-ink); }
+  .btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.45s var(--ease-out-expo); }
+  .btn:hover svg { transform: translateX(3px); }
+
+  /* Entrada */
+  :global(html.js) .bm :is(.bm-head, .bm-fig, .bm-steps, .bm-act) { opacity: 0; transform: translateY(16px); }
+  :global(html.js) .bm.is-in :is(.bm-head, .bm-fig, .bm-steps, .bm-act) { opacity: 1; transform: none; transition: opacity 0.8s, transform 1s var(--ease-out-expo); }
+  :global(html.js) .bm.is-in .bm-fig { transition-delay: 0.15s; }
+  :global(html.js) .bm.is-in .bm-steps { transition-delay: 0.3s; }
+  :global(html.rm) .bm * { transition: none !important; }
+  :global(html.rm) .bm :is(.bm-head, .bm-fig, .bm-steps, .bm-act) { opacity: 1 !important; transform: none !important; }
+
+  @media (max-width: 639px) and (max-height: 700px) {
+    .bm :global(.trz) { display: none; }
+    .st-d { font-size: 0.86rem; }
+  }
+  @media (max-width: 639px) and (max-height: 600px) {
+    .bm-sub { display: none; }
+    .bm-h2 { font-size: 1.4rem; }
+    .st-t { font-size: 1rem; }
+    .st-d { font-size: 0.82rem; line-height: 1.35; }
+    .bm-caj { padding: 3px 8px 4px; font-size: 11px; }
+    .bm-north { width: 30px; height: 30px; }
+  }
+  @media (min-width: 640px) {
+    .bm { --pad: 28px; }
+  }
+
+  /* ---------- Escritorio: razones a la izquierda (todas a la vista), modelo a la derecha ---------- */
+  @media (min-width: 1024px) {
+    .bm { --pad: max(40px, calc((100% - 1200px) / 2)); --hd: 84px; }
+    .bm-pin { padding-top: calc(var(--hd) + clamp(12px, 3svh, 36px)); padding-bottom: clamp(20px, 4svh, 44px); }
+    .bm-body { flex-direction: row; align-items: center; gap: clamp(32px, 4vw, 64px); }
+    .bm-copy { display: flex; flex-direction: column; gap: clamp(18px, 3svh, 30px); width: 40%; flex: none; }
+    .bm-head { justify-items: start; text-align: left; }
+    .bm-steps { order: 0; max-width: none; margin: 0; gap: 4px; }
+    .bm-step { grid-area: auto; opacity: 1; transform: none; pointer-events: auto; padding: 10px 0 10px 14px; border-left: 2px solid rgb(11 13 16 / 0.1); transition: border-color 0.4s; }
+    .bm-step.is-on { border-left-color: var(--color-brand); }
+    .bm-step .st-n, .bm-step .st-t { opacity: 0.4; transition: opacity 0.4s; }
+    .bm-step.is-on .st-n, .bm-step.is-on .st-t { opacity: 1; }
+    .st-dw { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.5s var(--ease-out-expo); }
+    .st-dw > .st-d { overflow: hidden; }
+    .bm-step.is-on .st-dw { grid-template-rows: 1fr; }
+    .st-t { font-size: 1.2rem; }
+    .st-d { font-size: 1rem; padding-top: 2px; }
+    .bm-act { display: flex; }
+    .bm-dots { display: none; }
+    .bm-fig { grid-template-rows: minmax(0, 1fr); }
+    .bm-fig { order: 0; height: min(100%, 600px); align-self: center; }
+    .bm-sheet { --cut: 22px; width: min(100cqw, calc(100cqh * 1.41)); }
+    .bm-north { top: 16px; right: 18px; width: 46px; height: 46px; }
+    .bm-caj { left: 16px; bottom: 16px; font-size: 13px; }
+  }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-bm]');
+  if (sec) {
+    const views = [...sec.querySelectorAll<HTMLElement>('[data-v]')];
+    const steps = [...sec.querySelectorAll<HTMLElement>('[data-step]')];
+    const dots = [...sec.querySelectorAll<HTMLElement>('[data-dot]')];
+    const wipe = sec.querySelector<HTMLElement>('.bm-wipe')!;
+    const north = sec.querySelector<SVGGElement>('[data-north]')!;
+    const viewEl = sec.querySelector<HTMLElement>('[data-view]')!;
+    const pin = sec.querySelector<HTMLElement>('.bm-pin')!;
+    const names = ['noreste', 'sureste', 'suroeste', 'noroeste'];
+    const N = views.length;
+    const reduced = document.documentElement.classList.contains('rm');
+    let cur = -1;
+
+    const show = (i: number) => {
+      if (i === cur) return;
+      cur = i;
+      views.forEach((v, k) => { v.classList.toggle('is-on', k === i); v.classList.toggle('is-past', k < i); });
+      steps.forEach((s, k) => s.classList.toggle('is-on', k === i));
+      dots.forEach((d, k) => d.classList.toggle('is-on', k === i));
+      // la brújula sigue girando en el mismo sentido (no se devuelve de 315° a 45°)
+      north.style.setProperty('--a', `${-(45 + i * 90)}deg`);
+      viewEl.textContent = names[i];
+    };
+    show(0);
+    if (reduced) wipe.style.setProperty('--w', '1');
+
+    // el avance depende de cuánto se ha bajado dentro de la sección (con histéresis para no saltar en los bordes)
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const r = sec.getBoundingClientRect();
+        const range = sec.offsetHeight - pin.offsetHeight;
+        const p = Math.min(1, Math.max(0, -r.top / range));
+        const f = p * N;
+        const target = Math.min(N - 1, Math.floor(f));
+        if (target !== cur && Math.abs(f - (target > cur ? target : cur)) > 0.05) show(target);
+        // primera vista: el color entra durante los primeros dos tercios de su tramo
+        if (!reduced) wipe.style.setProperty('--w', Math.min(1, Math.max(0, (f - 0.08) / 0.62)).toFixed(3));
+      });
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { sec.classList.add('is-in'); io.disconnect(); } }, { threshold: 0.05 }).observe(sec);
+  }
+</script>

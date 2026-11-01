@@ -243,7 +243,7 @@ Registro de lo aprobado en cada sección, para no repetir recursos y mantener el
 - Diseño de vivienda (campestre y urbana) · Remodelación e interiores · Comercial e institucional (locales y obra pública) · Proyectos ejecutivos ("toda la ingeniería y la arquitectura del proyecto", palabras del cliente; solo como servicio, sin pregunta extra en el formulario).
 - ids: vivienda, remodelacion, comercial, ejecutivo (service_id en dataLayer y hoja). Slugs nuevos y redirecciones 301 en vercel.json desde los 6 anteriores.
 - Mesa de maquetas (sección 03) = los 4 servicios; se quita el bloque "También diseñamos". Maqueta nueva ejecutivo(): estructura a la vista (columnas y losas en azul).
-- Pendiente confirmar con Ulises qué ingenierías incluye el proyecto ejecutivo antes de escribir su página.
+- Proyecto ejecutivo (confirmado 2026-11-01): arquitectura + estructural, hidrosanitaria y eléctrica por ingenieros aliados que Galezo coordina; se entrega listo para radicar la licencia (el cliente la tramita). Pendiente: planos reales de ingeniería para mostrar.
 
 ## 2026-10-31 · Auditoría SEO técnico
 - Medido: versión de lanzamiento (PUBLIC_PREVIEW=false) con SEO 100, accesibilidad 100, buenas prácticas 100; sitio en vivo con rendimiento 98–99 en móvil (LCP 1,9 s, TBT 0, CLS 0–0,013). El SEO en vivo sale 66 solo por el noindex de la vista previa.
@@ -266,3 +266,53 @@ Registro de lo aprobado en cada sección, para no repetir recursos y mantener el
 - Pendiente (Ulises): planos o renders de un proyecto institucional (colegio o coliseo) para "Lo que recibes" y "Cómo trabajamos" en esta página; hoy muestran la casa en ladera.
 - (rehecha) Comercial e institucional sin secciones del inicio (no eran coherentes: mostraban la casa en ladera a un público institucional). Estructura: hero · 01 Para quién · 02 "Cada obra tenía un reto" (mirador, coliseo, cuatro colegios: reto → lo que hicimos, dibujo a lápiz → foto con el scroll) · 03 "Del diseño a la contratación" (4 pasos sobre una línea) · 04 "Un estudio con obra construida" (+70, 6, desde 2021, 9 + Ulises con su cargo real) · cierre. Base real: portafolio p. 5 y 7–13.
 - (ajuste) "Para quién": entidades públicas y constructoras como tarjetas protagonistas; comercio en una línea aparte ("También diseñamos locales…"). Se quitó toda mención de que Ulises formula proyectos para licitación en la Gobernación o que trabajamos "con la Gobernación desde 2021": puede leerse como que ayudamos a ganar contratos. La Gobernación solo aparece como contratante de cada obra y en los logos.
+
+## Sección BIM en el inicio (2026-11-01)
+- Pedido de Ulises: mostrar la tecnología (modelo BIM de arquitectura en Revit). Nueva sección 06 "Tu proyecto se construye primero en el computador" entre Cómo trabajamos y Quién diseña; Estudio, Preguntas y Cierre pasan a 07, 08 y 09.
+- Fija con el scroll: las 4 vistas reales del modelo (noreste → sureste → suroeste → noroeste); la primera pasa de línea a materiales. Una razón por vista: modelo con medidas reales · planos que coinciden · cantidades medidas en el modelo · verlo antes de construir. Brújula y cajetín giran con la vista. Plomada nueva "giro".
+- Para no repetir recursos: las vistas del modelo solo se usan aquí; se quitó la lámina "Modelo 3D" de Lo que recibes.
+- Por confirmar con Ulises: que las cantidades de obra salen del modelo de Revit.
+- Hero de Proyectos ejecutivos en pausa: el usuario ve los mismos planos repetidos en toda la web.
+
+## Hero de vivienda: una sola fachada en tarjeta (2026-11-01)
+- Pedido: meter la pieza del hero en una tarjeta con la figura de la marca y dejar una sola imagen animada.
+- Fachada oeste sacada del PDF de Ulises (lámina P4) en dos capas: ejes y niveles (vector del plano) y la fachada (imagen, cielo quitado). Animación: se trazan ejes y niveles de arriba abajo, luego la fachada se levanta desde el piso con una línea de nivel azul. Cajetín: brújula al oeste, "Fachada oeste · el frente sobre la calle", escala 1:50 (dato del plano). Sin arrastre ni carrusel.
+- Archivos: src/assets/vivienda/oeste-fachada.png y oeste-lineas.png. Las fachadas anteriores (oeste/este-hero) quedan sin uso.
+
+## Hero de Proyectos ejecutivos sin planos (2026-11-01)
+- El usuario pidió no repetir más los planos de la casa en ladera. Pieza nueva: vista explotada de un proyecto en 4 capas (arquitectura, estructural, hidrosanitaria, eléctrica), cada una con su simbología; se trazan una tras otra, corre el agua y la corriente, y se apilan en "Un solo paquete" en bucle mientras se ve. Es un esquema del servicio (sin medidas ni datos), no un proyecto.
+- Cajetín: "4 disciplinas, 1 paquete" · "Coordina Galezo Studio"; el texto cambia entre "por capas" y "en un solo paquete".
+
+## Ejecutivos · 01 "Lo que incluye" (2026-11-01)
+- "Cuatro respuestas antes de construir": carpeta con separadores (A, E, HS, EL); cada lámina responde una pregunta de quien construye y trae un detalle dibujado de su disciplina (muro y puerta, columna con zapata y cargas, tubería con agua y llave, tablero con circuitos y puntos de luz), qué resuelve y qué recibes. Fija con el scroll; las pestañas se tocan.
+- Entregables de ingeniería escritos con lo usual en Colombia (NSR-10, RETIE): planos estructurales + memoria de cálculo; planos hidrosanitarios + isométricos; planos eléctricos + cuadro de cargas. POR CONFIRMAR con Ulises.
+- Inicio: se quitó la nota "cuéntanos de tu lote y lo hablamos por WhatsApp" del héroe.
+
+## Ejecutivos · 02 "Tú hablas con uno, nosotros con todos" (2026-11-01)
+- Diagrama de quién habla con quién con interruptor "Por tu cuenta / Con Galezo": hilos enredados hacia los cuatro profesionales y choques ("el tubo atraviesa la viga", "la caja cae en la columna") → una línea tuya a Galezo y de ahí en orden a las cuatro disciplinas, con chulos. Pasa solo a "Con Galezo" al entrar; se puede tocar.
+- Promesas: un solo contacto, revisamos que los planos coincidan antes de entregarlos, un responsable para ajustes. Confirmar con Ulises que revisan la coordinación entre disciplinas.
+
+## Ejecutivos · 03 "Así llega tu proyecto a la obra" (2026-11-01)
+- Ruta dibujada con 4 paradas (Diseñamos · Calculamos · Radicas · Construyes); la carpeta del proyecto la recorre con el scroll y se detiene en cada parada; la línea se pinta en azul detrás. Ficha con "Lo hace Galezo" / "Lo haces tú": desde Radicas la carpeta pasa a tus manos (cambia a oscura). Distinta a la línea de pasos de Comercial.
+- Datos usados: la licencia la radica el cliente (confirmado), ingenieros aliados (confirmado), revisión por etapas (ya usado en Comercial).
+
+## PENDIENTES (corte 2026-11-01)
+Proyectos ejecutivos (página armada: hero, 01 Lo que incluye, 02 Un solo responsable, 03 Así llega a la obra, cierre; sigue en noindex):
+- 04 Preguntas: falta de Ulises cuánto tarda un ejecutivo, si lo hacen sobre un diseño que trae el cliente y cómo se cobra.
+- Confirmar con Ulises: entregables de cada ingeniería (memoria de cálculo, isométricos, cuadro de cargas), que revisan la coordinación entre disciplinas, planos reales de ingeniería para mostrar.
+Inicio:
+- Confirmar que las cantidades de obra salen del modelo de Revit (sección BIM, razón 3).
+Remodelación e interiores: página por armar; falta material (fotos antes/después o renders de interiores y qué incluye).
+Vivienda: renders, testimonios, tiempo de diseño, si incluye licencia e ingenierías.
+Lanzamiento: GTM, GA4, Meta, Ads; PUBLIC_PREVIEW=false; Search Console, Bing, Google Business Profile; tablero de leads.
+
+## Clientes en cajetín y +10 años (2026-11-01)
+- Experiencia: "+10 años" (dato del usuario) en tarjeta del héroe del inicio, Quién diseña y Cifras de comercial.
+- Componente Clientes.astro: los 9 clientes dentro del cajetín de un plano (rótulo "Cliente 01…", logo y nombre por casilla; pie con +70 proyectos, +10 años, Valledupar, Cesar). Se traza el marco y cada logo entra como sello. En escritorio la casilla 10 es "Tu proyecto" y abre el cotizador. Distinto a la fila de clientes del inicio.
+- Comercial: 05 Clientes antes del cierre (06). Ejecutivos: Obras sin fila de clientes (04), 05 Clientes, 06 Quién diseña, cierre 07.
+
+## Marbal Ingeniería y clientes en vivienda (2026-11-01)
+- Cliente nuevo: Marbal Ingeniería (empresa privada, vivienda). Logo reconstruido desde una captura (círculo negro): ícono dorado original, texto pasado a tinta oscura para fondo claro, fondo transparente, 8× con bordes suavizados → src/assets/clientes/marbal-ingenieria.png. Pedir a Marbal el logo original en vector cuando se pueda.
+- Ahora son 10 clientes: inicio (fila de clientes, 5 × 2), comercial (tarjeta Constructoras y cifra "10 entidades y empresas"), cajetín de comercial y ejecutivos.
+- Vivienda: 05 Clientes solo con empresas privadas con las que se ha diseñado vivienda (A Construir, HRS Ingeniería, Marbal Ingeniería); Quién diseña 06, Preguntas 07, Cierre 08.
+- El cajetín se adapta al número de clientes: la casilla "Tu proyecto" completa la última fila (en escritorio se oculta si la fila ya está llena); con 10 clientes en celular las casillas son más bajas y sin nombre en pantallas cortas.

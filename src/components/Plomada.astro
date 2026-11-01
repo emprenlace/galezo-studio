@@ -9,6 +9,7 @@
  * - sello (05 · Cómo trabajamos): un sello cae, marca, sube y se desvanece; queda la huella de "aprobado".
  * - firma (06 · Quién diseña): el monograma aparece y debajo se traza el rasgo de una firma a mano.
  * - chat (07 · Preguntas): un globo de mensaje "escribe" (tres puntos) y la respuesta es el monograma.
+ * - giro (Modelo BIM): el monograma gira sobre una base como un modelo 3D que se revisa por todos sus lados.
  * - trazo (08 · Tu casa): el monograma se traza a lápiz (contorno) y se llena de tinta: el último trazo.
  * Debajo, número y nombre. Todas ocupan el mismo alto.
  */
@@ -17,7 +18,7 @@ import d from '../assets/brand/monogram-d.txt?raw';
 interface Props {
   n: string;
   label: string;
-  variant?: 'plomada' | 'grua' | 'obra' | 'sello' | 'firma' | 'chat' | 'trazo';
+  variant?: 'plomada' | 'grua' | 'obra' | 'sello' | 'firma' | 'chat' | 'trazo' | 'giro';
 }
 const { n, label, variant = 'plomada' } = Astro.props;
 const mono = d.trim();
@@ -75,6 +76,18 @@ const swings = variant === 'plomada';
             <path class="tz-ink" transform="matrix(1 0 0 -1 0 1914)" d={mono} />
             <path class="tz-line" transform="matrix(1 0 0 -1 0 1914)" d={mono} pathLength="1" />
           </svg>
+        </span>
+      )
+    }
+    {
+      variant === 'giro' && (
+        <span class="pl-bob pl-giro">
+          <span class="gi-turn">
+            <svg viewBox="0 0 1647 1914" focusable="false">
+              <path transform="matrix(1 0 0 -1 0 1914)" d={mono} />
+            </svg>
+          </span>
+          <span class="gi-base" />
         </span>
       )
     }
@@ -264,6 +277,14 @@ const swings = variant === 'plomada';
   @keyframes pl-fill { to { opacity: 1; } }
   :global(html.rm) .tz-line { stroke-dashoffset: 0; animation: none; }
   :global(html.rm) .tz-ink { opacity: 1; animation: none; }
+
+  /* ---------- Giro: el monograma da una vuelta completa sobre su base, como un modelo 3D ---------- */
+  .pl-giro { width: 26px; top: calc(60px + var(--t) - 20px); opacity: 1; display: grid; justify-items: center; perspective: 160px; }
+  .gi-turn { display: block; width: 22px; transform-style: preserve-3d; }
+  .gi-base { width: 34px; height: 8px; margin-top: -3px; border: 1.5px solid var(--color-brand); border-radius: 50%; opacity: 0.45; }
+  .plom.is-in .gi-turn { animation: pl-giro 1.8s 0.35s cubic-bezier(0.45, 0.05, 0.25, 1) both; }
+  .plom.is-in .gi-base { animation: pl-pop 0.6s 0.2s var(--ease-out-expo) both; }
+  @keyframes pl-giro { from { transform: rotateY(-360deg); } to { transform: rotateY(0deg); } }
 
   /* ---------- 07 · Chat: el globo escribe y responde con el monograma ---------- */
   .pl-chat { width: 40px; top: calc(60px + var(--t) - 22px); opacity: 1; }
