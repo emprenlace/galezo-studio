@@ -12,6 +12,8 @@ import Plomada from './Plomada.astro';
 import mono from '../assets/brand/monogram-d.txt?raw';
 
 const year = new Date().getFullYear();
+// número de la sección (cambia cuando se reutiliza en otra página)
+const { n = '08' } = Astro.props as { n?: string };
 ---
 
 <section class="ci" id="contacto" data-nav-label="Tu proyecto" aria-labelledby="ci-title" data-ci>
@@ -28,7 +30,7 @@ const year = new Date().getFullYear();
     </p>
 
     <div class="ci-in">
-      <Plomada n="08" label="Tu proyecto" variant="trazo" />
+      <Plomada n={n} label="Tu proyecto" variant="trazo" />
 
       <div class="ci-main">
         <h2 id="ci-title" class="ci-h2"><span class="ln"><span class="ln-in">¿Empezamos</span></span> <span class="ln"><span class="ln-in accent">tu proyecto?</span></span></h2>

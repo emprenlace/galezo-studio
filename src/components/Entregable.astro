@@ -71,6 +71,9 @@ const laminas = [
   { k: 'Fachada', note: 'fachada', src: fachada },
   { k: 'Modelo 3D', note: 'modelo 3D' },
 ];
+// número de la sección (cambia cuando se reutiliza en otra página)
+// cta: false en páginas donde el botón de la cabecera basta
+const { n = '02', variant = 'plomada', ejemplo = 'proyecto de ejemplo', cta = true } = Astro.props as { n?: string; ejemplo?: string; cta?: boolean; variant?: 'plomada' | 'grua' | 'obra' | 'sello' | 'firma' | 'chat' | 'trazo' };
 ---
 
 <section class="en" id="entregable" data-nav-label="Lo que recibes" data-en aria-labelledby="en-title">
@@ -78,7 +81,7 @@ const laminas = [
     <Trazos left="norte" right="escala" />
     <span class="en-slab" aria-hidden="true"></span>
     <div class="en-in">
-      <Plomada n="02" label="Lo que recibes" />
+      <Plomada n={n} label="Lo que recibes" variant={variant} />
       <header class="en-top">
         <h2 id="en-title" class="en-h2 rv">Un proyecto, <span class="accent">cuatro formas de verlo</span> antes de construirlo</h2>
         <p class="count rv" aria-hidden="true">
@@ -118,7 +121,7 @@ const laminas = [
                     ))}
                   </div>
                 </div>
-                  <p class="stage-note"><span data-rp-note>planta general</span> · proyecto de ejemplo</p>
+                  <p class="stage-note"><span data-rp-note>planta general</span> · {ejemplo}</p>
                 <span class="page-shade" aria-hidden="true"></span>
                 <span class="page-crease" aria-hidden="true"></span>
               </div>
@@ -156,7 +159,7 @@ const laminas = [
                     </div>
                   </div>
                 </div>
-                  <p class="stage-note">recorrido · proyecto de ejemplo</p>
+                  <p class="stage-note">recorrido · {ejemplo}</p>
                 <span class="page-shade" aria-hidden="true"></span>
                 <span class="page-crease" aria-hidden="true"></span>
               </div>
@@ -181,7 +184,7 @@ const laminas = [
                     </div>
                   </div>
                 </div>
-                  <p class="stage-note">cantidades · proyecto de ejemplo</p>
+                  <p class="stage-note">cantidades · {ejemplo}</p>
                 <span class="page-shade" aria-hidden="true"></span>
                 <span class="page-crease" aria-hidden="true"></span>
               </div>
@@ -210,10 +213,12 @@ const laminas = [
               </div>
             ))
           }
+          {cta && (
           <a href="#cotizar" class="btn btn-primary chamfer" data-open-chat data-cta="entregable">
             Cotiza tu diseño
             <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
           </a>
+          )}
         </div>
       </div>
 
@@ -507,9 +512,13 @@ const laminas = [
   /* Celulares altos: hay espacio para lo que incluye cada entregable */
   @media (max-width: 639px) and (max-height: 700px) {
     .card-lead { font-size: 14px; }
+    .count-n, .en-count { font-size: 2.6rem; }
     .en-h2 { font-size: 1.4rem; }
     .en-in { gap: 10px; }
     .btn { margin-top: 10px; height: 46px; }
+  }
+  @media (max-width: 360px) and (max-height: 600px) {
+    .card-lead { display: none; }
   }
   @media (min-width: 640px) and (max-width: 1023px) and (min-height: 760px) {
     .card-list { display: grid; margin-top: 14px; gap: 7px; }

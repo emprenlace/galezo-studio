@@ -7,10 +7,12 @@ export interface Servicio {
   line: string;
   /** true cuando su página esté terminada: deja de ser noindex y entra al sitemap */
   ready?: boolean;
+  /** tiene página propia en src/pages/servicios/ (no usa la plantilla genérica) */
+  own?: boolean;
 }
 export const servicios: Servicio[] = [
-  { slug: 'diseno-de-vivienda', id: 'vivienda', title: 'Diseño de vivienda', short: 'Vivienda', line: 'Casas campestres y urbanas' },
+  { slug: 'diseno-de-vivienda', id: 'vivienda', title: 'Diseño de vivienda', short: 'Vivienda', line: 'Casas campestres y urbanas', own: true },
   { slug: 'remodelacion-e-interiores', id: 'remodelacion', title: 'Remodelación e interiores', short: 'Remodelación', line: 'Ampliaciones, remodelaciones y diseño interior' },
-  { slug: 'comercial-e-institucional', id: 'comercial', title: 'Comercial e institucional', short: 'Comercial', line: 'Locales, colegios, escenarios deportivos y edificios públicos' },
+  { slug: 'comercial-e-institucional', id: 'comercial', title: 'Comercial e institucional', short: 'Comercial', line: 'Locales, colegios, escenarios deportivos y edificios públicos', own: true },
   { slug: 'proyectos-ejecutivos', id: 'ejecutivo', title: 'Proyectos ejecutivos', short: 'Ejecutivos', line: 'Toda la ingeniería y la arquitectura del proyecto' },
 ];

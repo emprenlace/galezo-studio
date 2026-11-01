@@ -1,0 +1,115 @@
+---
+/**
+ * Comercial e institucional · 03 "Del diseño a la contratación": el camino de un proyecto público hasta poder
+ * contratarse. Cuatro pasos sobre una línea que se traza al entrar; cada paso termina en lo que se entrega.
+ * Sin nombrar a la Gobernación: no debe leerse como que ayudamos a ganar contratos.
+ */
+import Plomada from '../Plomada.astro';
+import Trazos from '../Trazos.astro';
+
+const { n = '03' } = Astro.props as { n?: string };
+const pasos = [
+  { t: 'La necesidad', d: 'Partimos de lo que necesitas construir y del predio donde va.', e: 'Programa y predio' },
+  { t: 'El diseño', d: 'Distribución, fachadas y exteriores, revisados contigo por etapas.', e: 'Diseño arquitectónico' },
+  { t: 'La formulación', d: 'Planos, modelo BIM y cantidades de obra para estructurar el proceso.', e: 'Planos · BIM · cantidades' },
+  { t: 'Listo para contratar', d: 'Listo para contratar la obra, con renders para socializarlo.', e: 'Renders para socializar' },
+];
+---
+
+<section class="ct2" data-nav-label="Del diseño a la contratación" aria-labelledby="ct2-title" data-ct2>
+  <Trazos left="nivel" right="corte" />
+  <div class="ct2-in">
+    <Plomada n={n} label="Cómo trabajamos" variant="sello" />
+    <header class="ct2-head ct2-rv">
+      <h2 id="ct2-title" class="ct2-h2">Del diseño <span class="accent">a la contratación</span></h2>
+      <p class="ct2-sub">Te entregamos el proyecto completo, listo para contratar la obra.</p>
+    </header>
+
+    <ol class="steps" role="list">
+      <span class="rail" aria-hidden="true"><i></i></span>
+      {
+        pasos.map((p, i) => (
+          <li class="step" style={`--i:${i}`}>
+            <span class="s-n" aria-hidden="true">{i + 1}</span>
+            <div class="s-tx">
+              <h3 class="s-t">{p.t}</h3>
+              <p class="s-d">{p.d}</p>
+              <p class="s-e"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.4 6.6 11.3 12.5 4.9" /></svg>{p.e}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .ct2 { --pad: 20px; --hd: 76px; position: relative; isolation: isolate; background: #fff; min-height: 100svh; display: flex; padding: calc(var(--hd) + 6px) var(--pad) 20px; overflow: hidden; }
+  .ct2-in { position: relative; z-index: 1; width: 100%; max-width: 1200px; margin: auto; display: flex; flex-direction: column; align-items: center; gap: clamp(12px, 2.4svh, 28px); }
+  .ct2-head { display: grid; justify-items: center; gap: 6px; text-align: center; }
+  .ct2-h2 { font-size: clamp(1.7rem, min(1.2rem + 2.6vw, 5.2svh), 3.3rem); line-height: 1.03; font-weight: 560; letter-spacing: -0.038em; text-wrap: balance; }
+  .ct2-h2 .accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.015em; color: var(--color-brand); font-size: 1.08em; }
+  .ct2-sub { max-width: 32rem; font-size: clamp(0.93rem, 0.88rem + 0.25vw, 1.06rem); line-height: 1.45; color: var(--color-ink-soft); text-wrap: balance; }
+
+  /* Celular: pasos en columna sobre una línea vertical que se llena */
+  .steps { position: relative; width: 100%; max-width: 520px; display: grid; gap: clamp(10px, 1.8svh, 16px); }
+  .rail { position: absolute; left: 15px; top: 16px; bottom: 16px; width: 2px; background: rgb(11 13 16 / 0.1); }
+  .rail i { position: absolute; inset: 0; background: var(--color-brand); transform-origin: 50% 0; transform: scaleY(0); }
+  .step { position: relative; display: grid; grid-template-columns: 32px 1fr; gap: 14px; align-items: start; }
+  .s-n { position: relative; z-index: 1; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 1.5px solid var(--color-brand-ink); font-family: var(--font-serif); font-style: italic; font-size: 17px; color: var(--color-brand-ink); transition: background-color 0.4s, color 0.4s; }
+  .s-tx { display: grid; gap: 3px; padding-top: 4px; }
+  .s-t { font-size: 1.08rem; font-weight: 620; letter-spacing: -0.02em; }
+  .s-d { font-size: 0.9rem; line-height: 1.4; color: var(--color-ink-soft); }
+  .s-e { display: inline-flex; align-items: center; gap: 6px; margin-top: 3px; font-size: 12px; font-weight: 650; color: var(--color-brand-ink); }
+  .s-e svg { width: 16px; height: 16px; padding: 2px; border-radius: 50%; background: var(--color-brand-ink); fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Entrada: la línea se traza y cada paso se enciende cuando la línea llega */
+  :global(html.js) .ct2-rv { opacity: 0; transform: translateY(16px); }
+  :global(html.js) .ct2.is-in .ct2-rv { opacity: 1; transform: none; transition: opacity 0.8s, transform 1s var(--ease-out-expo); }
+  :global(html.js) .step { opacity: 0; transform: translateY(12px); }
+  :global(html.js) .ct2.is-in .step { opacity: 1; transform: none; transition: opacity 0.6s, transform 0.8s var(--ease-out-expo); transition-delay: calc(0.25s + var(--i) * 0.32s); }
+  :global(html.js) .ct2.is-in .rail i { transform: scaleY(1); transition: transform 1.5s 0.3s cubic-bezier(0.5, 0, 0.2, 1); }
+  :global(html.js) .ct2.is-in .s-n { background: var(--color-brand-ink); color: #fff; transition-delay: calc(0.45s + var(--i) * 0.32s); }
+  :global(html:not(.js)) .rail i { transform: none; }
+  :global(html.rm) .ct2 * { transition: none !important; }
+  :global(html.rm) :is(.ct2-rv, .step) { opacity: 1 !important; transform: none !important; }
+  :global(html.rm) .rail i { transform: none !important; }
+
+  @media (max-width: 639px) {
+    .s-e { display: none; }
+    .ct2-sub { font-size: 0.9rem; }
+  }
+  @media (max-width: 639px) and (max-height: 700px) {
+    .s-d { font-size: 0.85rem; }
+    .ct2 :global(.trz) { display: none; }
+  }
+  @media (max-width: 639px) and (max-height: 600px) {
+    .ct2-sub { display: none; }
+    .s-d { font-size: 0.8rem; line-height: 1.32; }
+    .s-t { font-size: 1rem; }
+    .steps { gap: 6px; }
+    .ct2 { padding-top: calc(var(--hd) + 2px); padding-bottom: 10px; }
+    .ct2-in { gap: 10px; }
+  }
+
+  /* ---------- Escritorio: los cuatro pasos en fila sobre una línea horizontal ---------- */
+  @media (min-width: 900px) {
+    .ct2 { --pad: max(40px, calc((100% - 1200px) / 2)); --hd: 84px; padding-bottom: 32px; }
+    .steps { max-width: none; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; margin-top: 12px; }
+    .rail { left: 16px; right: 16px; top: 15px; bottom: auto; width: auto; height: 2px; }
+    .rail i { transform-origin: 0 50%; transform: scaleX(0); }
+    :global(html.js) .ct2.is-in .rail i { transform: scaleX(1); }
+    :global(html:not(.js)) .rail i, :global(html.rm) .rail i { transform: none !important; }
+    .step { grid-template-columns: 1fr; gap: 16px; }
+    .s-n { width: 34px; height: 34px; font-size: 18px; }
+    .s-tx { gap: 6px; padding: 0; }
+    .s-t { font-size: 1.3rem; }
+    .s-d { font-size: 1rem; }
+    .s-e { font-size: 13px; }
+  }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-ct2]');
+  if (sec) new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { sec.classList.add('is-in'); io.disconnect(); } }, { threshold: 0.3 }).observe(sec);
+</script>

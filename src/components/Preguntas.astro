@@ -9,18 +9,23 @@ import Plomada from './Plomada.astro';
 import Trazos from './Trazos.astro';
 import mono from '../assets/brand/monogram-d.txt?raw';
 
-import { faq } from '../lib/faq';
+import { faq as todas } from '../lib/faq';
+// número de la sección (cambia cuando se reutiliza en otra página)
+// items: las preguntas de esta página (por defecto, todas)
+const { n = '07', items = todas, cta = true } = Astro.props as { n?: string; items?: { q: string; a: string }[]; cta?: boolean };
+const faq = items;
 ---
 
 <section class="pq" id="preguntas" data-nav-label="Preguntas" aria-labelledby="pq-title" data-pq>
   <Trazos left="ventana" right="detalle" />
   <div class="pq-in">
-    <Plomada n="07" label="Preguntas" variant="chat" />
+    <Plomada n={n} label="Preguntas" variant="chat" />
 
     <div class="pq-body">
       <header class="pq-head pq-rv">
         <h2 id="pq-title" class="pq-h2">Pregúntanos <span class="accent">lo que quieras</span></h2>
         <p class="pq-sub">Las dudas de siempre antes de diseñar un proyecto, respondidas por el equipo que lo diseña.</p>
+        {cta && (
         <div class="pq-actions">
           <a href="#cotizar" class="btn btn-primary chamfer" data-open-chat data-cta="preguntas">
             Cotiza tu diseño
@@ -28,6 +33,7 @@ import { faq } from '../lib/faq';
           </a>
           <p class="pq-note">¿Otra pregunta? Escríbenos directo.</p>
         </div>
+        )}
       </header>
 
       <!-- El chat -->

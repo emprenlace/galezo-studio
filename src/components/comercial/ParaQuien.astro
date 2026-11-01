@@ -1,0 +1,208 @@
+---
+/**
+ * Comercial e institucional · "Para quién diseñamos": responde "¿esto es para mí?".
+ * Los dos clientes principales (entidades públicas y constructoras) en tarjetas grandes, con los logos reales de
+ * quienes ya nos contrataron. Comercio va en una línea aparte: presente, pero no es el enfoque.
+ * Celular: la sección queda fija y el scroll trae un tipo a la vez. Escritorio: los tres a la vista.
+ */
+import { Image } from 'astro:assets';
+import Plomada from '../Plomada.astro';
+import Trazos from '../Trazos.astro';
+import gobernacion from '../../assets/clientes/gobernacion-cesar.png';
+import alcaldia from '../../assets/clientes/alcaldia-valledupar.png';
+import corpocesar from '../../assets/clientes/corpocesar.png';
+import codazzi from '../../assets/clientes/alcaldia-agustin-codazzi.png';
+import urumita from '../../assets/clientes/alcaldia-urumita.png';
+import aconstruir from '../../assets/clientes/a-construir.png';
+import hrs from '../../assets/clientes/hrs-ingenieria.png';
+
+const { n = '01' } = Astro.props as { n?: string };
+const grupos = [
+  {
+    t: 'Entidades públicas',
+    d: 'Colegios, escenarios deportivos y espacios públicos, con planos, cantidades de obra y renders para contratar y socializar la obra.',
+    logos: [
+      { src: gobernacion, name: 'Gobernación del Cesar', k: 1 },
+      { src: alcaldia, name: 'Alcaldía de Valledupar', k: 0.7 },
+      { src: corpocesar, name: 'Corpocesar', k: 0.55 },
+      { src: codazzi, name: 'Alcaldía de Agustín Codazzi', k: 0.62 },
+      { src: urumita, name: 'Alcaldía de Urumita', k: 1 },
+    ],
+  },
+  {
+    t: 'Constructoras y contratistas',
+    d: 'El diseño arquitectónico y las cantidades de obra de los proyectos que ejecutas, listos para construir.',
+    logos: [
+      { src: aconstruir, name: 'A Construir S.A.', k: 0.9 },
+      { src: hrs, name: 'HRS Ingeniería', k: 0.5 },
+    ],
+  },
+];
+---
+
+<section class="pq2" data-nav-label="Para quién" aria-labelledby="pq2-title" data-pq2>
+  <div class="pq2-pin">
+    <Trazos left="norte" right="escala" />
+    <div class="pq2-in">
+      <Plomada n={n} label="Para quién" />
+      <header class="pq2-head pq2-rv">
+        <h2 id="pq2-title" class="pq2-h2">Diseñamos para quien <span class="accent">contrata la obra</span></h2>
+        <p class="pq2-sub">Entidades públicas y constructoras que necesitan un proyecto listo para contratar.</p>
+      </header>
+
+      <ol class="grp" role="list">
+        {
+          grupos.map((g, i) => (
+            <li class:list={['card', { 'is-on': i === 0 }]} style={`--i:${i}`} data-card={i}>
+              <span class="c-n">0{i + 1}</span>
+              <h3 class="c-t">{g.t}</h3>
+              <p class="c-d">{g.d}</p>
+              {g.logos.length > 0 && (
+                <ul class="c-logos" role="list" aria-label={`Algunos clientes: ${g.logos.map((l) => l.name).join(', ')}`}>
+                  {g.logos.map((l, j) => (
+                    <li style={`--k:${l.k};--j:${j}`}>
+                      <Image src={l.src} alt="" height={120} densities={[1]} loading="lazy" />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))
+        }
+      </ol>
+      <div class="pq2-dots" aria-hidden="true">{grupos.map((_, i) => <i class:list={{ 'is-on': i === 0 }} data-dot={i} />)}</div>
+
+      <!-- Comercio: presente, pero en segundo plano -->
+      <p class="also pq2-rv">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10h18l-1.5-5h-15L3 10Zm1 0v10h16V10M9 20v-5h6v5" /></svg>
+        <span>También diseñamos <strong>locales, oficinas y proyectos comerciales</strong>.</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pq2 { --pad: 20px; --hd: 76px; position: relative; background: #fff; }
+  .pq2-pin { position: relative; isolation: isolate; height: 100svh; min-height: 560px; display: flex; padding: calc(var(--hd) + 8px) var(--pad) 18px; overflow: hidden; }
+  .pq2-in { position: relative; z-index: 1; flex: 1; min-height: 0; width: 100%; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(10px, 2svh, 22px); }
+  .pq2-head { display: grid; justify-items: center; gap: 6px; text-align: center; }
+  .pq2-h2 { font-size: clamp(1.8rem, min(1.3rem + 2.6vw, 5.6svh), 3.4rem); line-height: 1.03; font-weight: 560; letter-spacing: -0.038em; text-wrap: balance; }
+  .pq2-h2 .accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.015em; color: var(--color-brand); font-size: 1.08em; }
+  .pq2-sub { font-size: clamp(0.95rem, 0.9rem + 0.25vw, 1.08rem); color: var(--color-ink-soft); }
+
+  .card { --cut: 18px; position: relative; display: flex; flex-direction: column; gap: 10px; padding: 24px 22px 24px; background: var(--color-bone); box-shadow: inset 0 0 0 1px rgb(11 13 16 / 0.05); clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); }
+  .c-n { font-family: var(--font-serif); font-style: italic; font-size: 28px; line-height: 1; color: var(--color-brand); }
+  .c-t { font-size: 1.55rem; font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; }
+  /* la tarjeta en uso: línea azul arriba que se traza */
+  .card::before { content: ''; position: absolute; left: 0; top: 0; height: 3px; width: 100%; background: var(--color-brand); transform: scaleX(0); transform-origin: 0 50%; transition: transform 0.9s 0.2s var(--ease-out-expo); }
+  .pq2.is-in .card::before { transform: scaleX(1); }
+  .also { display: flex; align-items: center; gap: 10px; max-width: 520px; padding: 10px 14px; font-size: 0.9rem; line-height: 1.4; color: var(--color-ink-mute); border: 1px dashed rgb(11 13 16 / 0.18); border-radius: 4px; }
+  .also svg { flex: none; width: 22px; height: 22px; fill: none; stroke: var(--color-brand-ink); stroke-width: 1.4; stroke-linejoin: round; }
+  .also strong { font-weight: 600; color: var(--color-ink-soft); }
+  .c-d { font-size: 0.98rem; line-height: 1.45; color: var(--color-ink-soft); }
+  /* los logos van centrados y al pie de la tarjeta: en las dos quedan a la misma altura */
+  .c-logos { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px 22px; margin-top: auto; padding-top: 16px; border-top: 1px dashed rgb(11 13 16 / 0.15); }
+  .c-logos li { display: flex; align-items: center; height: 46px; }
+  .c-logos :global(img) { height: calc(46px * var(--k)); width: auto; max-width: 110px; object-fit: contain; }
+
+  /* ---------- Celular y tableta: un tipo de cliente a la vez, guiado por el scroll ---------- */
+  @media (max-width: 899px) {
+    :global(html.js:not(.rm)) .pq2 { height: 210svh; }
+    :global(html.js:not(.rm)) .pq2-pin { position: sticky; top: 0; }
+    .grp { position: relative; width: 100%; max-width: 520px; display: grid; }
+    .card { grid-area: 1 / 1; }
+    :global(html.js:not(.rm)) .card { opacity: 0; visibility: hidden; transform: translateY(24px) scale(0.98); transition: opacity 0.35s, transform 0.5s var(--ease-out-expo), visibility 0s 0.35s; }
+    :global(html.js:not(.rm)) .card.is-on { opacity: 1; visibility: inherit; transform: none; transition: opacity 0.45s, transform 0.7s var(--ease-out-expo); }
+    :global(html.js:not(.rm)) .card .c-logos li { opacity: 0; transform: scale(1.3); }
+    :global(html.js:not(.rm)) .card.is-on .c-logos li { opacity: 1; transform: none; transition: opacity 0.4s, transform 0.6s cubic-bezier(0.3, 1.5, 0.5, 1); transition-delay: calc(0.35s + var(--j) * 0.09s); }
+    .pq2-dots { display: flex; gap: 6px; }
+    .pq2-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgb(11 13 16 / 0.18); transition: width 0.4s var(--ease-out-expo), background-color 0.3s; }
+    .pq2-dots i.is-on { width: 18px; border-radius: 3px; background: var(--color-brand); }
+    :global(html:not(.js)) .grp, :global(html.rm) .grp { gap: 10px; }
+    :global(html:not(.js)) .card, :global(html.rm) .card { grid-area: auto; }
+    :global(html:not(.js)) .pq2-dots, :global(html.rm) .pq2-dots { display: none; }
+  }
+  @media (max-width: 639px) {
+    .c-logos { flex-wrap: nowrap; gap: 10px; justify-content: space-between; }
+    .c-logos li { height: 40px; }
+    .c-logos :global(img) { height: calc(40px * var(--k)); max-width: 64px; }
+  }
+  @media (max-width: 639px) {
+    .c-t { font-size: 1.35rem; }
+    .c-d { font-size: 0.93rem; }
+    .also { font-size: 0.82rem; padding: 8px 12px; gap: 8px; }
+    .also svg { width: 18px; height: 18px; }
+  }
+  @media (max-width: 639px) and (max-height: 700px) {
+    .pq2-sub { display: none; }
+  }
+  @media (max-width: 899px) and (max-height: 640px) {
+    .pq2 :global(.trz) { display: none; }
+    .pq2-pin { padding-bottom: 10px; }
+    .c-n { display: none; }
+    .pq2-in { gap: 8px; }
+    .pq2-sub { display: none; }
+    .card { padding: 18px 18px 20px; gap: 8px; }
+    .c-logos li { height: 38px; }
+    .c-logos :global(img) { height: calc(38px * var(--k)); }
+  }
+
+  /* ---------- Escritorio: los tres a la vista ---------- */
+  @media (min-width: 900px) {
+    .pq2 { --pad: max(40px, calc((100% - 1200px) / 2)); --hd: 84px; }
+    .pq2-pin { padding-top: calc(var(--hd) + 10px); padding-bottom: clamp(16px, 3svh, 32px); }
+    .grp { width: 100%; max-width: 1040px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+    .c-t { font-size: 1.9rem; }
+    .c-logos li { height: 56px; }
+    .c-logos { gap: 16px 30px; padding-top: 22px; }
+    .c-d { margin-bottom: 18px; }
+    .c-logos :global(img) { height: calc(56px * var(--k)); max-width: 130px; }
+    .card { padding: 36px 34px 34px; transition: transform 0.6s var(--ease-out-expo); }
+    .c-t { font-size: 1.55rem; }
+    .c-d { font-size: 1.02rem; }
+    .pq2-dots { display: none; }
+    :global(html.js) .card { opacity: 0; transform: translateY(18px); }
+    :global(html.js) .pq2.is-in .card { opacity: 1; transform: none; transition: opacity 0.7s, transform 1s var(--ease-out-expo); transition-delay: calc(0.15s + var(--i) * 0.14s); }
+    :global(html.js) .card .c-logos li { opacity: 0; transform: scale(1.3); }
+    :global(html.js) .pq2.is-in .card .c-logos li { opacity: 1; transform: none; transition: opacity 0.4s, transform 0.6s cubic-bezier(0.3, 1.5, 0.5, 1); transition-delay: calc(0.6s + var(--i) * 0.14s + var(--j) * 0.08s); }
+  }
+
+  /* ---------- Entrada ---------- */
+  :global(html.js) .pq2-rv { opacity: 0; transform: translateY(16px); }
+  :global(html.js) .pq2.is-in .pq2-rv { opacity: 1; transform: none; transition: opacity 0.8s, transform 1s var(--ease-out-expo); }
+  :global(html.rm) .pq2 * { transition: none !important; }
+  :global(html.rm) :is(.pq2-rv, .card, .c-logos li) { opacity: 1 !important; transform: none !important; visibility: visible !important; }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-pq2]');
+  if (sec) {
+    new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { sec.classList.add('is-in'); io.disconnect(); } }, { threshold: 0.2 }).observe(sec);
+    // celular: el avance dentro de la sección elige la tarjeta (con histéresis para no titilar en los bordes)
+    const cards = [...sec.querySelectorAll<HTMLElement>('[data-card]')];
+    const dots = [...sec.querySelectorAll<HTMLElement>('[data-dot]')];
+    const pin = sec.querySelector<HTMLElement>('.pq2-pin')!;
+    const N = cards.length;
+    let cur = 0;
+    const set = (i: number) => {
+      if (i === cur) return;
+      cur = i;
+      cards.forEach((c, k) => c.classList.toggle('is-on', k === i));
+      dots.forEach((d, k) => d.classList.toggle('is-on', k === i));
+    };
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const range = sec.offsetHeight - pin.offsetHeight;
+        if (range < 40) return;
+        const p = Math.min(0.999, Math.max(0, -sec.getBoundingClientRect().top / range));
+        const f = p * N;
+        const t = Math.floor(f);
+        if (t !== cur && Math.abs(f - (t > cur ? t : cur)) > 0.06) set(t);
+      });
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+</script>

@@ -233,6 +233,8 @@ export function campestre(): Model {
     .tree(17.2, 1.5, 1.2, 1.8, 0.8)
     .person(4.2, 0.5, 7.4)
     .person(13.2, 0.4, 9.6, 0.95);
+  // puntos para anotar la maqueta (página de vivienda)
+  m.mark('alero', 5, 3.7, 9.8).mark('brisa', 9.6, 2.2, 3).mark('terreno', 15.6, 0.2, 10.6).mark('vista', 11.6, 0.45, 7.9).mark('sol', 8, 9, 5);
   return m.build(400, 300);
 }
 
@@ -248,6 +250,7 @@ export function urbana(): Model {
     .box(-0.2, 6.3, 0.2, 5.6, 0.25, 6.8, 'paper', 3, 0.6) // cubierta
     .tree(8.8, 9.2, 0.9, 1.4, 0.75)
     .person(5.4, 0.25, 9.0);
+  m.mark('frente', 4, 0.25, 10).mark('luz', 6.3, 3.6, 3.5).mark('pisos', 2.6, 4.9, 6.8).mark('privacidad', 4.6, 1.9, 7.6).mark('vecino', -0.7, 4.2, 4.5);
   return m.build(400, 300);
 }
 

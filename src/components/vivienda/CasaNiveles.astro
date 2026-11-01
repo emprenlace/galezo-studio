@@ -1,0 +1,254 @@
+---
+/**
+ * Diseño de vivienda · Sección 2: una casa real, nivel por nivel.
+ * La sección queda fija y con el scroll se baja por la casa en ladera (planos reales de Revit, sin datos del cliente):
+ * en el corte una franja azul marca el nivel; al lado entra la planta de ese nivel con sus espacios y áreas reales.
+ * Los niveles del corte se pueden tocar para saltar a ellos.
+ */
+import { Image } from 'astro:assets';
+import Trazos from '../Trazos.astro';
+import Plomada from '../Plomada.astro';
+
+const { n = '01' } = Astro.props as { n?: string };
+import corte from '../../assets/vivienda/corte.jpg';
+import azotea from '../../assets/vivienda/azotea.jpg';
+import habitaciones from '../../assets/vivienda/habitaciones.jpg';
+import social from '../../assets/planos/planta1-color.jpg';
+import estudio from '../../assets/vivienda/estudio.jpg';
+import garaje from '../../assets/vivienda/garaje.jpg';
+
+// a, b: franja del nivel en el corte (% del alto de la imagen). Áreas tomadas de los planos.
+const niveles = [
+  { t: 'Azotea', n: '+5,50', a: 3, b: 21, img: azotea, d: 'Estar al aire libre bajo una pérgola metálica, con salón social privado.', es: [['Azotea', '97,69'], ['Salón privado', '16,75'], ['Patio de labores', '12,94']] },
+  { t: 'Habitaciones', n: '+1,80', a: 22, b: 40, img: habitaciones, d: 'Las tres habitaciones, cada una con su balcón; la principal con vestier.', es: [['Habitación principal', '35,15'], ['Habitación', '25,83'], ['Habitación', '24,76']] },
+  { t: 'Acceso y zona social', n: '±0,00', a: 41, b: 58, img: social, d: 'Se entra desde la calle: garaje, estar de recibimiento y, medio nivel abajo, sala y comedor abiertos al balcón.', es: [['Sala', '73,05'], ['Balcón', '71,97'], ['Garaje', '32,38'], ['Comedor', '25,74']] },
+  { t: 'Estudio y huéspedes', n: '−5,60', a: 59, b: 77, img: estudio, d: 'Un nivel más abajo, siguiendo la ladera: salón social, oficina y cuarto de invitados.', es: [['Salón social', '59,41'], ['Balcón', '37,20'], ['Oficina', '22,45'], ['Cuarto de invitados', '18,01']] },
+  { t: 'Garaje y apartamento', n: '−9,30', a: 77.5, b: 96, img: garaje, d: 'Al pie de la ladera, un segundo acceso con garaje y un apartamento independiente.', es: [['Garaje', '81,03'], ['Habitación', '16,96'], ['Comedor', '14,63'], ['Cocina', '6,17']] },
+];
+const pad = (i: number) => String(i + 1).padStart(2, '0');
+---
+
+<section class="cn" id="caso" data-nav-label="Una casa real" aria-labelledby="cn-title" data-cn>
+  <div class="cn-pin">
+    <Trazos left="ejes" right="cota" />
+    <div class="cn-in">
+      <Plomada n={n} label="Una casa real" />
+      <header class="cn-head">
+        <h2 id="cn-title" class="cn-h2">Recorre una casa real, <span class="accent">nivel por nivel</span></h2>
+        <p class="cn-sub">Casa en ladera diseñada por el estudio: cinco niveles que bajan con el terreno.</p>
+      </header>
+
+      <div class="cn-body">
+        <!-- El corte: la franja azul marca el nivel -->
+        <figure class="cn-cut" aria-label="Corte arquitectónico de la casa">
+          <div class="cut-img">
+            <Image src={corte} alt="Corte de una casa de cinco niveles escalonada sobre una ladera" widths={[700, 1100, 1600]} sizes="(min-width: 1024px) 560px, 92vw" loading="lazy" />
+            <span class="band" data-band aria-hidden="true"></span>
+            {
+              niveles.map((l, i) => (
+                <button type="button" class="hit" style={`top:${l.a}%;height:${l.b - l.a}%`} data-go={i} aria-label={`Ir al nivel ${l.t}`} />
+              ))
+            }
+          </div>
+          <ol class="cut-ticks" aria-hidden="true">
+            {niveles.map((l, i) => <li class:list={{ 'is-on': i === 0 }} data-tick={i} style={`top:${(l.a + l.b) / 2}%`}><span>{l.n}</span></li>)}
+          </ol>
+        </figure>
+
+        <!-- El nivel activo: su planta y sus espacios -->
+        <div class="cn-level">
+          <div class="lv-top" aria-live="polite">
+            <p class="lv-k"><span class="lv-i" data-lv-i>01</span><span class="lv-of">/ 05</span><span class="lv-n">N <span data-lv-n>{niveles[0].n}</span></span></p>
+            <h3 class="lv-t" data-lv-t>{niveles[0].t}</h3>
+          </div>
+          <div class="lv-plans">
+            {
+              niveles.map((l, i) => (
+                <div class:list={['lv-plan', { 'is-on': i === 0 }]} data-plan={i}>
+                  <Image src={l.img} alt={`Planta del nivel ${l.t}`} widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 600px, 92vw" loading="lazy" />
+                </div>
+              ))
+            }
+          </div>
+          <div class="lv-txs">
+            {
+              niveles.map((l, i) => (
+                <div class:list={['lv-tx', { 'is-on': i === 0 }]} data-tx={i}>
+                  <p class="lv-d">{l.d}</p>
+                  <ul class="lv-es" role="list">
+                    {l.es.map(([n, m], j) => (
+                      <li style={`--j:${j}`}>
+                        <span>{n}</span>
+                        <i aria-hidden="true" />
+                        <b>{m} m²</b>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            }
+          </div>
+          <div class="lv-dots" aria-hidden="true">{niveles.map((_, i) => <i class:list={{ 'is-on': i === 0 }} data-dot={i} />)}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cn { --pad: 20px; --hd: 76px; position: relative; height: 520svh; background: #fff; }
+  .cn-pin { isolation: isolate; position: sticky; top: 0; height: 100svh; overflow: hidden; display: flex; padding: calc(var(--hd) + 6px) var(--pad) 14px; }
+  .cn-in { position: relative; z-index: 1; width: 100%; min-width: 0; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+  .cn-head { display: grid; gap: 4px; text-align: center; flex: none; }
+  .cn-h2 { font-size: clamp(1.45rem, min(1.1rem + 2.4vw, 4.6svh), 3.1rem); line-height: 1.05; font-weight: 560; letter-spacing: -0.035em; text-wrap: balance; }
+  .cn-h2 .accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.015em; color: var(--color-brand); font-size: 1.08em; }
+  .cn-sub { font-size: 0.9rem; color: var(--color-ink-mute); }
+
+  .cn-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; align-content: center; gap: 16px; }
+  .cn-body > * { min-width: 0; }
+
+  /* ---------- Corte ---------- */
+  .cn-cut { position: relative; margin: 0; padding-right: 46px; }
+  .cut-img { position: relative; }
+  .cut-img :global(img) { display: block; width: 100%; height: auto; border: 1px solid var(--color-line); }
+  .band { position: absolute; left: -4px; right: -4px; top: 0; height: 100%; transform-origin: 0 0; background: rgb(0 128 193 / 0.14); box-shadow: inset 0 0 0 2px var(--color-brand); transform: translateY(var(--y, 3%)) scaleY(var(--s, 0.18)); transition: transform 0.75s var(--ease-out-expo); pointer-events: none; }
+  .band::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.5), transparent); transform: translateX(-100%); animation: cn-scan 2.8s ease-in-out infinite; }
+  @keyframes cn-scan { 60%, 100% { transform: translateX(100%); } }
+  .hit { position: absolute; left: 0; right: 0; cursor: pointer; }
+  .hit:focus-visible { outline: 2px solid var(--color-brand); outline-offset: -2px; }
+  .cut-ticks { position: absolute; top: 0; bottom: 0; right: 0; width: 42px; }
+  .cut-ticks li { position: absolute; right: 0; translate: 0 -50%; font-size: 10.5px; font-weight: 600; color: var(--color-ink-mute); font-variant-numeric: tabular-nums; transition: color 0.3s; }
+  .cut-ticks li::before { content: ''; display: inline-block; width: 7px; height: 6px; margin-right: 3px; background: currentColor; clip-path: polygon(0 0, 100% 0, 50% 100%); vertical-align: 1px; }
+  .cut-ticks li.is-on { color: var(--color-brand-ink); }
+
+  /* ---------- Nivel ---------- */
+  .cn-level { position: relative; min-height: 0; display: grid; grid-template-rows: auto auto auto; align-content: center; gap: 8px; }
+  .lv-k { display: flex; align-items: baseline; gap: 6px; font-size: 12.5px; color: var(--color-ink-mute); }
+  .lv-i { font-family: var(--font-serif); font-style: italic; font-size: 22px; line-height: 1; color: var(--color-brand); }
+  .lv-n { margin-left: auto; font-weight: 600; color: var(--color-brand-ink); font-variant-numeric: tabular-nums; }
+  .lv-t { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.025em; }
+  /* alto según el ancho (las plantas son alargadas): sin huecos arriba ni abajo */
+  .lv-plans { position: relative; width: 100%; aspect-ratio: 2.35; max-height: 36svh; }
+  .lv-plan { position: absolute; inset: 0; opacity: 0; visibility: hidden; transform: translateY(14px) scale(0.98); transition: opacity 0.45s, transform 0.7s var(--ease-out-expo), visibility 0s 0.45s; }
+  .lv-plan.is-on { opacity: 1; visibility: inherit; transform: none; transition: opacity 0.5s 0.1s, transform 0.8s 0.1s var(--ease-out-expo); }
+  .lv-plan :global(img) { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .lv-txs { display: grid; }
+  .lv-tx { grid-area: 1 / 1; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0s 0.3s; }
+  .lv-tx.is-on { opacity: 1; visibility: inherit; transition: opacity 0.4s 0.15s; }
+  .lv-d { font-size: 0.92rem; line-height: 1.45; color: var(--color-ink-soft); margin-bottom: 6px; }
+  .lv-es { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 16px; }
+  .lv-es li { min-width: 0; }
+  .lv-es li { display: flex; align-items: baseline; gap: 6px; font-size: 13px; padding: 3px 0; }
+  .lv-es span { color: var(--color-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lv-es i { flex: 1; border-bottom: 1px dotted rgb(11 13 16 / 0.25); transform: translateY(-3px); }
+  .lv-es b { font-weight: 650; color: var(--color-brand-ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .lv-tx.is-on .lv-es li { animation: cn-in 0.5s var(--ease-out-expo) both; animation-delay: calc(0.2s + var(--j) * 0.07s); }
+  @keyframes cn-in { from { opacity: 0; transform: translateY(6px); } }
+  .lv-dots { display: none; }
+
+  /* ---------- Entrada ---------- */
+  :global(html.js) .cn :is(.cn-head, .cn-cut, .cn-level) { opacity: 0; transform: translateY(16px); }
+  :global(html.js) .cn.is-in :is(.cn-head, .cn-cut, .cn-level) { opacity: 1; transform: none; transition: opacity 0.8s, transform 1s var(--ease-out-expo); }
+  :global(html.js) .cn.is-in .cn-cut { transition-delay: 0.1s; }
+  :global(html.js) .cn.is-in .cn-level { transition-delay: 0.2s; }
+  :global(html.rm) .cn * { transition: none !important; animation: none !important; }
+  :global(html.rm) .cn :is(.cn-head, .cn-cut, .cn-level) { opacity: 1 !important; transform: none !important; }
+
+  /* Celulares bajitos */
+  @media (max-height: 700px) and (max-width: 639px) {
+    .cn-sub { display: none; }
+    .lv-d { display: none; }
+    .lv-plans { max-height: 30svh; }
+  }
+  @media (max-height: 600px) and (max-width: 639px) {
+    .lv-plans { max-height: 24svh; }
+    .cn-in, .cn-body { gap: 8px; }
+    .lv-es li { padding: 2px 0; }
+  }
+
+  /* ---------- Tableta ---------- */
+  @media (min-width: 640px) {
+    .cn { --pad: 28px; }
+    .cn-cut { max-width: 640px; width: 100%; justify-self: center; }
+    .lv-es li { font-size: 14px; }
+  }
+  /* ---------- Escritorio: corte a la izquierda, nivel a la derecha ---------- */
+  @media (min-width: 1024px) {
+    .cn { --pad: max(40px, calc((100% - 1200px) / 2)); --hd: 84px; }
+    .cn-pin { padding-top: calc(var(--hd) + clamp(16px, 4svh, 44px)); padding-bottom: clamp(20px, 4svh, 44px); }
+    .cn-in { gap: clamp(16px, 3svh, 32px); }
+    .cn-sub { font-size: 1rem; }
+    .cn-body { grid-template-rows: none; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 48px; align-items: center; }
+    .cn-cut { max-width: none; }
+    .cn-level { align-content: center; }
+    .lv-plans { max-height: 44svh; }
+    .lv-t { font-size: 1.9rem; }
+    .lv-i { font-size: 30px; }
+    .lv-d { font-size: 1.02rem; }
+    .lv-es { grid-template-columns: 1fr; gap: 0; }
+    .lv-es li { font-size: 15px; padding: 6px 0; }
+  }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-cn]');
+  if (sec) {
+    const plans = [...sec.querySelectorAll<HTMLElement>('[data-plan]')];
+    const txs = [...sec.querySelectorAll<HTMLElement>('[data-tx]')];
+    const ticks = [...sec.querySelectorAll<HTMLElement>('[data-tick]')];
+    const band = sec.querySelector<HTMLElement>('[data-band]')!;
+    const iEl = sec.querySelector<HTMLElement>('[data-lv-i]')!;
+    const nEl = sec.querySelector<HTMLElement>('[data-lv-n]')!;
+    const tEl = sec.querySelector<HTMLElement>('[data-lv-t]')!;
+    const hits = [...sec.querySelectorAll<HTMLElement>('[data-go]')];
+    const lv = hits.map((h) => ({ a: parseFloat(h.style.top), h: parseFloat(h.style.height) }));
+    const names = txs.map((_, i) => plans[i].querySelector('img')?.getAttribute('alt')?.replace('Planta del nivel ', '') || '');
+    const nums = ticks.map((t) => t.textContent || '');
+    const N = plans.length;
+    let cur = -1;
+
+    const show = (i: number) => {
+      if (i === cur) return;
+      cur = i;
+      plans.forEach((p, k) => p.classList.toggle('is-on', k === i));
+      txs.forEach((t, k) => t.classList.toggle('is-on', k === i));
+      ticks.forEach((t, k) => t.classList.toggle('is-on', k === i));
+      band.style.setProperty('--y', `${lv[i].a}%`);
+      band.style.setProperty('--s', `${lv[i].h / 100}`);
+      iEl.textContent = String(i + 1).padStart(2, '0');
+      nEl.textContent = nums[i];
+      tEl.textContent = names[i];
+    };
+    show(0);
+
+    // el avance depende de cuánto se ha bajado dentro de la sección (con un margen para no saltar en los bordes)
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const r = sec.getBoundingClientRect();
+        const pin = sec.querySelector<HTMLElement>('.cn-pin')!.offsetHeight;
+        const range = sec.offsetHeight - pin;
+        const p = Math.min(1, Math.max(0, -r.top / range));
+        const f = p * N;
+        const target = Math.min(N - 1, Math.floor(f));
+        // histéresis: solo cambia cuando se pasa claramente el borde del tramo
+        if (target !== cur && Math.abs(f - (target > cur ? target : cur)) > 0.06) show(target);
+      });
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // tocar un nivel del corte lleva el scroll hasta él
+    hits.forEach((h, i) =>
+      h.addEventListener('click', () => {
+        const pin = sec.querySelector<HTMLElement>('.cn-pin')!.offsetHeight;
+        const range = sec.offsetHeight - pin;
+        const top = sec.getBoundingClientRect().top + scrollY;
+        scrollTo({ top: top + range * ((i + 0.5) / N), behavior: document.documentElement.classList.contains('rm') ? 'auto' : 'smooth' });
+      }),
+    );
+
+    new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { sec.classList.add('is-in'); io.disconnect(); } }, { threshold: 0.05 }).observe(sec);
+  }
+</script>

@@ -7,6 +7,9 @@ const modelos = [campestre(), ampliacion(), institucional(), ejecutivo()];
 
 // Servicios despliega la lista de páginas de cada servicio; Blog va directo
 const links = [{ href: '/blog', label: 'Blog' }];
+// servicio de la página actual: se marca en azul en el menú (para saber dónde estás)
+const here = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '');
+const actual = servicios.find((s) => here === `/servicios/${s.slug}`)?.slug;
 const pad = (i: number) => String(i + 1).padStart(2, '0');
 ---
 
@@ -29,7 +32,7 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
     <nav class="hd-nav" aria-label="Principal">
       <ul>
         <li class="hd-dd" data-dd>
-          <button type="button" class="hd-dd-btn" aria-expanded="false" aria-controls="menu-servicios" data-dd-btn data-sec="servicios">
+          <button type="button" class:list={['hd-dd-btn', { 'is-here': actual }]} aria-expanded="false" aria-controls="menu-servicios" data-dd-btn data-sec="servicios">
             Servicios
             <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.6 6 7.6 9 4.6"></path></svg>
           </button>
@@ -43,11 +46,12 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
               {
                 servicios.map((s, i) => (
                   <li style={`--i:${i}`}>
-                    <a href={`/servicios/${s.slug}`} class="dd-card is-built">
+                    <a href={`/servicios/${s.slug}`} class:list={['dd-card is-built', { 'is-here': s.slug === actual }]} aria-current={s.slug === actual ? 'page' : undefined}>
                       <span class="dd-mq" aria-hidden="true">
                         <Maqueta model={modelos[i]} />
                       </span>
                       <span class="dd-n">{pad(i)}</span>
+                      {s.slug === actual && <span class="dd-here">Estás aquí</span>}
                       <span class="dd-t">{s.title}</span>
                       <span class="dd-l">{s.line}</span>
                       <svg class="dd-go" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
@@ -83,7 +87,7 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
           {
             servicios.map((s) => (
               <li>
-                <a href={`/servicios/${s.slug}`}>{s.title}</a>
+                <a href={`/servicios/${s.slug}`} class:list={{ 'is-here': s.slug === actual }} aria-current={s.slug === actual ? 'page' : undefined}>{s.title}</a>
               </li>
             ))
           }
@@ -313,6 +317,9 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
   .sh-sub[hidden] { display: none; }
   .hd-sheet .sh-sub a { display: block; padding: 9px 0; border: 0; font-size: 17px; font-weight: 500; color: var(--color-ink-soft); }
   .hd-sheet .sh-sub a:hover { color: var(--color-brand-ink); }
+  /* el servicio de la página actual */
+  .hd-sheet .sh-sub a.is-here { position: relative; color: var(--color-brand-ink); font-weight: 650; }
+  .hd-sheet .sh-sub a.is-here::before { content: ''; position: absolute; left: -16px; top: 50%; width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%; background: var(--color-brand); }
   .sh-sub li { animation: sheet-li 0.5s var(--ease-out-expo) both; }
   .hd.is-open .hd-sheet { animation: sheet-in 0.6s var(--ease-out-expo) both; }
   .hd.is-open .hd-sheet li { animation: sheet-li 0.7s var(--ease-out-expo) both; animation-delay: calc(80ms + var(--i) * 50ms); }
@@ -422,6 +429,14 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
     .hd-dd-panel .dd-card:hover, .hd-dd-panel .dd-card:focus-visible { background: var(--color-brand-soft); outline: none; }
     .dd-card:hover .dd-mq, .dd-card:focus-visible .dd-mq { transform: translateY(-6px); }
     .dd-card:hover .dd-go, .dd-card:focus-visible .dd-go { opacity: 1; transform: none; }
+    /* el servicio de la página actual: tarjeta azul de marca, maqueta en blanco sobre ella */
+    .hd-dd-panel .dd-card.is-here, .hd-dd-panel .dd-card.is-here:hover { background: rgb(0 128 193 / 0.14); box-shadow: inset 0 0 0 1.5px rgb(0 128 193 / 0.45); color: var(--color-ink); }
+    .dd-card.is-here .dd-t { color: var(--color-brand-ink); }
+    .dd-here { position: absolute; right: 10px; top: 10px; padding: 3px 8px; font-size: 10.5px; font-weight: 650; color: #fff; background: var(--color-brand); border-radius: 999px; }
+    .dd-card.is-here .dd-go { display: none; }
+    /* el botón "Servicios" también se marca cuando estás dentro de uno */
+    .hd-dd-btn.is-here { color: var(--color-brand-ink); }
+    .hd-dd-btn.is-here::after { content: ''; position: absolute; left: 50%; bottom: 2px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--color-brand); }
     .hd-dd.is-open .hd-dd-panel { animation: dd-in 0.5s var(--ease-out-expo) both; }
     .hd-dd.is-open .dd-cards li { animation: sheet-li 0.6s var(--ease-out-expo) both; animation-delay: calc(60ms + var(--i) * 50ms); }
     @keyframes dd-in { from { opacity: 0; transform: translateY(-8px); } }

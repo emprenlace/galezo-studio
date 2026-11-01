@@ -1,0 +1,229 @@
+---
+/**
+ * Comercial e institucional · 02 "Retos resueltos": tres casos reales, cada uno contado como reto → lo que hicimos.
+ * La sección queda fija; con el scroll cada caso pasa del dibujo a lápiz a la foto de la obra (una línea azul la
+ * recorre) y luego da paso al siguiente. Datos del portafolio de Ulises. El coliseo es render (está en construcción).
+ */
+import { getImage } from 'astro:assets';
+import Plomada from '../Plomada.astro';
+import Trazos from '../Trazos.astro';
+import mirador from '../../assets/obras/ln/mirador.jpg';
+import miradorL from '../../assets/obras/ln/mirador-dibujo.jpg';
+import coliseo from '../../assets/obras/ln/coliseo.jpg';
+import coliseoL from '../../assets/obras/ln/coliseo-dibujo.jpg';
+import instpecam from '../../assets/obras/ln/instpecam.jpg';
+import instpecamL from '../../assets/obras/ln/instpecam-dibujo.jpg';
+
+const { n = '02' } = Astro.props as { n?: string };
+const casos = [
+  {
+    t: 'Mirador al Santo Ecce Homo',
+    reto: 'Una obra abandonada en obra gris desde 2008, dentro del área sustraída del cerro.',
+    hicimos: 'El diseño arquitectónico y ornamental para terminarla. Hoy está construida.',
+    datos: ['Valledupar · 2023', '1.988 m²', 'Gobernación del Cesar'],
+    estado: 'Construido',
+    photo: mirador, line: miradorL, pos: '62% 35%',
+  },
+  {
+    t: 'Coliseo de tenis de mesa',
+    reto: 'Cumplir los requisitos técnicos nacionales e internacionales para entrenar y competir.',
+    hicimos: 'El diseño y la formulación de una caja de cristal, sostenible y accesible.',
+    datos: ['Valledupar · 2025', '8.959 m²', 'Gobernación del Cesar'],
+    estado: 'En construcción · render',
+    photo: coliseo, line: coliseoL,
+  },
+  {
+    t: 'Cuatro colegios en Valledupar',
+    reto: 'Un prototipo de la Gobernación que debía servir a cuatro instituciones distintas.',
+    hicimos: 'Rediseñamos interiores y fachadas de cada una, con sus plazoletas, canchas y cafetería.',
+    datos: ['Valledupar · 2022 – 2024', 'Gobernación del Cesar'],
+    extra: 'Instpecam, CASD, José Eugenio Martínez y Alfonso López',
+    estado: 'Tres construidos, uno en obra',
+    photo: instpecam, line: instpecamL,
+  },
+];
+const opts = { widths: [640, 960, 1400], format: 'webp' as const };
+const pics = await Promise.all(
+  casos.map(async (c) => {
+    const [p, l] = await Promise.all([getImage({ src: c.photo, ...opts, quality: 72 }), getImage({ src: c.line, ...opts, quality: 64 })]);
+    return { p: { src: p.src, set: p.srcSet.attribute }, l: { src: l.src, set: l.srcSet.attribute } };
+  }),
+);
+const sizes = '(min-width: 1024px) 640px, 100vw';
+---
+
+<section class="rt" data-nav-label="Retos resueltos" aria-labelledby="rt-title" data-rt>
+  <div class="rt-pin">
+    <Trazos left="ejes" right="cota" />
+    <div class="rt-in">
+      <Plomada n={n} label="Retos resueltos" variant="obra" />
+      <h2 id="rt-title" class="rt-h2">Cada obra tenía <span class="accent">un reto</span></h2>
+
+      <div class="rt-body">
+        <!-- Imagen: dibujo a lápiz debajo, foto de la obra encima recortada hasta la línea -->
+        <div class="rt-stage chamfer" aria-hidden="true">
+          {
+            casos.map((c, i) => (
+              <figure class:list={['rt-fig', { 'is-on': i === 0 }]} data-fig={i}>
+                <img class="rt-img" src={pics[i].l.src} srcset={pics[i].l.set} sizes={sizes} alt="" loading="lazy" decoding="async" style={c.pos && `object-position:${c.pos}`} />
+                <div class="rt-top">
+                  <div class="rt-top-in">
+                    <img class="rt-img" src={pics[i].p.src} srcset={pics[i].p.set} sizes={sizes} alt="" loading="lazy" decoding="async" style={c.pos && `object-position:${c.pos}`} />
+                  </div>
+                </div>
+                <span class="rt-line" />
+                <span class="rt-tag">{c.estado}</span>
+              </figure>
+            ))
+          }
+        </div>
+
+        <!-- El caso -->
+        <div class="rt-txs" aria-live="polite">
+          {
+            casos.map((c, i) => (
+              <article class:list={['rt-tx', { 'is-on': i === 0 }]} data-tx={i} aria-hidden={i === 0 ? 'false' : 'true'}>
+                <p class="rt-k"><span>0{i + 1}</span> / 03</p>
+                <h3 class="rt-t">{c.t}</h3>
+                <dl class="rt-dl">
+                  <div><dt>El reto</dt><dd>{c.reto}</dd></div>
+                  <div><dt>Lo que hicimos</dt><dd>{c.hicimos}</dd></div>
+                </dl>
+                <ul class="rt-datos" role="list">{c.datos.map((d) => <li>{d}</li>)}{c.extra && <li class="extra">{c.extra}</li>}</ul>
+              </article>
+            ))
+          }
+          <div class="rt-dots" aria-hidden="true">{casos.map((_, i) => <i class:list={{ 'is-on': i === 0 }} data-dot={i} />)}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .rt { --pad: 20px; --hd: 76px; position: relative; background: var(--color-bone); }
+  :global(html.js:not(.rm)) .rt { height: 420svh; }
+  .rt-pin { position: relative; isolation: isolate; height: 100svh; min-height: 560px; display: flex; padding: calc(var(--hd) + 6px) var(--pad) 16px; overflow: hidden; }
+  :global(html.js:not(.rm)) .rt-pin { position: sticky; top: 0; }
+  .rt-in { position: relative; z-index: 1; flex: 1; min-height: 0; width: 100%; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(8px, 1.6svh, 18px); }
+  .rt-h2 { font-size: clamp(1.7rem, min(1.2rem + 2.6vw, 5.2svh), 3.3rem); line-height: 1.03; font-weight: 560; letter-spacing: -0.038em; text-align: center; text-wrap: balance; }
+  .rt-h2 .accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.015em; color: var(--color-brand); font-size: 1.08em; }
+
+  .rt-body { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .rt-stage { --cut: 16px; --r: 0; position: relative; width: 100%; aspect-ratio: 16 / 10; max-height: 30svh; background: #fff; overflow: hidden; }
+  .rt-fig { position: absolute; inset: 0; margin: 0; opacity: 0; visibility: hidden; transition: opacity 0.5s, visibility 0s 0.5s; }
+  .rt-fig.is-on { opacity: 1; visibility: inherit; transition: opacity 0.5s; }
+  .rt-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* recorte compuesto: la ventana se corre y la foto se corre al revés (sin repintar) */
+  .rt-top { position: absolute; inset: 0; overflow: hidden; transform: translateX(calc((var(--r) - 1) * 100%)); will-change: transform; }
+  .rt-top-in { position: absolute; inset: 0; transform: translateX(calc((1 - var(--r)) * 100%)); will-change: transform; }
+  .rt-line { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; margin-left: -1px; background: var(--color-brand); box-shadow: 0 0 0 1px rgb(255 255 255 / 0.6), 0 0 16px rgb(0 128 193 / 0.6); transform: translateX(calc(var(--r) * var(--w, 100vw))); opacity: calc(1 - var(--r) * var(--r) * var(--r)); will-change: transform; }
+  .rt-tag { position: absolute; left: 10px; bottom: 10px; padding: 4px 10px; font-size: 11.5px; font-weight: 600; color: #fff; background: rgb(11 13 16 / 0.6); border-radius: 999px; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+
+  .rt-txs { position: relative; display: grid; }
+  .rt-tx { grid-area: 1 / 1; display: grid; gap: 6px; align-content: start; opacity: 0; visibility: hidden; transform: translateY(14px); transition: opacity 0.35s, transform 0.5s var(--ease-out-expo), visibility 0s 0.35s; }
+  .rt-tx.is-on { opacity: 1; visibility: inherit; transform: none; transition: opacity 0.45s 0.1s, transform 0.7s 0.1s var(--ease-out-expo); }
+  .rt-k { font-size: 12.5px; color: var(--color-ink-mute); }
+  .rt-k span { font-family: var(--font-serif); font-style: italic; font-size: 20px; color: var(--color-brand); }
+  .rt-t { font-size: 1.3rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.15; }
+  .rt-dl { display: grid; gap: 8px; margin-top: 2px; }
+  .rt-dl div { display: grid; gap: 2px; }
+  .rt-dl dt { font-size: 11.5px; font-weight: 650; color: var(--color-ink-mute); }
+  .rt-dl div + div dt { color: var(--color-brand-ink); }
+  .rt-dl dd { font-size: 0.95rem; line-height: 1.42; color: var(--color-ink); }
+  .rt-dl div:first-child dd { color: var(--color-ink-soft); }
+  .rt-datos { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .rt-datos li { padding: 4px 9px; font-size: 12px; font-weight: 560; color: var(--color-ink-soft); background: #fff; border: 1px solid var(--color-line); border-radius: 999px; }
+  .rt-dots { display: flex; gap: 6px; margin-top: 10px; }
+  .rt-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgb(11 13 16 / 0.18); transition: width 0.4s var(--ease-out-expo), background-color 0.3s; }
+  .rt-dots i.is-on { width: 18px; border-radius: 3px; background: var(--color-brand); }
+
+  /* sin JS o sin animaciones: los tres casos en lista, la foto completa */
+  :global(html:not(.js)) .rt-stage, :global(html.rm) .rt-stage { --r: 1; }
+
+  @media (max-width: 639px) {
+    .rt-datos .extra { display: none; }
+    .rt-dots { margin-top: 6px; }
+  }
+  @media (max-width: 639px) and (max-height: 700px) {
+    .rt-stage { max-height: 25svh; }
+    .rt :global(.trz) { display: none; }
+  }
+  @media (max-width: 639px) and (max-height: 600px) {
+    .rt-stage { max-height: 20svh; }
+    .rt-t { font-size: 1.05rem; }
+    .rt-k { display: none; }
+    .rt-dl { gap: 4px; }
+    .rt-dl dd { font-size: 0.85rem; line-height: 1.35; }
+    .rt-datos li:nth-child(3) { display: none; }
+    .rt-dl dd { font-size: 0.9rem; }
+    .rt-t { font-size: 1.15rem; }
+  }
+
+  /* ---------- Escritorio: imagen grande a la izquierda, el caso a la derecha ---------- */
+  @media (min-width: 900px) {
+    .rt { --pad: max(40px, calc((100% - 1200px) / 2)); --hd: 84px; }
+    .rt-pin { padding-top: calc(var(--hd) + 10px); padding-bottom: clamp(16px, 3svh, 32px); }
+    .rt-body { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); align-items: center; gap: 44px; }
+    .rt-stage { --cut: 22px; max-height: 58svh; aspect-ratio: 4 / 3; }
+    .rt-tag { left: 16px; bottom: 16px; font-size: 12.5px; }
+    .rt-t { font-size: 1.9rem; }
+    .rt-k span { font-size: 26px; }
+    .rt-dl { gap: 14px; margin-top: 8px; }
+    .rt-dl dt { font-size: 12.5px; }
+    .rt-dl dd { font-size: 1.05rem; }
+    .rt-datos li { font-size: 13px; padding: 5px 11px; }
+  }
+
+  /* ---------- Entrada ---------- */
+  :global(html.js) .rt :is(.rt-h2, .rt-body) { opacity: 0; transform: translateY(16px); }
+  :global(html.js) .rt.is-in :is(.rt-h2, .rt-body) { opacity: 1; transform: none; transition: opacity 0.8s, transform 1s var(--ease-out-expo); }
+  :global(html.js) .rt.is-in .rt-body { transition-delay: 0.12s; }
+  :global(html.rm) .rt * { transition: none !important; }
+  :global(html.rm) .rt :is(.rt-h2, .rt-body) { opacity: 1 !important; transform: none !important; }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-rt]');
+  if (sec) {
+    const pin = sec.querySelector<HTMLElement>('.rt-pin')!;
+    const stage = sec.querySelector<HTMLElement>('.rt-stage')!;
+    const figs = [...sec.querySelectorAll<HTMLElement>('[data-fig]')];
+    const txs = [...sec.querySelectorAll<HTMLElement>('[data-tx]')];
+    const dots = [...sec.querySelectorAll<HTMLElement>('[data-dot]')];
+    const N = figs.length;
+    const reduced = document.documentElement.classList.contains('rm');
+    let cur = 0;
+    const measure = () => stage.style.setProperty('--w', `${stage.offsetWidth}px`);
+    measure();
+    addEventListener('resize', measure);
+
+    const set = (i: number) => {
+      if (i === cur) return;
+      cur = i;
+      figs.forEach((f, k) => f.classList.toggle('is-on', k === i));
+      txs.forEach((t, k) => { t.classList.toggle('is-on', k === i); t.setAttribute('aria-hidden', k === i ? 'false' : 'true'); });
+      dots.forEach((d, k) => d.classList.toggle('is-on', k === i));
+    };
+
+    // cada caso ocupa un tramo del scroll: en su primera mitad el dibujo se vuelve foto; luego se sostiene
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const range = sec.offsetHeight - pin.offsetHeight;
+        if (range < 40 || reduced) { stage.style.setProperty('--r', '1'); return; }
+        const p = Math.min(0.999, Math.max(0, -sec.getBoundingClientRect().top / range));
+        const f = p * N;
+        const t = Math.floor(f);
+        if (t !== cur && Math.abs(f - (t > cur ? t : cur)) > 0.04) set(t);
+        const local = f - cur;
+        const r = Math.min(1, Math.max(0, (local - 0.05) / 0.55));
+        stage.style.setProperty('--r', (r * r * (3 - 2 * r)).toFixed(4));
+      });
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { sec.classList.add('is-in'); io.disconnect(); } }, { threshold: 0.05 }).observe(sec);
+  }
+</script>

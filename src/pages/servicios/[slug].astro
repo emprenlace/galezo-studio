@@ -10,7 +10,7 @@ import { servicios, type Servicio } from '../../lib/servicios';
 import mono from '../../assets/brand/monogram-d.txt?raw';
 
 export function getStaticPaths() {
-  return servicios.map((s) => ({ params: { slug: s.slug }, props: { s } }));
+  return servicios.filter((s) => !s.own).map((s) => ({ params: { slug: s.slug }, props: { s } }));
 }
 const { s } = Astro.props as { s: Servicio };
 const i = servicios.findIndex((x) => x.slug === s.slug);

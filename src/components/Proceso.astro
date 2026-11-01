@@ -30,13 +30,16 @@ const cantidades = [
   ['Carpintería', 0.38],
 ] as const;
 const pad = (i: number) => String(i + 1).padStart(2, '0');
+// número de la sección (cambia cuando se reutiliza en otra página)
+// plano y planoColor: la planta de las etapas 3 y 5 (en vivienda se usa otra para no repetir la de "Lo que recibes")
+const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = Astro.props as { n?: string; cta?: boolean; plano?: ImageMetadata; planoColor?: ImageMetadata };
 ---
 
 <section class="pr" id="proceso" data-nav-label="Cómo trabajamos" aria-labelledby="pr-title" data-pr>
  <div class="pr-pin">
   <Trazos left="rosa" right="muro" />
   <div class="pr-in">
-    <Plomada n="05" label="Cómo trabajamos" variant="sello" />
+    <Plomada n={n} label="Cómo trabajamos" variant="sello" />
     <header class="pr-head pr-rv">
       <h2 id="pr-title" class="pr-h2">Tu proyecto, <span class="accent">etapa por etapa</span></h2>
       <p class="pr-sub">Arrancamos con un anticipo y avanzamos por etapas: cada una la revisas y la apruebas antes de seguir.</p>
@@ -94,12 +97,12 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
 
         <!-- 3 y 5. Plano real de Ulises (planta del primer nivel), en línea -->
         <div class="ly g g-plano real" aria-hidden="true">
-          <Image src={plantaLinea} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" loading="lazy" />
+          <Image src={plano} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" loading="lazy" />
         </div>
 
         <!-- 5. Para construir: el mismo plano, ya completo a color con cotas y áreas -->
         <div class="ly g g-tecnico real" aria-hidden="true">
-          <Image src={plantaColor} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" loading="lazy" />
+          <Image src={planoColor} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" loading="lazy" />
         </div>
 
         <!-- 4. Fachada real (fachada norte, sobre la ladera) -->
@@ -176,6 +179,7 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
           }
         </div>
 
+        {cta && (
         <div class="pr-actions">
           <a href="#cotizar" class="btn btn-primary chamfer" data-open-chat data-cta="proceso">
             Cotiza tu diseño
@@ -183,6 +187,7 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
           </a>
           <p class="pr-note">El primer paso es contarnos de tu espacio.</p>
         </div>
+        )}
       </div>
     </div>
   </div>
@@ -441,11 +446,19 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
   :global(html.rm) .pr-rv { opacity: 1 !important; transform: none !important; }
   :global(html.rm) .pr * { transition-duration: 0.01s !important; transition-delay: 0s !important; }
 
+  @media (min-width: 1024px) and (max-height: 760px) {
+    .pr-sub { display: none; }
+  }
   @media (max-width: 639px) and (max-height: 700px) {
     .pr .lam { aspect-ratio: 16 / 10.2; }
+    /* que quepa en una pantalla: el subtítulo lo dicen las etapas */
+    .pr-sub { display: none; }
   }
   @media (max-width: 360px) {
     .lam { aspect-ratio: 16 / 9; max-height: calc(100svh - 456px); }
+    .pr :global(.trz) { display: none; }
+    .lam { aspect-ratio: 16 / 7.4; min-height: 146px; }
+    .pr-h2 { font-size: 1.5rem; }
     .pr-h2 { font-size: 1.7rem; }
     .pr-in, .pr-body, .side { gap: 8px; }
     .pr-sub { font-size: 0.88rem; }

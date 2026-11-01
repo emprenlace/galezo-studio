@@ -1,0 +1,49 @@
+---
+/**
+ * Servicio · Diseño de vivienda (casas campestres y urbanas). Funciona como landing de pauta (Meta y Google):
+ * cada sección responde una pregunta del visitante y empuja a cotizar.
+ * 1 ¿Es lo que busco? (hero) · 2 ¿Saben hacerlo? (casa real) · 3 ¿Por qué diseñar? · 4 ¿Qué me entregan?
+ * 5 ¿Cómo es el proceso? · 6 ¿Puedo confiar? · 7 Objeciones · 8 Cotizar.
+ * Las secciones 4 a 8 son las del inicio. Mientras no esté lista (ready en lib/servicios.ts) sigue en noindex.
+ */
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import HeroVivienda from '../../components/vivienda/HeroVivienda.astro';
+import CasaNiveles from '../../components/vivienda/CasaNiveles.astro';
+import SinDiseno from '../../components/vivienda/SinDiseno.astro';
+import Entregable from '../../components/Entregable.astro';
+import Proceso from '../../components/Proceso.astro';
+import Estudio from '../../components/Estudio.astro';
+import Preguntas from '../../components/Preguntas.astro';
+import Cierre from '../../components/Cierre.astro';
+import { servicios } from '../../lib/servicios';
+import { breadcrumb, servicio, faqDe } from '../../lib/seo';
+import { faqVivienda } from '../../lib/faq';
+import habitaciones from '../../assets/vivienda/habitaciones.jpg';
+import habitacionesLinea from '../../assets/vivienda/habitaciones-linea.jpg';
+
+const s = servicios.find((x) => x.id === 'vivienda')!;
+const path = `/servicios/${s.slug}`;
+const description = 'Diseñamos casas campestres y urbanas en Colombia: planos, modelo BIM en Revit, renders y cantidades de obra para construir tu casa sin improvisar.';
+---
+
+<Base
+  title="Diseño de casas campestres y urbanas · Galezo Studio"
+  description={description}
+  noindex={!s.ready}
+  pageType="service"
+  serviceId={s.id}
+  schema={[servicio('Diseño de casas campestres y urbanas', description, path, 'Diseño arquitectónico de vivienda'), breadcrumb([['Inicio', '/'], ['Servicios', '/#servicios'], [s.title, path]]), faqDe(faqVivienda)]}
+>
+  <Header />
+  <main>
+    <HeroVivienda />
+    <CasaNiveles n="01" />
+    <SinDiseno n="02" />
+    <Entregable n="03" variant="grua" ejemplo="casa en ladera" cta={false} />
+    <Proceso n="04" cta={false} plano={habitacionesLinea} planoColor={habitaciones} />
+    <Estudio n="05" cta={false} />
+    <Preguntas n="06" items={faqVivienda} cta={false} />
+    <Cierre n="07" />
+  </main>
+</Base>

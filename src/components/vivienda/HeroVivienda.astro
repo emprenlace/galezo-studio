@@ -1,0 +1,269 @@
+---
+/**
+ * Diseño de vivienda · Hero. Misma forma que el héroe del inicio: una lámina de papel enmarcada (margen blanco,
+ * cortes a 45°, azul tenue en la esquina) que cubre también la cabecera, como en el inicio, y el cajetín abajo.
+ * El H1 lleva la búsqueda. La pieza visual son dos fachadas reales (Revit) de una casa en ladera: pasan solas y se
+ * cambian arrastrando; la brújula del cajetín señala hacia dónde mira cada una. Sin nombre del cliente.
+ */
+import { Image } from 'astro:assets';
+import oeste from '../../assets/vivienda/fachada-oeste-hero.jpg';
+import este from '../../assets/vivienda/fachada-este-hero.jpg';
+
+const vistas = [
+  {
+    src: oeste, t: 'oeste', d: 'el frente sobre la calle', deg: 270, n: '01',
+    alt: 'Fachada oeste de la casa: el frente sobre la calle, con el garaje para dos carros',
+  },
+  {
+    src: este, t: 'este', d: 'cinco niveles hacia el valle', deg: 90, n: '02',
+    alt: 'Fachada este de la casa: cinco niveles con balcones de vidrio hacia la pendiente',
+  },
+];
+---
+
+<section class="vh" data-nav-label="Diseño de vivienda" aria-labelledby="vh-title" data-vh>
+  <div class="vh-paper" aria-hidden="true"></div>
+  <div class="vh-in">
+    <div class="vh-copy">
+      <nav class="vh-crumbs" aria-label="Ruta">
+        <a href="/">Inicio</a><span aria-hidden="true">/</span><a href="/#servicios">Servicios</a><span aria-hidden="true">/</span><span aria-current="page">Diseño de vivienda</span>
+      </nav>
+      <h1 id="vh-title" class="vh-h1">
+        <span class="ln"><span class="ln-in">Diseño de casas</span></span>{' '}
+        <span class="ln"><span class="ln-in accent">campestres y urbanas<svg class="underline" viewBox="0 0 400 24" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M4 15 C 70 9, 150 8, 230 10 S 360 14, 396 9"></path><path pathLength="1" class="u2" d="M40 19 C 120 15, 230 15, 330 17"></path></svg></span></span>
+      </h1>
+      <p class="vh-sub">Tu casa pensada para tu lote, tu clima y cómo vives: planos, modelo BIM, renders y cantidades de obra, listos para construir.</p>
+      <div class="vh-act">
+        <a href="#cotizar" class="btn chamfer" data-open-chat data-cta="vivienda-hero" data-service="vivienda">
+          Cotiza tu diseño
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
+        </a>
+      </div>
+      <p class="vh-proof"><b>+70</b> proyectos diseñados<span class="pr-more"><span aria-hidden="true">·</span>obra pública construida en el Cesar</span></p>
+    </div>
+
+    <!-- Las fachadas -->
+    <figure class="vh-model" data-vh-model aria-label="Fachadas de una casa en ladera diseñada por Galezo Studio">
+      <div class="vh-stage">
+        {
+          vistas.map((v, i) => (
+            <div class:list={['vh-v', { 'is-on': i === 0 }]} data-v={i}>
+              <div class="fz" style={`--ar:${(v.src.width / v.src.height).toFixed(4)}`}>
+                <Image src={v.src} alt={v.alt} widths={[600, 900, 1300, 1600]} sizes="(min-width: 1024px) 680px, 100vw" loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} class="fz-img" />
+              </div>
+            </div>
+          ))
+        }
+      </div>
+      <div class="vh-dots" aria-hidden="true">{vistas.map((_, i) => <i class:list={{ 'is-on': i === 0 }} data-dot={i} />)}</div>
+    </figure>
+
+    <!-- Pie: el cajetín de la lámina -->
+    <div class="vh-foot">
+      <figcaption class="cajetin" aria-live="polite">
+        <span class="caj-c caj-compass" aria-hidden="true">
+          <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17"></circle><text x="20" y="9.5" text-anchor="middle">N</text><g class="needle" data-vh-needle style="--deg:270deg"><path d="M20 8 L23 20 L20 32 L17 20 Z"></path><path class="tip" d="M20 8 L23 20 L17 20 Z"></path></g></svg>
+        </span>
+        <span class="caj-c caj-main"><span class="caj-l">Contenido</span><b>Fachada <span data-vh-view>oeste</span></b><span class="caj-d" data-vh-desc>el frente sobre la calle</span></span>
+        <span class="caj-c caj-n"><span class="caj-l">Lámina</span><b><span data-vh-n>01</span><span class="of"> / 02</span></b></span>
+        <span class="caj-c caj-drag" aria-hidden="true">
+          <svg viewBox="0 0 24 12"><path d="M7 2 2 6l5 4M17 2l5 4-5 4M2 6h20"></path></svg>
+          <span class="t-touch">desliza</span><span class="t-mouse">arrastra</span>
+        </span>
+      </figcaption>
+    </div>
+  </div>
+</section>
+
+<style>
+  .vh {
+    --hd: 76px;
+    --pad: 20px;
+    --g: 8px;
+    position: relative;
+    isolation: isolate;
+    height: 100svh;
+    min-height: 560px;
+    display: flex;
+    padding: calc(var(--hd) + 18px) calc(var(--pad) + var(--g)) calc(var(--g) + 10px);
+    background: #fff;
+    overflow: hidden;
+  }
+  /* La lámina: papel hueso con margen blanco, cortes a 45° y el azul de la marca muy tenue arriba a la izquierda */
+  .vh-paper {
+    position: absolute;
+    inset: var(--g);
+    z-index: -1;
+    background:
+      radial-gradient(60% 55% at 0% 0%, rgb(0 128 193 / 0.11), rgb(0 128 193 / 0.04) 50%, rgb(0 128 193 / 0) 78%),
+      radial-gradient(45% 38% at 50% 32%, rgb(255 255 255 / 0.75), rgb(255 255 255 / 0) 100%),
+      var(--color-bone);
+    clip-path: polygon(26px 0, 100% 0, 100% calc(100% - 26px), calc(100% - 26px) 100%, 0 100%, 0 26px);
+  }
+  .vh-in { flex: 1; min-height: 0; width: 100%; max-width: 1200px; margin: 0 auto; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 8px; }
+  .vh-copy { display: grid; justify-items: center; text-align: center; gap: clamp(8px, 1.5svh, 14px); }
+  .vh-crumbs { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; font-size: 12.5px; color: var(--color-ink-mute); }
+  .vh-crumbs a { color: var(--color-ink-mute); transition: color 0.3s; }
+  .vh-crumbs a:hover { color: var(--color-brand-ink); }
+  .vh-crumbs [aria-current] { color: var(--color-ink-soft); font-weight: 600; }
+  .vh-h1 { font-size: clamp(1.9rem, min(1.4rem + 3.4vw, 6.2svh), 4.1rem); line-height: 1.02; font-weight: 560; letter-spacing: -0.04em; text-wrap: balance; }
+  .vh-h1 .ln { display: block; overflow: hidden; padding: 0.04em 0.06em 0.3em; margin-bottom: -0.26em; }
+  .vh-h1 .ln-in { display: inline-block; }
+  .vh-h1 .accent { position: relative; font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.015em; color: var(--color-brand); font-size: 1.08em; }
+  /* subrayado a mano, como en el inicio */
+  .underline { position: absolute; left: -2%; width: 104%; bottom: -0.2em; height: 0.28em; overflow: visible; pointer-events: none; }
+  .underline path { fill: none; stroke: var(--color-brand); stroke-width: 3.2; stroke-linecap: round; vector-effect: non-scaling-stroke; opacity: 0.85; stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .underline .u2 { stroke-width: 2; opacity: 0.5; }
+  .vh.is-in .underline path { stroke-dashoffset: 0; transition: stroke-dashoffset 0.9s 0.7s cubic-bezier(0.5, 0, 0.2, 1); }
+  .vh.is-in .underline .u2 { transition-delay: 0.95s; }
+  .vh-sub { max-width: 34rem; font-size: clamp(0.92rem, 0.85rem + 0.3vw, 1.05rem); line-height: 1.5; color: var(--color-ink-soft); text-wrap: balance; }
+  .vh-act { position: relative; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px 22px; margin-top: 2px; }
+  .btn { --cut: 9px; display: inline-flex; align-items: center; gap: 8px; height: 50px; padding: 0 24px; font-size: 15px; font-weight: 560; background: var(--color-brand-ink); color: #fff; transition: background-color 0.3s; }
+  .btn:hover { background: var(--color-ink); }
+  .btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.45s var(--ease-out-expo); }
+  .btn:hover svg { transform: translateX(3px); }
+  /* respaldo: una sola línea discreta bajo el botón */
+  .vh-proof { font-size: 13px; color: var(--color-ink-mute); }
+  .vh-proof b { font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: 1.35em; color: var(--color-brand); margin-right: 2px; }
+  .vh-proof .pr-more span { margin: 0 6px; }
+  /* celular: solo la cifra, en una línea */
+  @media (max-width: 639px) { .vh-proof .pr-more { display: none; } }
+
+  /* ---------- Las fachadas ---------- */
+  .vh-model { position: relative; min-height: 0; margin: 0; display: grid; cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+  .vh-model.is-drag { cursor: grabbing; }
+  .vh-stage { position: relative; min-height: 0; container-type: size; }
+  .vh-v { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; visibility: hidden; transform: scale(0.985); transition: opacity 0.55s, transform 0.9s var(--ease-out-expo), visibility 0s 0.55s; }
+  .vh-v.is-on { opacity: 1; visibility: inherit; transform: none; transition: opacity 0.55s, transform 0.9s var(--ease-out-expo); }
+  /* el dibujo cabe entero (por ancho o por alto) y su marco se ajusta a él */
+  .fz { position: relative; width: min(100cqw, 100cqh * var(--ar)); aspect-ratio: var(--ar); }
+  .fz :global(.fz-img) { display: block; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; pointer-events: none; -webkit-user-drag: none; -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
+  .vh-dots { position: absolute; left: 50%; bottom: 0; translate: -50% 0; display: flex; gap: 6px; }
+  .vh-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgb(11 13 16 / 0.18); transition: background-color 0.3s, width 0.4s var(--ease-out-expo); }
+  .vh-dots i.is-on { width: 18px; border-radius: 3px; background: var(--color-brand); }
+
+  /* ---------- Pie: arquitecto y cajetín ---------- */
+  .vh-foot { display: flex; align-items: flex-end; justify-content: center; gap: 16px; }
+  .cajetin { display: flex; align-items: stretch; width: 100%; max-width: 440px; border: 1px solid rgb(35 38 43 / 0.4); background: rgb(255 253 249 / 0.94); font-size: 11px; line-height: 1.2; color: #23262b; }
+  .caj-c { display: grid; align-content: center; gap: 2px; padding: 6px 11px 7px; }
+  .caj-c + .caj-c { border-left: 1px solid rgb(35 38 43 / 0.25); }
+  .caj-l { font-size: 9.5px; color: #7a7f87; }
+  .caj-c b { font-size: 12.5px; font-weight: 650; white-space: nowrap; }
+  .caj-d { font-size: 11px; color: #5c616a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .caj-main { flex: 1; min-width: 0; }
+  .caj-n .of { font-weight: 400; color: #7a7f87; }
+  .caj-compass { padding: 4px 8px; }
+  .caj-compass svg { display: block; width: 34px; height: 34px; }
+  .caj-compass circle { fill: #fff; stroke: rgb(11 13 16 / 0.25); stroke-width: 1.2; }
+  .caj-compass text { font-size: 7px; font-weight: 700; fill: var(--color-ink-mute); font-family: var(--font-sans); }
+  .caj-compass .needle { transform-origin: 20px 20px; transform: rotate(var(--deg)); transition: transform 0.8s var(--ease-out-expo); }
+  .caj-compass .needle path { fill: #c9ced6; }
+  .caj-compass .needle .tip { fill: var(--color-brand); }
+  .caj-drag { display: flex; grid-auto-flow: column; align-items: center; gap: 5px; font-family: 'Architects Daughter', var(--font-sans); font-size: 13px; color: var(--color-brand-ink); }
+  .caj-drag svg { width: 20px; height: 10px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+  .t-mouse { display: none; }
+  @media (pointer: fine) { .t-mouse { display: inline; } .t-touch { display: none; } }
+
+  /* celulares bajitos: la ruta sobra (va en los datos estructurados) */
+  @media (max-height: 700px) and (max-width: 639px) {
+    .vh-crumbs { display: none; }
+    .vh-act { gap: 8px 18px; }
+    .btn { height: 46px; }
+  }
+  @media (max-width: 639px) {
+    .caj-n { display: none; }
+  }
+
+  /* ---------- Entrada ---------- */
+  :global(html.js) .vh .ln-in { transform: translateY(105%); }
+  :global(html.js) .vh.is-in .ln-in { transform: none; transition: transform 1s var(--ease-out-expo); }
+  :global(html.js) .vh.is-in .ln + .ln .ln-in { transition-delay: 0.08s; }
+  :global(html.js) .vh :is(.vh-crumbs, .vh-sub, .vh-act, .vh-proof, .vh-foot) { opacity: 0; transform: translateY(12px); }
+  :global(html.js) .vh.is-in :is(.vh-crumbs, .vh-sub, .vh-act, .vh-proof, .vh-foot) { opacity: 1; transform: none; transition: opacity 0.7s, transform 0.9s var(--ease-out-expo); }
+  :global(html.js) .vh.is-in .vh-sub { transition-delay: 0.15s; }
+  :global(html.js) .vh.is-in .vh-act { transition-delay: 0.25s; }
+  :global(html.js) .vh.is-in .vh-proof { transition-delay: 0.35s; }
+  :global(html.js) .vh.is-in .vh-foot { transition-delay: 0.5s; }
+  :global(html.js) .vh .vh-stage { opacity: 0; transform: translateY(24px) scale(0.97); }
+  :global(html.js) .vh.is-in .vh-stage { opacity: 1; transform: none; transition: opacity 0.9s 0.2s, transform 1.2s 0.2s var(--ease-out-expo); }
+  :global(html.rm) .vh * { transition: none !important; }
+  :global(html.rm) .vh :is(.ln-in, .vh-crumbs, .vh-sub, .vh-act, .vh-proof, .vh-foot, .vh-stage) { opacity: 1 !important; transform: none !important; }
+  :global(html.rm) .vh .underline path { stroke-dashoffset: 0 !important; }
+
+  /* ---------- Tableta ---------- */
+  @media (min-width: 640px) {
+    .vh { --pad: 28px; }
+  }
+  /* ---------- Escritorio: texto a la izquierda, fachada a la derecha, pie con arquitecto y cajetín ---------- */
+  @media (min-width: 1024px) {
+    .vh { --pad: max(40px, calc((100% - 1200px) / 2)); --hd: 84px; padding-top: calc(var(--hd) + 24px); padding-bottom: calc(var(--g) + 14px); }
+    .vh-in { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); grid-template-rows: minmax(0, 1fr) auto; align-items: center; gap: 12px 24px; }
+    .vh-copy { justify-items: start; text-align: left; gap: 16px; }
+    .vh-crumbs { justify-content: flex-start; }
+    .vh-act { justify-content: flex-start; margin-top: 6px; }
+          .vh-model { height: 100%; max-height: 640px; }
+    .vh-foot { grid-column: 2; justify-content: center; }
+      .cajetin { width: auto; max-width: none; }
+    .caj-d { max-width: 180px; }
+  }
+</style>
+
+<script>
+  // avisa a la red de seguridad de Base que el JS cargó (si no, a los 2,5 s se apagan las animaciones de toda la página)
+  document.documentElement.classList.add('ready');
+  const sec = document.querySelector<HTMLElement>('[data-vh]');
+  if (sec) {
+    requestAnimationFrame(() => requestAnimationFrame(() => sec.classList.add('is-in')));
+    const model = sec.querySelector<HTMLElement>('[data-vh-model]')!;
+    const views = [...sec.querySelectorAll<HTMLElement>('[data-v]')];
+    const dots = [...sec.querySelectorAll<HTMLElement>('[data-dot]')];
+    const needle = sec.querySelector<SVGGElement>('[data-vh-needle]')!;
+    const view = sec.querySelector<HTMLElement>('[data-vh-view]')!;
+    const descEl = sec.querySelector<HTMLElement>('[data-vh-desc]')!;
+    const numEl = sec.querySelector<HTMLElement>('[data-vh-n]')!;
+    const names = ['oeste', 'este'];
+    const descs = ['el frente sobre la calle', 'cinco niveles hacia el valle'];
+    const degs = [270, 90];
+    const N = views.length;
+    let cur = 0;
+    let deg = 270; // la aguja acumula vueltas para girar siempre por el camino corto
+    const reduced = document.documentElement.classList.contains('rm');
+
+    const show = (i: number) => {
+      i = (i + N) % N;
+      if (i === cur) return;
+      views[cur].classList.remove('is-on');
+      dots[cur].classList.remove('is-on');
+      cur = i;
+      views[cur].classList.add('is-on');
+      dots[cur].classList.add('is-on');
+      deg += ((degs[cur] - deg) % 360 + 540) % 360 - 180;
+      needle.style.setProperty('--deg', `${deg}deg`);
+      view.textContent = names[cur];
+      descEl.textContent = descs[cur];
+      numEl.textContent = String(cur + 1).padStart(2, '0');
+    };
+
+    // pasan solas mientras se ven; se detienen un rato cuando la persona las mueve
+    let timer = 0;
+    let visible = false;
+    const auto = (delay = 4200) => {
+      clearTimeout(timer);
+      if (reduced || !visible) return;
+      timer = window.setTimeout(() => { show(cur + 1); auto(); }, delay);
+    };
+    new IntersectionObserver((es) => { visible = es[0].isIntersecting; visible ? auto() : clearTimeout(timer); }, { threshold: 0.3 }).observe(model);
+
+    let x0 = 0;
+    let dragging = false;
+    model.addEventListener('pointerdown', (e) => { dragging = true; x0 = e.clientX; model.classList.add('is-drag'); clearTimeout(timer); });
+    addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - x0;
+      if (Math.abs(dx) >= 60) { show(cur + (dx < 0 ? 1 : -1)); x0 = e.clientX; }
+    });
+    const end = () => { if (!dragging) return; dragging = false; model.classList.remove('is-drag'); auto(6000); };
+    addEventListener('pointerup', end);
+    addEventListener('pointercancel', end);
+  }
+</script>

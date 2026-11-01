@@ -1,0 +1,178 @@
+---
+/**
+ * Diseño de vivienda · "Construir sin diseño sale más caro": por qué diseñar antes de construir.
+ * Cada situación de obra aparece primero como pasa sin diseño (y se tacha) y luego resuelta con el diseño.
+ * Celular: la sección queda fija y el scroll trae una situación a la vez (siempre cabe en una pantalla).
+ * Escritorio: las cuatro a la vista, en dos columnas, animadas en orden al entrar. Sin botón propio: el de la cabecera basta.
+ */
+import Plomada from '../Plomada.astro';
+import Trazos from '../Trazos.astro';
+
+const { n = '02' } = Astro.props as { n?: string };
+const filas = [
+  { sin: 'Las decisiones se toman en la obra, con el maestro esperando.', con: 'Todo se decide en el plano, antes de comprar el primer bulto de cemento.' },
+  { sin: 'Cambios a mitad de obra que obligan a demoler y repetir.', con: 'Ves tu casa en 3D y en renders, y la ajustas antes de construir.' },
+  { sin: 'No sabes cuánto material comprar ni cuánto te va a costar.', con: 'Cantidades de obra para cotizar bien y controlar cada compra.' },
+  { sin: 'Espacios oscuros, calurosos o que nadie usa.', con: 'Luz, brisa y cada metro pensados para cómo vives.' },
+];
+---
+
+<section class="sd" data-nav-label="Por qué diseñar" aria-labelledby="sd-title" data-sd>
+  <div class="sd-pin">
+    <Trazos left="nivel" right="corte" />
+    <div class="sd-in">
+      <Plomada n={n} label="Por qué diseñar" variant="obra" />
+      <header class="sd-head sd-rv">
+        <h2 id="sd-title" class="sd-h2">Construir sin diseño <span class="accent">sale más caro</span></h2>
+        <p class="sd-sub">Lo que ahorras en el diseño lo pagas en la obra.</p>
+      </header>
+
+      <div class="sd-cols sd-rv" aria-hidden="true">
+        <span class="col-l">Sin diseño</span>
+        <span class="col-r">Con Galezo Studio</span>
+      </div>
+      <ol class="sd-rows" role="list">
+        {
+          filas.map((f, i) => (
+            <li class:list={['row', { 'is-on': i === 0 }]} style={`--i:${i}`} data-row={i}>
+              <p class="sin">
+                <span class="ic ic-x" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7" /></svg></span>
+                <span class="tx"><span class="lab">Sin diseño</span><span class="sr">: </span><span class="st">{f.sin}</span></span>
+              </p>
+              <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 12"><path d="M1 6h20M16 1.5 21 6l-5 4.5" /></svg></span>
+              <p class="con">
+                <span class="ic ic-ok" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3.5 8.4 6.6 11.3 12.5 4.9" /></svg></span>
+                <span class="tx"><span class="lab">Con Galezo Studio</span><span class="sr">: </span>{f.con}</span>
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="sd-dots" aria-hidden="true">{filas.map((_, i) => <i class:list={{ 'is-on': i === 0 }} data-dot={i} />)}</div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  .sd { --pad: 20px; --hd: 76px; position: relative; background: var(--color-bone); }
+  .sd-pin { position: relative; height: 100svh; min-height: 560px; display: flex; padding: calc(var(--hd) + 8px) var(--pad) 18px; overflow: hidden; }
+  .sd-in { position: relative; z-index: 1; flex: 1; min-height: 0; width: 100%; max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(10px, 2svh, 20px); }
+  .sd-head { display: grid; justify-items: center; gap: 6px; text-align: center; }
+  .sd-h2 { font-size: clamp(1.8rem, min(1.3rem + 2.6vw, 5.6svh), 3.4rem); line-height: 1.03; font-weight: 560; letter-spacing: -0.038em; text-wrap: balance; }
+  .sd-h2 .accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.015em; color: var(--color-brand); font-size: 1.08em; }
+  .sd-sub { font-size: clamp(0.95rem, 0.9rem + 0.25vw, 1.08rem); line-height: 1.45; color: var(--color-ink-soft); text-wrap: balance; }
+
+  .sd-cols { display: none; }
+  .sin, .con { display: grid; grid-template-columns: 24px 1fr; gap: 12px; align-items: start; border-radius: 4px; }
+  .sin { color: var(--color-ink-mute); }
+  .con { color: var(--color-ink); font-weight: 560; }
+  .ic { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; margin-top: 1px; }
+  .ic svg { width: 14px; height: 14px; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .ic-x { background: #eceae6; }
+  .ic-x svg { stroke: #8a8f97; }
+  .ic-ok { background: var(--color-brand-ink); }
+  .ic-ok svg { stroke: #fff; }
+  .lab { display: block; margin-bottom: 4px; font-size: 11.5px; font-weight: 650; letter-spacing: 0.01em; color: var(--color-ink-mute); }
+  .con .lab { color: var(--color-brand-ink); }
+  /* tachado que cruza cada línea del texto */
+  .st { background: linear-gradient(#b4553c, #b4553c) no-repeat 0 58% / 0% 1.5px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .arrow { display: none; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+
+
+  /* ---------- Celular y tableta: una situación a la vez, guiada por el scroll ---------- */
+  @media (max-width: 899px) {
+    :global(html.js:not(.rm)) .sd { height: 300svh; }
+    :global(html.js:not(.rm)) .sd-pin { position: sticky; top: 0; }
+    .sd-rows { position: relative; width: 100%; max-width: 520px; display: grid; }
+    .row { grid-area: 1 / 1; display: grid; background: #fff; border: 1px solid var(--color-line); border-radius: 6px; overflow: hidden; box-shadow: 0 18px 36px -28px rgb(0 40 70 / 0.4); }
+    .sin, .con { padding: 16px 18px; font-size: 1.02rem; line-height: 1.42; }
+    .con { background: linear-gradient(90deg, rgb(0 128 193 / 0.08), transparent 85%); border-top: 1px dashed rgb(11 13 16 / 0.14); }
+    /* la tarjeta activa: entra, se tacha el problema y aparece la solución */
+    :global(html.js:not(.rm)) .row { opacity: 0; visibility: hidden; transform: translateY(24px) scale(0.98); transition: opacity 0.35s, transform 0.5s var(--ease-out-expo), visibility 0s 0.35s; }
+    :global(html.js:not(.rm)) .row.is-on { opacity: 1; visibility: inherit; transform: none; transition: opacity 0.45s, transform 0.7s var(--ease-out-expo); }
+    :global(html.js:not(.rm)) .row .con { opacity: 0; transform: translateY(8px); }
+    :global(html.js:not(.rm)) .row.is-on .con { opacity: 1; transform: none; transition: opacity 0.45s 0.55s, transform 0.6s 0.55s var(--ease-out-expo); }
+    :global(html.js:not(.rm)) .row.is-on .st { background-size: 100% 1.5px; transition: background-size 0.5s 0.2s cubic-bezier(0.6, 0, 0.3, 1); }
+    :global(html.js:not(.rm)) .row.is-on .sin { color: #a7abb1; transition: color 0.4s 0.3s; }
+    .sd-dots { display: flex; gap: 6px; }
+    .sd-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgb(11 13 16 / 0.18); transition: width 0.4s var(--ease-out-expo), background-color 0.3s; }
+    .sd-dots i.is-on { width: 18px; border-radius: 3px; background: var(--color-brand); }
+    /* sin JS o sin animaciones: la lista completa */
+    :global(html:not(.js)) .sd-rows, :global(html.rm) .sd-rows { gap: 8px; }
+    :global(html:not(.js)) .row, :global(html.rm) .row { grid-area: auto; }
+    :global(html:not(.js)) .st, :global(html.rm) .st { background-size: 100% 1.5px; }
+    :global(html:not(.js)) .sd-dots, :global(html.rm) .sd-dots { display: none; }
+  }
+  @media (max-width: 899px) and (max-height: 640px) {
+    .sd-sub { display: none; }
+    .sin, .con { padding: 13px 15px; font-size: 0.96rem; }
+  }
+
+  /* ---------- Escritorio: las cuatro a la vista, sin diseño → con diseño ---------- */
+  @media (min-width: 900px) {
+    .sd { --pad: max(40px, calc((100% - 1100px) / 2)); --hd: 84px; }
+    .sd-pin { padding-top: calc(var(--hd) + 10px); padding-bottom: clamp(16px, 3svh, 32px); }
+    .sd-cols { display: grid; grid-template-columns: 1fr 40px 1fr; width: 100%; font-size: 13px; font-weight: 650; color: var(--color-ink-mute); }
+    .sd-cols .col-l { padding-left: 20px; }
+    .sd-cols .col-r { grid-column: 3; padding-left: 20px; color: var(--color-brand-ink); }
+    .sd-rows { width: 100%; display: grid; gap: clamp(6px, 1.1svh, 10px); }
+    .row { display: grid; grid-template-columns: 1fr 40px 1fr; align-items: stretch; }
+    .lab { display: none; }
+    .sin, .con { align-items: center; padding: clamp(10px, 1.7svh, 18px) 20px; font-size: clamp(0.95rem, 0.6rem + 0.7svh, 1.05rem); line-height: 1.4; }
+    .sin { background: #fff; border: 1px solid var(--color-line); }
+    .con { background: #fff; border: 1px solid rgb(0 113 171 / 0.3); box-shadow: 0 14px 30px -24px rgb(0 60 100 / 0.5); }
+    .arrow { display: grid; place-items: center; }
+    .arrow svg { width: 24px; height: 12px; fill: none; stroke: var(--color-brand); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .sd-dots { display: none; }
+    :global(html.js) .row { opacity: 0; transform: translateY(14px); }
+    :global(html.js) .sd.is-in .row { opacity: 1; transform: none; transition: opacity 0.6s, transform 0.9s var(--ease-out-expo); transition-delay: calc(0.15s + var(--i) * 0.38s); }
+    :global(html.js) .row .con, :global(html.js) .row .arrow { opacity: 0; }
+    :global(html.js) .sd.is-in .row .con, :global(html.js) .sd.is-in .row .arrow { opacity: 1; transition: opacity 0.5s; transition-delay: calc(0.75s + var(--i) * 0.38s); }
+    :global(html.js) .sd.is-in .st { background-size: 100% 1.5px; transition: background-size 0.6s cubic-bezier(0.6, 0, 0.3, 1); transition-delay: calc(0.45s + var(--i) * 0.38s); }
+    :global(html.js) .sd.is-in .sin { color: #a7abb1; transition: color 0.4s; transition-delay: calc(0.5s + var(--i) * 0.38s); }
+    :global(html:not(.js)) .st { background-size: 100% 1.5px; }
+  }
+
+  /* ---------- Entrada ---------- */
+  :global(html.js) .sd-rv { opacity: 0; transform: translateY(16px); }
+  :global(html.js) .sd.is-in .sd-rv { opacity: 1; transform: none; transition: opacity 0.8s, transform 1s var(--ease-out-expo); }
+  :global(html.rm) .sd * { transition: none !important; }
+  :global(html.rm) :is(.sd-rv, .row, .row .con, .row .arrow) { opacity: 1 !important; transform: none !important; visibility: visible !important; }
+  :global(html.rm) .st { background-size: 100% 1.5px !important; }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-sd]');
+  if (sec) {
+    new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { sec.classList.add('is-in'); io.disconnect(); } }, { threshold: 0.2 }).observe(sec);
+
+    // celular: el avance dentro de la sección elige la situación (con histéresis para no titilar en los bordes)
+    const rows = [...sec.querySelectorAll<HTMLElement>('[data-row]')];
+    const dots = [...sec.querySelectorAll<HTMLElement>('[data-dot]')];
+    const pin = sec.querySelector<HTMLElement>('.sd-pin')!;
+    const N = rows.length;
+    let cur = 0;
+    const set = (i: number) => {
+      if (i === cur) return;
+      cur = i;
+      rows.forEach((r, k) => r.classList.toggle('is-on', k === i));
+      dots.forEach((d, k) => d.classList.toggle('is-on', k === i));
+    };
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const range = sec.offsetHeight - pin.offsetHeight;
+        if (range < 40) return; // escritorio: no hay recorrido
+        const p = Math.min(0.999, Math.max(0, -sec.getBoundingClientRect().top / range));
+        const f = p * N;
+        const t = Math.floor(f);
+        if (t !== cur && Math.abs(f - (t > cur ? t : cur)) > 0.06) set(t);
+      });
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+</script>

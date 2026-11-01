@@ -33,6 +33,32 @@ export const website = {
   publisher: { '@id': org },
 };
 
+/** Migas de pan: [['Inicio', '/'], ['Servicios', '/#servicios'], ['Diseño de vivienda', '/servicios/...']] */
+export const breadcrumb = (items: [string, string][]) => ({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map(([name, path], i) => ({ '@type': 'ListItem', position: i + 1, name, item: `${SITE}${path}` })),
+});
+
+/** Servicio ofrecido por el estudio */
+export const servicio = (name: string, description: string, path: string, serviceType: string) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name,
+  description,
+  serviceType,
+  url: `${SITE}${path}`,
+  provider: { '@id': org },
+  areaServed: { '@type': 'Country', name: 'Colombia' },
+});
+
+/** FAQPage con las preguntas que se muestran en una página concreta */
+export const faqDe = (items: { q: string; a: string }[]) => ({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: items.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+});
+
 export const faqPage = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',

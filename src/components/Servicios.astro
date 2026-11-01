@@ -249,6 +249,9 @@ const casos = [
     .cap-l { font-size: 0.9rem; }
   }
   /* Celulares con más alto (Pro Max): vuelve la línea "Ideal si…" */
+  @media (max-width: 639px) and (max-height: 700px) {
+    .mq-stage { aspect-ratio: 4 / 1.94; }
+  }
   @media (max-width: 639px) and (min-height: 780px) {
     .cap-i { display: block; }
     .mq-stage { aspect-ratio: 4 / 2.5; }

@@ -7,3 +7,6 @@ export const faq = [
   { q: '¿Qué recibo al final?', a: 'Planos completos, modelo BIM de arquitectura en Revit, renders, recorrido virtual y cantidades de obra.' },
   { q: '¿Diseñan locales?', a: 'Sí, también diseñamos locales y proyectos comerciales.' },
 ];
+
+/** Página de vivienda: sin la de locales (no aplica a quien va a construir casa). */
+export const faqVivienda = faq.filter((f) => f.q !== '¿Diseñan locales?');

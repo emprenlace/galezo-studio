@@ -1,0 +1,42 @@
+---
+/**
+ * Servicio · Comercial e institucional. Landing de pauta para quien contrata obra (entidades públicas,
+ * constructoras, empresas). Todo con material real y sin secciones del inicio:
+ * Hero (¿es lo que busco?) · 01 Para quién (¿es para mí?) · 02 Retos resueltos (¿saben hacerlo?)
+ * · 03 Del diseño a la contratación (¿cómo funciona?) · 04 Respaldo en cifras (¿puedo confiar?) · Cierre (cotizar).
+ * Mientras no esté lista (ready en lib/servicios.ts) sigue en noindex.
+ */
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import HeroComercial from '../../components/comercial/HeroComercial.astro';
+import ParaQuien from '../../components/comercial/ParaQuien.astro';
+import Retos from '../../components/comercial/Retos.astro';
+import Contratacion from '../../components/comercial/Contratacion.astro';
+import Cifras from '../../components/comercial/Cifras.astro';
+import Cierre from '../../components/Cierre.astro';
+import { servicios } from '../../lib/servicios';
+import { breadcrumb, servicio } from '../../lib/seo';
+
+const s = servicios.find((x) => x.id === 'comercial')!;
+const path = `/servicios/${s.slug}`;
+const description = 'Diseño arquitectónico y formulación de colegios, escenarios deportivos, espacios públicos y locales en Colombia: planos, modelo BIM, renders y cantidades de obra.';
+---
+
+<Base
+  title="Arquitectura para obra pública y comercio · Galezo Studio"
+  description={description}
+  noindex={!s.ready}
+  pageType="service"
+  serviceId={s.id}
+  schema={[servicio('Diseño arquitectónico comercial e institucional', description, path, 'Diseño arquitectónico de obra pública y comercio'), breadcrumb([['Inicio', '/'], ['Servicios', '/#servicios'], [s.title, path]])]}
+>
+  <Header />
+  <main>
+    <HeroComercial />
+    <ParaQuien n="01" />
+    <Retos n="02" />
+    <Contratacion n="03" />
+    <Cifras n="04" />
+    <Cierre n="05" />
+  </main>
+</Base>

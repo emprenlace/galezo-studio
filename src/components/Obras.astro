@@ -69,12 +69,15 @@ const pics = await Promise.all(
     return { ph: { src: ph.src, set: ph.srcSet.attribute }, ln: { src: ln.src, set: ln.srcSet.attribute } };
   }),
 );
+// número de la sección (cambia cuando se reutiliza en otra página)
+// cta y clientes: se apagan en páginas donde ya hay botón o donde los logos ya se mostraron
+const { n = '04', cta = true, conClientes = true } = Astro.props as { n?: string; cta?: boolean; conClientes?: boolean };
 ---
 
 <section class="ob" id="proyectos" data-nav-label="Proyectos" aria-labelledby="ob-title" data-ob>
   <Trazos left="ejes" right="cota" />
   <div class="ob-in">
-    <Plomada n="04" label="Proyectos" variant="obra" />
+    <Plomada n={n} label="Proyectos" variant="obra" />
     <header class="ob-head ob-rv">
       <h2 id="ob-title" class="ob-h2">Lo que dibujamos <span class="accent">se construye</span></h2>
       <p class="ob-sub">{words[obras.length][0].toUpperCase() + words[obras.length].slice(1)} proyectos de obra pública en el Cesar: {words[built]} construidos y {words[inWork]} en obra.</p>
@@ -158,6 +161,7 @@ const pics = await Promise.all(
           }
         </ol>
 
+        {cta && (
         <div class="ob-actions">
           <a href="#cotizar" class="btn btn-primary chamfer" data-open-chat data-cta="obras">
             Cotiza tu diseño
@@ -165,12 +169,14 @@ const pics = await Promise.all(
           </a>
           <p class="ob-note">El mismo rigor de una obra pública, para tu proyecto.</p>
         </div>
+        )}
       </div>
     </div>
 
     <!-- Nuestros clientes. Computador y tableta: cuadrícula; cada sello entra como un sello sobre la lámina
          (las marcas de corte se cierran, el logo cae, un anillo de tinta y una luz lo recorre).
          Celular: una cinta que corre sola, para que los siete quepan sin alargar la página. -->
+    {conClientes && (
     <div class="ob-clients-row" data-cl>
       <div class="cl-side">
         <p class="cl-stat"><span class="cl-num">+<span data-cl-count="70">70</span></span><span class="cl-what">proyectos diseñados</span></p>
@@ -217,6 +223,7 @@ const pics = await Promise.all(
         </div>
       </div>
     </div>
+    )}
   </div>
 </section>
 

@@ -19,12 +19,14 @@ const pisos = [
   { y: 'N +3,00', t: '6 años de experiencia', d: 'En el sector público y privado' },
 ];
 const total = pisos.length + 2;
+// número de la sección (cambia cuando se reutiliza en otra página)
+const { n = '06', cta = true } = Astro.props as { n?: string; cta?: boolean };
 ---
 
 <section class="es" id="estudio" data-nav-label="Quién diseña" aria-labelledby="es-title" data-es>
   <Trazos left="puerta" right="sube" />
   <div class="es-in">
-    <Plomada n="06" label="Quién diseña" variant="firma" />
+    <Plomada n={n} label="Quién diseña" variant="firma" />
     <header class="es-head es-rv">
       <h2 id="es-title" class="es-h2">Quién está detrás de <span class="accent">tu diseño</span></h2>
     </header>
@@ -44,6 +46,7 @@ const total = pisos.length + 2;
           <p>Mi compromiso está con las personas: mejorar su calidad de vida con la arquitectura.</p>
           <footer class="pf-sign" aria-hidden="true"><span>Ulises Galezo</span></footer>
         </blockquote>
+        {cta && (
         <div class="es-actions">
           <a href="#cotizar" class="btn btn-primary chamfer" data-open-chat data-cta="estudio">
             Cotiza tu diseño
@@ -51,6 +54,7 @@ const total = pisos.length + 2;
           </a>
           <p class="es-note">Hablas directo con el equipo que diseña tu proyecto.</p>
         </div>
+        )}
       </div>
 
       <!-- El corte -->
@@ -236,6 +240,9 @@ const total = pisos.length + 2;
     .ct li { grid-template-columns: 66px 1fr; }
     .ct-d { display: none; }
     .es-note { display: none; }
+    .es :global(.trz) { display: none; }
+    .corte { height: clamp(140px, calc(100svh - 524px), 380px); }
+    .pf-role { font-size: 0.82rem; }
   }
   @media (min-width: 640px) {
     .es { --pad: 28px; padding-bottom: 16px; }
