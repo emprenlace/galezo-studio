@@ -23,7 +23,10 @@ const canonical = new URL(path, Astro.site).href;
 const ogImage = new URL(image, origin).href;
 const preview = import.meta.env.PUBLIC_PREVIEW === 'true';
 const robots = noindex || preview ? 'noindex, follow' : '';
-const gtm = import.meta.env.PUBLIC_GTM_ID || '';
+// GTM de Galezo (el ID es público: aparece en el código de cualquier página). Solo en producción, para que las
+// pruebas en local no ensucien los datos; en local se enciende con PUBLIC_GTM_DEV=true.
+const gtmOn = import.meta.env.PROD || import.meta.env.PUBLIC_GTM_DEV === 'true';
+const gtm = gtmOn ? import.meta.env.PUBLIC_GTM_ID || 'GTM-PJGGMMKH' : '';
 const pageContext = { event: 'page_context', page_type: pageType, content_group: pageType, service_id: serviceId };
 ---
 
