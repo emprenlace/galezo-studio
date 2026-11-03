@@ -19,10 +19,10 @@
 }
 
 @theme {
-  /* Marca: azul del monograma (#0080C1). brand-ink para texto pequeño (AA 5,2:1 sobre blanco). */
-  --color-brand: #0080c1;
-  --color-brand-ink: #0071ab;
-  --color-brand-soft: #e3f1f9;
+  /* Marca: petróleo del monograma (#36727C, cambio de marca 2026-11-03; antes azul #0080C1). Contraste 5,4:1 sobre blanco; brand-ink 7:1 para texto pequeño. */
+  --color-brand: #36727c;
+  --color-brand-ink: #2c5f68;
+  --color-brand-soft: #e4eff0;
 
   /* Tinta y neutros */
   --color-ink: #0b0d10;

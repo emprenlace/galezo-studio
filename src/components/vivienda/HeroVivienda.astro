@@ -80,7 +80,7 @@ import lineas from '../../assets/vivienda/oeste-lineas.png';
     inset: var(--g);
     z-index: -1;
     background:
-      radial-gradient(60% 55% at 0% 0%, rgb(0 128 193 / 0.11), rgb(0 128 193 / 0.04) 50%, rgb(0 128 193 / 0) 78%),
+      radial-gradient(60% 55% at 0% 0%, rgb(54 114 124 / 0.11), rgb(54 114 124 / 0.04) 50%, rgb(54 114 124 / 0) 78%),
       radial-gradient(45% 38% at 50% 32%, rgb(255 255 255 / 0.75), rgb(255 255 255 / 0) 100%),
       var(--color-bone);
     clip-path: polygon(26px 0, 100% 0, 100% calc(100% - 26px), calc(100% - 26px) 100%, 0 100%, 0 26px);
@@ -117,7 +117,7 @@ import lineas from '../../assets/vivienda/oeste-lineas.png';
   /* ---------- La fachada en su tarjeta ---------- */
   .vh-model { position: relative; min-height: 0; margin: 0; display: grid; }
   .vh-stage { position: relative; min-height: 0; container-type: size; display: grid; place-items: center; }
-  .card { --cut: 18px; position: relative; width: min(100cqw, 100cqh * 1.5); aspect-ratio: 1.5; container-type: size; display: grid; place-items: center; background: #fff; box-shadow: 0 30px 50px -36px rgb(20 40 60 / 0.55); }
+  .card { --cut: 18px; position: relative; width: min(100cqw, 100cqh * 1.5); aspect-ratio: 1.5; container-type: size; display: grid; place-items: center; background: #fff; box-shadow: 0 30px 50px -36px rgb(20 45 50 / 0.55); }
   /* margen de lámina: una línea fina como el recuadro de un plano impreso */
   .card::before { content: ''; position: absolute; inset: 14px; border: 1px solid rgb(35 38 43 / 0.14); pointer-events: none; }
   .dw { position: relative; width: min(90cqw, 82cqh * var(--ar)); aspect-ratio: var(--ar); }
@@ -133,7 +133,7 @@ import lineas from '../../assets/vivienda/oeste-lineas.png';
   :global(html.js) .vh.is-in :is(.dw-f, .dw-f :global(.dw-img)) { transition: transform 1.9s 1.5s cubic-bezier(0.55, 0, 0.25, 1); }
   /* la línea de nivel azul sube con la fachada y se apaga arriba */
   .dw-lev { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
-  .dw-lev::after { content: ''; position: absolute; left: -3%; right: -3%; bottom: 0; height: 2px; background: var(--color-brand); box-shadow: 0 0 10px 2px rgb(0 128 193 / 0.35); }
+  .dw-lev::after { content: ''; position: absolute; left: -3%; right: -3%; bottom: 0; height: 2px; background: var(--color-brand); box-shadow: 0 0 10px 2px rgb(54 114 124 / 0.35); }
   :global(html.js) .vh.is-in .dw-lev { animation: dw-lev 1.9s 1.5s cubic-bezier(0.55, 0, 0.25, 1) both; }
   @keyframes dw-lev { 0% { opacity: 0; transform: none; } 8% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; transform: translateY(-100%); } }
 

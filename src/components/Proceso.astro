@@ -265,10 +265,10 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   .sun path { stroke: #e0a542; stroke-width: 2.4; stroke-linecap: round; }
   .links { fill: none; stroke: #2f343b; stroke-width: 2; stroke-dasharray: 1; opacity: 0.6; }
   .bub ellipse { stroke-width: 2.2; }
-  .bub-social ellipse { fill: rgb(0 128 193 / 0.14); stroke: var(--color-brand); }
+  .bub-social ellipse { fill: rgb(54 114 124 / 0.14); stroke: var(--color-brand); }
   .bub-servicio ellipse { fill: rgb(224 165 66 / 0.16); stroke: #c98f2c; }
   .bub-privado ellipse { fill: rgb(126 96 170 / 0.13); stroke: #7e60aa; }
-  .bub-agua ellipse { fill: rgb(47 159 214 / 0.2); stroke: #2f9fd6; }
+  .bub-agua ellipse { fill: rgb(74 143 154 / 0.2); stroke: #4a8f9a; }
   .bub-exterior ellipse { fill: rgb(111 154 85 / 0.14); stroke: #6f9a55; }
   .bub { transform-box: fill-box; transform-origin: center; transform: scale(0.4); opacity: 0; transition: transform 0.8s var(--ease-out-expo), opacity 0.5s; transition-delay: calc(0.15s + var(--i) * 0.09s); }
 
@@ -279,13 +279,13 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   .pl-water { fill: none; stroke: var(--color-brand); stroke-width: 1.2; }
   .pl-labels text { fill: #6b7280; font-size: 30px; font-family: var(--font-sans); font-weight: 500; }
   .pl-floor { fill: url(#pr-hatch); }
-  .pl-pool { fill: rgb(47 159 214 / 0.22); }
+  .pl-pool { fill: rgb(74 143 154 / 0.22); }
 
   .e-ground { stroke: #2f343b; stroke-width: 2; }
   .e-tree path { stroke: #6f5a44; stroke-width: 5; }
   .e-tree circle { fill: rgb(111 154 85 / 0.32); stroke: #6f8f5d; stroke-width: 1.6; }
   .e-wall { fill: #f1ede6; stroke: #2f343b; stroke-width: 1.4; }
-  .e-glass { fill: #8fb0c2; stroke: #2f343b; stroke-width: 1.4; }
+  .e-glass { fill: #8fb3b7; stroke: #2f343b; stroke-width: 1.4; }
   .e-refl { fill: rgb(255 255 255 / 0.28); }
   .e-mull { stroke: #2b3036; stroke-width: 2.4; }
   .e-wood-bg { fill: #3a2a1e; }
@@ -342,7 +342,7 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   }
   .lam-render :global(img) { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; }
   .lam-render span { position: absolute; left: 8px; bottom: 2px; font-family: 'Architects Daughter', var(--font-sans); font-size: 12px; color: var(--color-brand-ink); }
-  .lam-render::before { content: ''; position: absolute; left: 50%; top: -8px; width: 46px; height: 16px; translate: -50% 0; rotate: -4deg; background: rgb(0 128 193 / 0.2); }
+  .lam-render::before { content: ''; position: absolute; left: 50%; top: -8px; width: 46px; height: 16px; translate: -50% 0; rotate: -4deg; background: rgb(54 114 124 / 0.2); }
   .lam[data-step='4'] .lam-render { opacity: 1; transform: none; transition-delay: 0.7s; }
 
   /* cuadro de cantidades (etapa 5) */
@@ -371,7 +371,7 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   /* rótulo */
   .lam-cap { position: absolute; z-index: 4; left: 14px; top: 12px; display: grid; }
   .cap { grid-area: 1 / 1; padding: 5px 10px 6px; background: var(--color-ink); color: #fff; font-size: 12px; font-weight: 600; white-space: nowrap; opacity: 0; transform: translateY(-6px); transition: opacity 0.35s, transform 0.5s var(--ease-out-expo); }
-  .cap b { font-family: var(--font-serif); font-style: italic; font-weight: 400; color: #9fd3f0; margin-right: 3px; }
+  .cap b { font-family: var(--font-serif); font-style: italic; font-weight: 400; color: #a6cfd4; margin-right: 3px; }
   .cap.is-on { opacity: 1; transform: none; transition-delay: 0.1s; }
 
   /* ---------- Cronograma ---------- */
@@ -408,7 +408,7 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
     width: 24%;
     height: 12px;
     translate: 0 -50%;
-    background: rgb(0 113 171 / 0.12);
+    background: rgb(44 95 104 / 0.12);
     clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
     overflow: hidden;
   }

@@ -5,8 +5,12 @@ import Maqueta from './Maqueta.astro';
 import { campestre, ampliacion, institucional, ejecutivo } from '../lib/iso';
 const modelos = [campestre(), ampliacion(), institucional(), ejecutivo()];
 
-// Servicios despliega la lista de páginas de cada servicio; Blog va directo
-const links = [{ href: '/blog', label: 'Blog' }];
+// Servicios despliega la lista de páginas de cada servicio; el resto va directo (Contacto al lado de Servicios, pedido de Ulises)
+const links = [
+  { href: '/contacto', label: 'Contacto' },
+  { href: '/arquitecto', label: 'El arquitecto' },
+  { href: '/blog', label: 'Blog' },
+];
 // servicio de la página actual: se marca en azul en el menú (para saber dónde estás)
 const here = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '');
 const actual = servicios.find((s) => here === `/servicios/${s.slug}`)?.slug;
@@ -62,7 +66,7 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
             </ul>
           </div>
         </li>
-        {links.map((l, i) => <li style={`--i:${i + 1}`}><a href={l.href} data-sec={l.href.slice(1)}>{l.label}</a></li>)}
+        {links.map((l, i) => <li style={`--i:${i + 1}`}><a href={l.href} data-sec={l.href.slice(1)} class:list={{ 'is-page': here === l.href }} aria-current={here === l.href ? 'page' : undefined}>{l.label}</a></li>)}
       </ul>
     </nav>
 
@@ -93,7 +97,7 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
           }
         </ul>
       </li>
-      {links.map((l, i) => <li style={`--i:${i + 1}`}><a href={l.href}><span>0{i + 2}</span>{l.label}</a></li>)}
+      {links.map((l, i) => <li style={`--i:${i + 1}`}><a href={l.href} aria-current={here === l.href ? 'page' : undefined}><span>0{i + 2}</span>{l.label}</a></li>)}
     </ul>
     <a href="#cotizar" class="hd-sheet-cta chamfer" data-open-chat data-cta="menu">Cotiza tu diseño</a>
   </div>
@@ -368,7 +372,8 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
     .hd-nav a:hover::after, .hd-nav :is(a, .hd-dd-btn).is-active::after { opacity: 1; transform: none; }
     .hd-dd-btn { position: relative; }
     .hd-dd-btn.is-active { color: var(--color-ink); }
-    .hd-nav a.is-active { color: var(--color-ink); }
+    .hd-nav a.is-active, .hd-nav a.is-page { color: var(--color-ink); }
+    .hd-nav a.is-page::after { opacity: 1; transform: none; }
 
     /* ---------- Desplegable de servicios ---------- */
     .hd-dd { position: relative; }
@@ -430,7 +435,7 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
     .dd-card:hover .dd-mq, .dd-card:focus-visible .dd-mq { transform: translateY(-6px); }
     .dd-card:hover .dd-go, .dd-card:focus-visible .dd-go { opacity: 1; transform: none; }
     /* el servicio de la página actual: tarjeta azul de marca, maqueta en blanco sobre ella */
-    .hd-dd-panel .dd-card.is-here, .hd-dd-panel .dd-card.is-here:hover { background: rgb(0 128 193 / 0.14); box-shadow: inset 0 0 0 1.5px rgb(0 128 193 / 0.45); color: var(--color-ink); }
+    .hd-dd-panel .dd-card.is-here, .hd-dd-panel .dd-card.is-here:hover { background: rgb(54 114 124 / 0.14); box-shadow: inset 0 0 0 1.5px rgb(54 114 124 / 0.45); color: var(--color-ink); }
     .dd-card.is-here .dd-t { color: var(--color-brand-ink); }
     .dd-here { position: absolute; right: 10px; top: 10px; padding: 3px 8px; font-size: 10.5px; font-weight: 650; color: #fff; background: var(--color-brand); border-radius: 999px; }
     .dd-card.is-here .dd-go { display: none; }

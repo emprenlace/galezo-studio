@@ -101,8 +101,8 @@ const { n = '08' } = Astro.props as { n?: string };
     color: #fff;
     background:
       radial-gradient(70% 60% at 85% 10%, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0) 70%),
-      radial-gradient(60% 70% at 0% 100%, rgb(0 40 70 / 0.35), rgb(0 40 70 / 0) 70%),
-      linear-gradient(160deg, #0a84c4 0%, var(--color-brand-ink) 45%, #00547f 100%);
+      radial-gradient(60% 70% at 0% 100%, rgb(14 48 54 / 0.35), rgb(14 48 54 / 0) 70%),
+      linear-gradient(160deg, #3b7c87 0%, var(--color-brand-ink) 45%, #24535b 100%);
     clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
     padding: clamp(40px, 7svh, 80px) var(--pad) 0;
   }
@@ -129,22 +129,22 @@ const { n = '08' } = Astro.props as { n?: string };
 
   .ci-main { display: grid; justify-items: center; text-align: center; gap: 10px; }
   .ci-h2 { font-size: clamp(1.9rem, 1.3rem + 2.4vw, 3.4rem); line-height: 1; font-weight: 560; letter-spacing: -0.042em; text-wrap: balance; }
-  .ci-h2 .accent { color: #bfe6fb; font-size: 1.08em; letter-spacing: -0.012em; }
+  .ci-h2 .accent { color: #c4e3e6; font-size: 1.08em; letter-spacing: -0.012em; }
   .ci-sub { max-width: 26rem; font-size: 0.95rem; line-height: 1.45; color: rgb(255 255 255 / 0.82); text-wrap: balance; }
-  .btn { --cut: 9px; display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 22px; margin-top: 6px; font-size: 15px; font-weight: 600; white-space: nowrap; background: #fff; color: var(--color-brand-ink); box-shadow: 0 14px 30px -14px rgb(0 20 40 / 0.6); transition: background-color 0.3s, color 0.3s; }
+  .btn { --cut: 9px; display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 22px; margin-top: 6px; font-size: 15px; font-weight: 600; white-space: nowrap; background: #fff; color: var(--color-brand-ink); box-shadow: 0 14px 30px -14px rgb(6 24 27 / 0.6); transition: background-color 0.3s, color 0.3s; }
   .btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.45s var(--ease-out-expo); }
   .btn:hover { background: var(--color-ink); color: #fff; }
   .btn:hover svg { transform: translateX(3px); }
   .ci-hint { display: none; }
 
   /* ---------- El cajetín, en líneas blancas ---------- */
-  .caj { display: grid; grid-template-columns: 1fr 1fr; border: 1.5px solid rgb(255 255 255 / 0.9); background: rgb(0 60 95 / 0.22); }
+  .caj { display: grid; grid-template-columns: 1fr 1fr; border: 1.5px solid rgb(255 255 255 / 0.9); background: rgb(20 62 69 / 0.22); }
   .cj { padding: 9px 11px 10px; border-right: 1px solid rgb(255 255 255 / 0.22); border-bottom: 1px solid rgb(255 255 255 / 0.22); font-size: 12.5px; line-height: 1.4; color: rgb(255 255 255 / 0.85); transition: background-color 0.3s; }
   .cj:hover { background: rgb(255 255 255 / 0.07); }
   .cj-l { font-size: 9.5px; font-weight: 600; letter-spacing: 0.02em; color: rgb(255 255 255 / 0.55); margin-bottom: 3px; }
   .cj-soft { color: rgb(255 255 255 / 0.6); }
   .cj a { position: relative; color: #fff; text-decoration: none; }
-  .cj a::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: #bfe6fb; transform: scaleX(0); transform-origin: 0 50%; transition: transform 0.4s var(--ease-out-expo); }
+  .cj a::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: #c4e3e6; transform: scaleX(0); transform-origin: 0 50%; transition: transform 0.4s var(--ease-out-expo); }
   .cj a:hover::after { transform: none; }
   .cj a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
   /* Instagram como logo: un botón con el ícono, sin texto */
@@ -168,7 +168,7 @@ const { n = '08' } = Astro.props as { n?: string };
   .cj-contact { grid-column: 1 / -1; }
   .cj-contact ul { display: grid; gap: 2px; }
   .cj-sheet { display: grid; grid-template-columns: repeat(3, auto); justify-content: space-between; gap: 8px; }
-  .cj-big { font-family: var(--font-serif); font-style: italic; font-size: 20px; line-height: 1; color: #bfe6fb; }
+  .cj-big { font-family: var(--font-serif); font-style: italic; font-size: 20px; line-height: 1; color: #c4e3e6; }
   .cj-big span { font-family: var(--font-sans); font-style: normal; font-size: 11px; color: rgb(255 255 255 / 0.55); }
   .cj-legal { grid-column: 1 / -1; border-bottom: 0; font-size: 11px; color: rgb(255 255 255 / 0.6); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
   .cj-by { white-space: nowrap; }
@@ -194,10 +194,10 @@ const { n = '08' } = Astro.props as { n?: string };
      (máscara y contenido se mueven en sentidos contrarios), todo en capas compuestas */
   .w { position: relative; display: inline-block; padding: 0.14em 0.12em; margin: -0.14em -0.12em; }
   .w-out { display: block; color: transparent; -webkit-text-stroke: 1.4px rgb(255 255 255 / 0.85); will-change: opacity; }
-  .w2 .w-out { -webkit-text-stroke-color: rgb(191 230 251 / 0.85); }
+  .w2 .w-out { -webkit-text-stroke-color: rgb(196 227 230 / 0.85); }
   .w-mask { position: absolute; inset: 0; overflow: hidden; transform: translate3d(-100%, 0, 0); will-change: transform; }
   .w-fill { position: absolute; inset: 0; padding: 0.14em 0.12em; color: #fff; transform: translate3d(100%, 0, 0); will-change: transform; }
-  .w2 .w-fill { color: #bfe6fb; }
+  .w2 .w-fill { color: #c4e3e6; }
   :global(html.rm) .w-mask, :global(html.rm) .w-fill, :global(html:not(.js)) .w-mask, :global(html:not(.js)) .w-fill { transform: none; }
   :global(html.rm) .w-out, :global(html:not(.js)) .w-out { opacity: 0; }
 
@@ -220,7 +220,7 @@ const { n = '08' } = Astro.props as { n?: string };
   :global(html.js:not(.rm)) .ci.is-in .a-pop:hover { transition-delay: 0s; }
   /* cajetín: el marco se traza (cuatro lados) y las celdas aparecen una por una */
   :global(html.js:not(.rm)) .caj { border-color: transparent; background-color: transparent; transition: border-color 0.3s 1.75s, background-color 0.9s 0.8s; }
-  :global(html.js:not(.rm)) .ci.is-in .caj { background-color: rgb(0 60 95 / 0.22); }
+  :global(html.js:not(.rm)) .ci.is-in .caj { background-color: rgb(20 62 69 / 0.22); }
   :global(html.js:not(.rm)) .ci.is-in .caj { border-color: rgb(255 255 255 / 0.9); }
   :global(html.js:not(.rm)) .caj-frame { display: block; position: absolute; inset: -1.5px; pointer-events: none; }
   .caj-frame i { position: absolute; background: #fff; transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1); }
@@ -288,14 +288,14 @@ const { n = '08' } = Astro.props as { n?: string };
       font-family: 'Architects Daughter', var(--font-sans);
       font-size: 16px;
       line-height: 1.25;
-      color: #bfe6fb;
+      color: #c4e3e6;
       rotate: -4deg;
       text-align: right;
       transition: opacity 0.6s;
       pointer-events: none;
     }
     .ci-hint svg { display: block; width: 54px; height: 40px; margin: 6px 0 0 auto; overflow: visible; }
-    .ci-hint path { fill: none; stroke: #bfe6fb; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .ci-hint path { fill: none; stroke: #c4e3e6; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
     .ci-hint.is-gone { opacity: 0; }
     /* el puntero es un lápiz blanco sobre la hoja azul */
     .ci-block { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cg transform='rotate(-45 14 14)'%3E%3Crect x='11' y='2' width='6' height='17' fill='%23ffffff'/%3E%3Crect x='11' y='2' width='6' height='3' fill='%23bfe6fb'/%3E%3Cpath d='M11 19h6l-3 7z' fill='%23e8d2ad'/%3E%3Cpath d='M13 23.7h2l-1 2.3z' fill='%232b2f36'/%3E%3C/g%3E%3C/svg%3E") 3 25, crosshair; }

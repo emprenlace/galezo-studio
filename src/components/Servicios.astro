@@ -12,10 +12,10 @@ import Trazos from './Trazos.astro';
 import { campestre, ampliacion, institucional, ejecutivo } from '../lib/iso';
 
 const casos = [
-  { id: 'vivienda', short: 'Vivienda', ideal: 'tienes un lote en el campo, en la ciudad o en un condominio', title: 'Diseño de vivienda', lead: 'Casas campestres y urbanas, de uno o varios pisos, pensadas para el clima, la luz y cómo vives.', model: campestre() },
-  { id: 'remodelacion', short: 'Remodelación', ideal: 'tu espacio ya existe y quieres que crezca, cambie o se renueve por dentro', title: 'Remodelación e interiores', lead: 'Ampliamos o renovamos lo que ya tienes y diseñamos la distribución, los muebles y los acabados.', model: ampliacion() },
+  { id: 'vivienda', short: 'Vivienda', ideal: 'tienes un lote en el campo, en la ciudad o en un condominio', title: 'Diseño de vivienda', lead: 'Casas urbanas y campestres de uno o varios pisos, adaptadas a tus necesidades, al clima y a la ubicación de tu lote.', model: campestre() },
+  { id: 'remodelacion', short: 'Remodelación', ideal: 'tu espacio ya existe y quieres que crezca, cambie o se renueve por dentro', title: 'Remodelación', lead: 'Rediseñamos, ampliamos y mejoramos espacios interiores o exteriores de tu vivienda, local o infraestructura: distribución, acabados, mobiliario, carpintería y cielo raso.', model: ampliacion() },
   { id: 'comercial', short: 'Comercial', ideal: 'vas a construir un local, un negocio o un proyecto público', title: 'Comercial e institucional', lead: 'Locales, oficinas, colegios y escenarios deportivos, con la experiencia de la obra pública que ya construimos.', model: institucional() },
-  { id: 'ejecutivo', short: 'Ejecutivos', ideal: 'necesitas el proyecto completo para tramitar y construir', title: 'Proyectos ejecutivos', lead: 'Toda la ingeniería y la arquitectura del proyecto en un solo paquete.', model: ejecutivo() },
+  { id: 'ejecutivo', short: 'Ejecutivos', ideal: 'necesitas el proyecto completo para tramitar y construir', title: 'Proyectos ejecutivos', lead: 'Además del diseño arquitectónico, diseñamos todas las ingenierías: estructural, eléctrica, hidrosanitaria y, si se requiere, aires acondicionados y red contra incendios.', model: ejecutivo() },
 ];
 ---
 
@@ -226,7 +226,7 @@ const casos = [
     .mq-item { width: auto; }
     .slab { display: none; }
     .mq-btn { padding-bottom: 2px; text-align: center; }
-    .mq-stage { aspect-ratio: 4 / 2.2; min-height: 0; margin: 0 -2%; }
+    .mq-stage { aspect-ratio: 4 / 2.1; min-height: 0; margin: 0 -2%; }
     .mq-stage :global(.mq) { position: absolute; inset: 0; }
     .mq-shadow { bottom: 2%; }
     .tag { margin: -14px auto 0; padding: 6px 10px 7px; }
@@ -236,9 +236,9 @@ const casos = [
     .t-short { display: inline; }
     .mq-item.is-active .mq-stage { transform: translateY(-8px); }
     .row.has-active .mq-item:not(.is-active) .mq-stage { opacity: 0.5; }
-    .cap-t .cap-n { display: none; }
-    .cap-t { font-size: 1.15rem; }
-    .cap-l { margin-top: 3px; font-size: 0.95rem; line-height: 1.42; }
+    /* la etiqueta elegida ya dice el nombre: aquí solo va la descripción */
+    .cap-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .cap-l { margin-top: 0; font-size: 0.93rem; line-height: 1.42; }
     .cap-i { display: none; }
     .sv-foot { gap: 12px; }
   }
@@ -251,6 +251,11 @@ const casos = [
   /* Celulares con más alto (Pro Max): vuelve la línea "Ideal si…" */
   @media (max-width: 639px) and (max-height: 700px) {
     .mq-stage { aspect-ratio: 4 / 1.94; }
+  }
+  /* SE: textos largos de remodelación y ejecutivos */
+  @media (max-width: 639px) and (max-height: 600px) {
+    .mq-stage { aspect-ratio: 4 / 1.8; }
+    .cap-l { font-size: 0.86rem; line-height: 1.36; }
   }
   @media (max-width: 639px) and (min-height: 780px) {
     .cap-i { display: block; }
@@ -291,6 +296,7 @@ const casos = [
   @media (min-width: 1024px) {
     .sv { --pad: max(40px, calc((100% - 1200px) / 2)); --hdr: 84px; }
     .sv-foot { grid-template-columns: 1fr auto; align-items: end; gap: 32px; }
+    .cap-l { max-width: 46rem; }
     .sv-actions { justify-items: end; text-align: right; }
   }
   @media (min-width: 1024px) and (max-height: 760px) {

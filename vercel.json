@@ -15,12 +15,17 @@
     },
     {
       "source": "/servicios/remodelacion-y-ampliacion",
-      "destination": "/servicios/remodelacion-e-interiores",
+      "destination": "/servicios/remodelacion",
       "permanent": true
     },
     {
       "source": "/servicios/diseno-de-interiores",
-      "destination": "/servicios/remodelacion-e-interiores",
+      "destination": "/servicios/remodelacion",
+      "permanent": true
+    },
+    {
+      "source": "/servicios/remodelacion-e-interiores",
+      "destination": "/servicios/remodelacion",
       "permanent": true
     },
     {

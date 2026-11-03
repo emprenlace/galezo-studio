@@ -12,7 +12,7 @@ export interface Servicio {
 }
 export const servicios: Servicio[] = [
   { slug: 'diseno-de-vivienda', id: 'vivienda', title: 'Diseño de vivienda', short: 'Vivienda', line: 'Casas campestres y urbanas', own: true },
-  { slug: 'remodelacion-e-interiores', id: 'remodelacion', title: 'Remodelación e interiores', short: 'Remodelación', line: 'Ampliaciones, remodelaciones y diseño interior' },
+  { slug: 'remodelacion', id: 'remodelacion', title: 'Remodelación', short: 'Remodelación', line: 'Rediseño, ampliación y mejora de espacios' },
   { slug: 'comercial-e-institucional', id: 'comercial', title: 'Comercial e institucional', short: 'Comercial', line: 'Locales, colegios, escenarios deportivos y edificios públicos', own: true },
-  { slug: 'proyectos-ejecutivos', id: 'ejecutivo', title: 'Proyectos ejecutivos', short: 'Ejecutivos', line: 'Toda la ingeniería y la arquitectura del proyecto', own: true },
+  { slug: 'proyectos-ejecutivos', id: 'ejecutivo', title: 'Proyectos ejecutivos', short: 'Ejecutivos', line: 'Arquitectura e ingenierías en un solo paquete', own: true },
 ];

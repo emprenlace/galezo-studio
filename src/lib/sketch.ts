@@ -536,7 +536,7 @@ export function buildSketch(opts: { w?: number; h?: number; seed?: number; fit?:
   };
 
   // Cielo: aguada azul de la marca en la esquina superior izquierda (atenuada)
-  washBlob(back, W * 0.02, H * -0.04, W * 0.34, H * 0.28, '#0080c1', 0.016, 3.5, 2);
+  washBlob(back, W * 0.02, H * -0.04, W * 0.34, H * 0.28, '#36727c', 0.016, 3.5, 2);
   
   // Montañas: dos cordilleras a mano detrás de la casa
   const ridge = (base: number, amp: number, seedPh: number, step: number) => {
@@ -552,7 +552,7 @@ export function buildSketch(opts: { w?: number; h?: number; seed?: number; fit?:
   const near = ridge(hy + 4, H * 0.075, 4.1, 34);
   back.push({ d: smooth(far), at: 0.6, dur: 1.6, w: 0.8, o: 0.32, kind: 'scene' });
   back.push({ d: smooth(near), at: 0.9, dur: 1.5, w: 1.0, o: 0.48, kind: 'scene' });
-  wash(back, smooth([...far, [W + 40, hy + 20], [-40, hy + 20]], true), '#7f9fb8', 0.07, 3.7, 2);
+  wash(back, smooth([...far, [W + 40, hy + 20], [-40, hy + 20]], true), '#84a6aa', 0.07, 3.7, 2);
   wash(back, smooth([...near, [W + 40, hy + 30], [-40, hy + 30]], true), '#6f8f86', 0.07, 3.9, 2);
   // sombreado de laderas: trazos cortos inclinados bajo la cresta cercana
   {
@@ -665,9 +665,9 @@ export function buildSketch(opts: { w?: number; h?: number; seed?: number; fit?:
   // Aguadas de la casa: vidrio, madera y piscina
   {
     const quad = (o: V3, u: V3, v: V3) => 'M' + [o, add(o, u), add(add(o, u), v), add(o, v)].map((p) => P(p).map(f1).join(' ')).join('L') + 'Z';
-    wash(strokes, quad([-10.8, FLOOR, -0.98], [13.6, 0, 0], [0, 3.0, 0]), '#5f8aa6', 0.14, 3.9, 2);
+    wash(strokes, quad([-10.8, FLOOR, -0.98], [13.6, 0, 0], [0, 3.0, 0]), '#5f8c93', 0.14, 3.9, 2);
     wash(strokes, quad([-12.2, DECK, -0.7], [24.4, 0, 0], [0, 0, 8.9]), '#c79a6b', 0.12, 4.0, 2);
-    wash(strokes, quad([-0.8, DECK + 0.01, 4.1], [10, 0, 0], [0, 0, 3.1]), '#2f9fd6', 0.32, 4.1, 2);
+    wash(strokes, quad([-0.8, DECK + 0.01, 4.1], [10, 0, 0], [0, 0, 3.1]), '#4a8f9a', 0.32, 4.1, 2);
   }
 
   // Donde reposa el lápiz al terminar
@@ -734,7 +734,7 @@ export function buildSketch(opts: { w?: number; h?: number; seed?: number; fit?:
         lines: [{ d: stone.join(''), w: 0.7, o: 0.6 }],
       },
       vidrio: {
-        wash: { d: quadD, fill: '#6aa6cc', o: 0.36 },
+        wash: { d: quadD, fill: '#6ea4ab', o: 0.36 },
         lines: [
           { d: mull.join(''), w: 1.1, o: 0.85 },
           { d: refl.join(''), w: 0.7, o: 0.45 },

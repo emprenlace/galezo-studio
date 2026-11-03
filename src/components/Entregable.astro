@@ -297,7 +297,7 @@ const { n = '02', variant = 'plomada', ejemplo = 'proyecto de ejemplo', cta = tr
   /* ---------- Centro: láminas + ficha ---------- */
   .en-mid { flex: 1; min-height: 0; display: grid; gap: 18px; }
   .stage { position: relative; width: 100%; aspect-ratio: 3 / 2; align-self: center; }
-  .sheet-back { position: absolute; inset: 0; background: #f7f4ee; box-shadow: 0 10px 24px -16px rgb(20 40 60 / 0.35); }
+  .sheet-back { position: absolute; inset: 0; background: #f7f4ee; box-shadow: 0 10px 24px -16px rgb(20 45 50 / 0.35); }
   .sheet-back-1 { rotate: -2.4deg; translate: -6px 6px; }
   .sheet-back-2 { rotate: 1.6deg; translate: 8px 2px; background: #fbf9f5; }
 
@@ -305,7 +305,7 @@ const { n = '02', variant = 'plomada', ejemplo = 'proyecto de ejemplo', cta = tr
      y la parte levantada se dibuja como el reverso del papel, reflejado sobre el pliegue (.flap). */
   .pages { position: absolute; inset: 0; }
   .page { position: absolute; inset: 0; }
-  .page-face { position: absolute; inset: 0; background: #fffdf9; overflow: hidden; box-shadow: 0 26px 50px -26px rgb(20 40 60 / 0.45), 0 1px 3px rgb(20 40 60 / 0.08); }
+  .page-face { position: absolute; inset: 0; background: #fffdf9; overflow: hidden; box-shadow: 0 26px 50px -26px rgb(20 45 50 / 0.45), 0 1px 3px rgb(20 45 50 / 0.08); }
   .page-shade, .page-crease { position: absolute; inset: 0; opacity: 0; pointer-events: none; z-index: 3; }
   .flap {
     position: absolute;
@@ -347,7 +347,7 @@ const { n = '02', variant = 'plomada', ejemplo = 'proyecto de ejemplo', cta = tr
   }
   .rp-ov { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
   /* El lápiz que va dibujando: una línea vertical azul que recorre el plano */
-  .rp-pen { position: absolute; top: -3%; bottom: -3%; left: 0; width: 2px; background: var(--color-brand); box-shadow: 0 0 12px rgb(0 128 193 / 0.6); opacity: 0; }
+  .rp-pen { position: absolute; top: -3%; bottom: -3%; left: 0; width: 2px; background: var(--color-brand); box-shadow: 0 0 12px rgb(54 114 124 / 0.6); opacity: 0; }
   .stage-note {
     position: absolute;
     left: 4.4%;
@@ -359,15 +359,15 @@ const { n = '02', variant = 'plomada', ejemplo = 'proyecto de ejemplo', cta = tr
   }
 
   .t-path { fill: none; stroke: var(--color-brand); stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
-  .t-cone { fill: rgb(0 128 193 / 0.14); stroke: rgb(0 128 193 / 0.4); stroke-width: 1.5; }
-  .t-halo { fill: rgb(0 128 193 / 0.18); }
+  .t-cone { fill: rgb(54 114 124 / 0.14); stroke: rgb(54 114 124 / 0.4); stroke-width: 1.5; }
+  .t-halo { fill: rgb(54 114 124 / 0.18); }
   .t-dot { fill: var(--color-brand); stroke: #fff; stroke-width: 4; }
   .q-walls { fill: var(--color-brand); }
   .q-lead { stroke: var(--color-ink); stroke-width: 1.2; }
   .q-pin { fill: #fff; stroke: var(--color-ink); stroke-width: 2; }
   .q-box { fill: var(--color-ink); }
   .q-k { fill: #fff; font-size: 15px; font-family: var(--font-sans); font-weight: 500; }
-  .q-v { font-weight: 700; fill: #9fd3f2; }
+  .q-v { font-weight: 700; fill: #a6cfd4; }
 
   /* Cada lámina anima su contenido cuando queda a la vista (is-live) */
   /* Planos: primero se dibuja en línea (de izquierda a derecha, con el lápiz azul), luego entra el color */
@@ -748,17 +748,17 @@ const { n = '02', variant = 'plomada', ejemplo = 'proyecto de ejemplo', cta = tr
     if (shade) {
       shade.style.opacity = String((0.35 + 0.65 * k).toFixed(3));
       shade.style.background = grad([nx, ny], W, H, W / 2, H / 2, A, [
-        ['rgb(20 30 40 / 0.34)', 0],
-        ['rgb(20 30 40 / 0.1)', Math.min(depth * 0.25, 40)],
-        ['rgb(20 30 40 / 0)', Math.min(depth * 0.6, 120)],
+        ['rgb(20 34 37 / 0.34)', 0],
+        ['rgb(20 34 37 / 0.1)', Math.min(depth * 0.25, 40)],
+        ['rgb(20 34 37 / 0)', Math.min(depth * 0.6, 120)],
       ]);
     }
     // La hoja se oscurece suave justo antes del pliegue (donde empieza a curvarse)
     crease.style.opacity = '1';
     crease.style.background = grad([-nx, -ny], W, H, W / 2, H / 2, A, [
-      ['rgb(20 30 40 / 0.16)', 0],
-      ['rgb(20 30 40 / 0.04)', 14],
-      ['rgb(20 30 40 / 0)', 34],
+      ['rgb(20 34 37 / 0.16)', 0],
+      ['rgb(20 34 37 / 0.04)', 14],
+      ['rgb(20 34 37 / 0)', 34],
     ]);
   };
 

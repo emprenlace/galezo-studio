@@ -316,3 +316,21 @@ Lanzamiento: GTM, GA4, Meta, Ads; PUBLIC_PREVIEW=false; Search Console, Bing, Go
 - Ahora son 10 clientes: inicio (fila de clientes, 5 × 2), comercial (tarjeta Constructoras y cifra "10 entidades y empresas"), cajetín de comercial y ejecutivos.
 - Vivienda: 05 Clientes solo con empresas privadas con las que se ha diseñado vivienda (A Construir, HRS Ingeniería, Marbal Ingeniería); Quién diseña 06, Preguntas 07, Cierre 08.
 - El cajetín se adapta al número de clientes: la casilla "Tu proyecto" completa la última fila (en escritorio se oculta si la fila ya está llena); con 10 clientes en celular las casillas son más bajas y sin nombre en pantallas cortas.
+
+## Cambio de marca y correcciones de Ulises (2026-11-03)
+Fuente: carpeta "GALEZO STUDIO - MARCA/" (logos corregidos y "correcciones pagina.txt"; no se sube al repo).
+- Color de marca: azul #0080C1 → petróleo #36727C (mismo monograma). brand-ink #2C5F68, brand-soft #E4EFF0, fondo tenue #F2F7F7. Se reemplazaron todos los azules escritos a mano (equivalentes de igual luminosidad) y se recolorearon íconos, favicon e imagen para compartir.
+- Servicio "Remodelación e interiores" → "Remodelación", con dirección /servicios/remodelacion (redirecciones 301 desde la anterior y las viejas).
+- Textos de Ulises en "¿Qué vas a construir?" (vivienda, remodelación, ejecutivos), con redacción ajustada para que la sección quepa en una pantalla. Ejecutivos suma aires acondicionados y red contra incendios "si se requiere". En celular la descripción va sin título (la etiqueta elegida ya lo dice).
+- Proyectos: "Lo que diseñamos se construye" (antes "dibujamos"). El cambio boceto → render queda pendiente de los renders.
+- Clientes particulares: casilla con ícono de persona (línea, color de marca) en la fila de clientes del inicio (6 + 5 en escritorio) y en el cajetín de servicios (también en vivienda). En celular su nombre siempre se ve.
+- Foto profesional de Ulises (src/assets/ulises-pro.jpg; recorte del rostro en ulises-rostro.jpg) reemplaza la provisional en héroe, Quién diseña y Cifras.
+- Datos de contacto en un solo archivo: src/lib/contacto.ts (página de contacto, schema y política). Cambiar ahí cuando lleguen el correo corporativo y el WhatsApp Business.
+- Menú: Servicios · Contacto · El arquitecto · Blog (la página actual queda marcada).
+- Página /contacto: la valla de obra (arquitecto responsable + WhatsApp, correo, Instagram, ciudad). Parales que suben, valla que se monta, datos en orden. Botón principal: el chat. Evento contact_click con link_type (solo el canal). noindex hasta aprobar.
+- Página /arquitecto: foto profesional grande que se descubre como una lámina, presentación del portafolio en primera persona (sin cifra de años) y trayectoria sin fechas + programas. noindex hasta aprobar.
+
+## PENDIENTES (corte 2026-11-03)
+Dudas para Ulises: años de experiencia (portafolio dice 6, la web dice +10); fachada que da a la calle (este-oeste, norte o sur); ícono de remodelación; si las 9 etapas aplican a todos los servicios; dirección de oficina y horario.
+Material de Ulises: renders de I.E. Alfonso López, Instpecam, Mirador Ecce Homo y CASD; imagen de su diseño para el héroe del inicio; resto de proyectos; correo corporativo y WhatsApp Business.
+Por hacer cuando respondan: proceso en 9 etapas (inicio), fachada frontal en vivienda, boceto → render en Proyectos, héroe del inicio con su imagen, ícono de remodelación.

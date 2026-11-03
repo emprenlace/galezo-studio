@@ -7,7 +7,7 @@
  * Al salir con el scroll, el texto se desvanece y el dibujo se desplaza en parallax; el entregable se cuenta en la sección siguiente.
  */
 import { Image } from 'astro:assets';
-import ulises from '../assets/ulises.jpg';
+import ulises from '../assets/ulises-rostro.jpg';
 import Sketch from './Sketch.astro';
 import obra1 from '../assets/obras/mirador-ecce-homo.jpg';
 import obra2 from '../assets/obras/ie-instpecam.jpg';
@@ -67,11 +67,11 @@ const finishes = [
           <path
             d="M10 10 L210 210 L10 210 Z M42 92 L42 178 L128 178 Z"
             fill-rule="evenodd"
-            fill="rgb(0 128 193 / 0.1)"
-            stroke="rgb(0 128 193 / 0.55)"
+            fill="rgb(54 114 124 / 0.1)"
+            stroke="rgb(54 114 124 / 0.55)"
             stroke-width="1.5"
             stroke-linejoin="round"></path>
-          <g stroke="rgb(0 128 193 / 0.6)" stroke-width="1">
+          <g stroke="rgb(54 114 124 / 0.6)" stroke-width="1">
             {Array.from({ length: 19 }, (_, i) => <path d={`M${20 + i * 10} 210 V${i % 5 === 0 ? 198 : 203}`} />)}
           </g>
         </svg>
@@ -164,7 +164,7 @@ const finishes = [
     inset: 0;
     z-index: -1;
     background:
-      radial-gradient(60% 55% at 0% 0%, rgb(0 128 193 / 0.11), rgb(0 128 193 / 0.04) 50%, rgb(0 128 193 / 0) 78%),
+      radial-gradient(60% 55% at 0% 0%, rgb(54 114 124 / 0.11), rgb(54 114 124 / 0.04) 50%, rgb(54 114 124 / 0) 78%),
       radial-gradient(45% 38% at 50% 32%, rgb(255 255 255 / 0.75), rgb(255 255 255 / 0) 100%);
   }
   /* Cortes a 45° del panel (como el monograma) */
@@ -277,7 +277,7 @@ const finishes = [
   .sw-glass {
     background:
       linear-gradient(125deg, rgb(255 255 255 / 0.55) 0 22%, transparent 23% 40%, rgb(255 255 255 / 0.3) 41% 46%, transparent 47%),
-      linear-gradient(180deg, rgb(150 196 222 / 0.85), rgb(110 160 190 / 0.85));
+      linear-gradient(180deg, rgb(160 200 205 / 0.85), rgb(115 165 172 / 0.85));
   }
 
   /* ---------- Escena 1 ---------- */
@@ -376,7 +376,7 @@ const finishes = [
     padding: 2px;
     rotate: calc((var(--i) - 1) * 5deg);
     translate: 0 calc(var(--i) * 1px - 1px);
-    box-shadow: 0 6px 12px -6px rgb(20 30 40 / 0.45);
+    box-shadow: 0 6px 12px -6px rgb(20 34 37 / 0.45);
     transition: rotate 0.5s var(--ease-out-expo), translate 0.5s var(--ease-out-expo), margin 0.5s var(--ease-out-expo);
   }
   .proof-pic :global(img) {

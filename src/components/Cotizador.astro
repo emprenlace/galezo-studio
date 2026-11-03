@@ -71,7 +71,7 @@ const leadsUrl = import.meta.env.PUBLIC_LEADS_URL || '';
 
   .cz-body { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow-y: auto; overscroll-behavior: contain; }
   /* lámina: arriba en celular, pequeña */
-  .cz-lam { position: relative; flex: none; display: grid; place-items: center; height: clamp(120px, 22svh, 190px); padding: 10px 20px 0; background: radial-gradient(70% 90% at 50% 100%, var(--color-brand-soft), rgb(227 241 249 / 0) 70%), var(--color-bone); }
+  .cz-lam { position: relative; flex: none; display: grid; place-items: center; height: clamp(120px, 22svh, 190px); padding: 10px 20px 0; background: radial-gradient(70% 90% at 50% 100%, var(--color-brand-soft), rgb(228 239 240 / 0) 70%), var(--color-bone); }
   .cz-mq { width: min(240px, 62vw); aspect-ratio: 4 / 3; }
   .cz-mq :global(.mq) { width: 100%; height: 100%; overflow: visible; }
   .cz-mq :global(.pc) { transition: opacity 0.5s, transform 0.7s var(--ease-out-expo) !important; animation: none !important; }
@@ -164,7 +164,7 @@ const leadsUrl = import.meta.env.PUBLIC_LEADS_URL || '';
 
   /* Celular: el botón de enviar queda siempre a la vista (fijo abajo dentro del formulario) */
   @media (max-width: 759px) {
-    .cz-step :global(.send:not(.done .send)) { position: sticky; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 2; box-shadow: 0 10px 24px -10px rgb(0 40 70 / 0.5); }
+    .cz-step :global(.send:not(.done .send)) { position: sticky; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 2; box-shadow: 0 10px 24px -10px rgb(14 48 54 / 0.5); }
   }
   /* ---------- Tableta y escritorio: ventana con la lámina a la izquierda ---------- */
   @media (min-width: 760px) {
