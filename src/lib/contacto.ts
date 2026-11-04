@@ -5,7 +5,7 @@
 export const contacto = {
   whatsapp: '+573043395726',
   whatsappLabel: '+57 304 339 5726',
-  email: 'arquitectoulisesgalezo@gmail.com',
+  email: 'galezostudio@gmail.com',
   instagram: 'galezostudio',
   ciudad: 'Valledupar, Cesar',
 };

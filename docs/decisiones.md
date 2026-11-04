@@ -334,3 +334,33 @@ Fuente: carpeta "GALEZO STUDIO - MARCA/" (logos corregidos y "correcciones pagin
 Dudas para Ulises: años de experiencia (portafolio dice 6, la web dice +10); fachada que da a la calle (este-oeste, norte o sur); ícono de remodelación; si las 9 etapas aplican a todos los servicios; dirección de oficina y horario.
 Material de Ulises: renders de I.E. Alfonso López, Instpecam, Mirador Ecce Homo y CASD; imagen de su diseño para el héroe del inicio; resto de proyectos; correo corporativo y WhatsApp Business.
 Por hacer cuando respondan: proceso en 9 etapas (inicio), fachada frontal en vivienda, boceto → render en Proyectos, héroe del inicio con su imagen, ícono de remodelación.
+
+## Ajustes (2026-11-03, tarde)
+- Correo nuevo del estudio: galezostudio@gmail.com (en src/lib/contacto.ts; lo usan contacto, política y schema).
+- Quién diseña: foto profesional a medio torso, en color y vertical (4:5), en src/assets/ulises-torso.jpg. El corte cede la altura en celular para que la sección siga cabiendo.
+- Clientes particulares: se quitaron (ni casilla ni línea). PENDIENTE: sección propia igual a la de clientes, con cajas de reseñas de clientes particulares, cuando haya testimonios reales.
+- Cajetín: la casilla "Tu proyecto" (abre el cotizador) va siempre, también en escritorio. Con filas llenas de cinco pasa a seis columnas para que complete la última fila (10 clientes: 6 + 4 y Tu proyecto de dos casillas).
+- Confirmado por Ulises: las 9 etapas del proceso aplican a todos los servicios.
+
+## Héroe del inicio con la casa de Ulises (2026-11-03, noche)
+- La casa es diseño de Ulises (fachada principal en lápiz de color, confirmado). Archivo: "sketch 2 s2.png" (7912 × 4500, ampliado desde ~1280; en web se ve bien). Se guardan dos versiones de 3200 px: casa-color.jpg y casa-lapiz.jpg (grafito sacado del mismo dibujo). En la web pesan ~360 KB en celular y ~490 KB en escritorio retina (WebP, calidad 72).
+- Reemplaza el boceto hecho en código y las muestras de "prueba otro acabado". Los textos del héroe no se tocaron.
+- Entrada: aparece a lápiz y el color se pinta de izquierda a derecha con el lápiz de la marca en el borde (par de translate opuestos, compuesto). El cajetín pasa de "Boceto" a "Fachada".
+- Escritorio: notas a mano a los lados (muro en piedra, jardinera, celosía en madera, voladizo); al pasar el mouse se atenúa todo menos ese elemento.
+- La casa crece según el alto de la pantalla para que el techo siempre quede bajo los botones (medido de iPhone SE a 1920 × 1080). En celular va por encima de la firma de Ulises. En iPhone SE se oculta "Diseños ya construidos" (sale en Proyectos).
+
+## Héroe: calco que se dibuja (2026-11-03, corrección del usuario)
+- La primera versión (imagen encogida para no chocar con el texto) "quedaba en un pedacito". Ahora la casa va apoyada abajo, grande, con la calle recortada (dibujo de 3200 × 1530).
+- Calco (src/lib/calco.ts): 165 líneas rectas de la arquitectura medidas sobre su dibujo y ajustadas a los trazos reales (pórticos, volumen, muros, vanos, lamas, celosía). Se dibujan solas en 3 s con el lápiz recorriendo cada línea; el suelo y el andén siguen hasta los bordes de la lámina, con pastos y pájaros.
+- Luego entra su dibujo a lápiz, el calco se retira y el color se pinta de izquierda a derecha. Notas a mano en escritorio (texto fuera del dibujo). La escuadra subió para no chocar con las notas.
+- Ancho en escritorio: min(242svh − 1040px, ancho − 400px, 1500px): el techo queda bajo los botones de 720 a 1080 px de alto.
+- (misma noche) Cambio a la versión panorámica que trajo el usuario ("Fachada contemporánea entre vegetación tropical.png", 2103 × 748, ampliada a 3200 × 1138 con enfoque suave). Calco rehecho sobre ella (164 líneas). En escritorio cubre todo el ancho: el script la ubica para que el techo quede bajo los botones; si hace falta baja y recorta la calle, y solo en pantallas muy bajas se achica. Notas como etiquetas de papel sobre el dibujo (muro en piedra, celosía en madera, voladizo). Firma de Ulises sobre papel en escritorio. Tableta vertical: texto centrado (la panorámica siempre deja cielo libre).
+
+## Héroe con láminas a línea (2026-11-04)
+- El usuario entregó dos láminas sin color con las medidas del héroe original: computador 2880 × 1800 (casa del 24 al 76 % del ancho) y celular 1200 × 1500. Se pasaron a tinta sobre transparencia (src/assets/hero/lamina-ancha.png y lamina-alta.png) para fundirse con el papel sin bordes.
+- Calco (lib/calco.ts) medido sobre la lámina de computador y llevado a la de celular por escala. Se dibuja en 3 s con el lápiz; luego entra el dibujo completo y el calco se retira; el cajetín pasa a "Fachada".
+- Ubicación por script: en computador la lámina cubre el panel; si el techo tocaría el texto, baja y se recorta el suelo, o se achica lo justo (medido de 1024 × 768 a 1920 × 1080). En celular va de lado a lado con la base sobre la firma, y el texto se centra en el cielo que queda.
+- Notas en computador: muro en piedra y celosía en madera (voladizo se quitó: se cruzaba con la otra nota en portátil).
+- Sin color por ahora (el usuario lo pidió así para que no se pierdan los demás elementos). Opcional: aguada suave al final.
+- Color (2026-11-04): aguada sacada de la versión a color de la misma casa (sin líneas ni cielo, bordes que se pierden como acuarela), alineada con las láminas y puesta debajo del trazo (aguada-ancha.png / aguada-alta.png). Se pinta de izquierda a derecha a los 4 s con el lápiz en el borde; los árboles de los costados quedan a línea, como el héroe original. El cielo queda en papel para que el texto se lea.
+- Corrección (2026-11-04, "deja todo mocho"): el color se cortaba a mitad de los árboles. Ahora toda la lámina lleva aguada: verde en los árboles de los costados y en las matas del frente (sale de la densidad del propio trazo, con dos verdes mezclados), la casa con los colores de su versión a color. Sin halos sobre muros ni líneas del suelo. Las notas se ocultan solas si en una pantalla caen sobre el texto o las fotos de obra.

@@ -38,16 +38,14 @@ const todos = [
   { src: aconstruir, name: 'A Construir S.A.', k: 0.88, priv: true },
   { src: hrs, name: 'HRS Ingeniería', k: 0.5, priv: true },
   { src: marbal, name: 'Marbal Ingeniería', k: 0.42, priv: true },
-  // familias y personas que nos encargan su casa: sin logo, un ícono de persona
-  { src: null, name: 'Clientes particulares', k: 0.9, priv: true },
 ];
 const clientes = privados ? todos.filter((c) => c.priv) : todos;
 const N = clientes.length;
 // la casilla "Tu proyecto" completa la última fila: en escritorio hasta 5 columnas, en celular 3
-const dc = N < 5 ? N + 1 : 5;
-const tuDesk = N < 5 || N % 5 !== 0;
-// en escritorio la casilla tuya ocupa lo que falta de la última fila
-const tuSpanD = N < 5 || N % 5 === 0 ? 1 : 5 - (N % 5);
+// con filas llenas de cinco, seis columnas: así la casilla tuya completa la última fila en vez de ir sola
+const dc = N < 5 ? N + 1 : N % 5 === 0 ? 6 : 5;
+// en escritorio la casilla tuya siempre va (abre el cotizador): ocupa lo que falta de la última fila, o la fila entera
+const tuSpanD = N % dc === 0 ? dc : dc - (N % dc);
 const mc = Math.min(3, N);
 const tuSpan = N % mc === 0 ? mc : mc - (N % mc);
 const pad = (i: number) => String(i + 1).padStart(2, '0');
@@ -65,13 +63,13 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
     <!-- El cajetín -->
     <div class="tb">
       <p class="tb-hd"><span class="tb-l">Propietarios</span><b>Nuestros clientes</b><span class="tb-r">Galezo Studio</span></p>
-      <ul class:list={['tb-grid', { 'no-tu': !tuDesk }]} role="list" style={`--dc:${dc};--mc:${mc};--ts:${tuSpan};--tsd:${tuSpanD}`}>
+      <ul class="tb-grid" role="list" style={`--dc:${dc};--mc:${mc};--ts:${tuSpan};--tsd:${tuSpanD}`}>
         {
           clientes.map((c, i) => (
-            <li class:list={['cell', { 'is-persona': !c.src }]} style={`--i:${i};--k:${c.k}`}>
+            <li class="cell" style={`--i:${i};--k:${c.k}`}>
               <span class="c-l" aria-hidden="true">Cliente {pad(i)}</span>
               <span class="c-logo">
-                {c.src ? <Image src={c.src} alt={c.name} height={200} densities={[1]} loading="lazy" /> : <svg class="c-person" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="15" r="8.5" /><path d="M7 44c1.6-9.6 8.4-15 17-15s15.4 5.4 17 15" /></svg>}
+                <Image src={c.src} alt={c.name} height={200} densities={[1]} loading="lazy" />
               </span>
               <span class="c-n">{c.name}</span>
             </li>
@@ -122,8 +120,7 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
   .tu-a { grid-template-columns: auto; }
   .c-l { justify-self: start; font-size: 9px; color: #9097a0; }
   .c-logo { display: grid; place-items: center; min-height: 0; }
-  .c-logo :is(:global(img), .c-person) { display: block; width: auto; height: calc(clamp(30px, 5.4svh, 52px) * var(--k)); max-width: 92%; object-fit: contain; margin: 0 auto; }
-  .c-person { aspect-ratio: 1; fill: none; stroke: var(--color-brand); stroke-width: 2.2; stroke-linecap: round; }
+  .c-logo :global(img) { display: block; width: auto; height: calc(clamp(30px, 5.4svh, 52px) * var(--k)); max-width: 92%; object-fit: contain; margin: 0 auto; }
   .c-n { font-size: 10px; font-weight: 600; line-height: 1.2; color: var(--color-ink-soft); text-align: center; text-wrap: balance; }
   .cell-tu { grid-column: span var(--ts); }
   .tu-a { display: grid; grid-template-rows: auto 1fr auto; justify-items: center; gap: 4px; width: 100%; height: 100%; }
@@ -176,8 +173,8 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
   }
   /* celular con la lista completa (cuatro filas): casillas más bajas; en pantallas cortas, sin nombres (van en el alt) */
   @media (max-width: 639px) {
-    .is-many .cell { min-height: clamp(62px, 11svh, 96px); padding: 5px 5px 6px; gap: 2px; }
-    .is-many .c-logo :is(:global(img), .c-person) { height: calc(clamp(26px, 4.6svh, 44px) * var(--k)); }
+    .is-many .cell { min-height: clamp(58px, 9.6svh, 96px); padding: 5px 5px 6px; gap: 2px; }
+    .is-many .c-logo :global(img) { height: calc(clamp(26px, 4.6svh, 44px) * var(--k)); }
     .is-many .tu-mk { width: 40px; height: 40px; }
   }
   @media (max-width: 639px) and (max-height: 760px) {
@@ -185,19 +182,19 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
     .is-many .c-n:not(.tu-n) { display: none; }
     .is-many .cell { grid-template-rows: auto 1fr; }
     .is-many .tu-a { grid-template-rows: auto 1fr auto; }
-    /* sin logo, el ícono solo no se entiende: su nombre siempre va */
-    .is-many .is-persona { grid-template-rows: auto 1fr auto; }
-    .is-many .is-persona .c-n { display: block; }
   }
   /* SE: la casilla tuya en una línea (signo + texto) para que la tabla quepa */
   @media (max-width: 639px) and (max-height: 600px) {
-    .is-many .cell { min-height: 54px; }
+    .is-many .cell { min-height: 52px; }
     .is-many .is-wide .tu-a { display: flex; align-items: center; justify-content: center; gap: 8px; }
     .is-many .is-wide .tu-a .c-l { position: absolute; top: 5px; left: 5px; }
     .is-many .tu-mk { width: 30px; height: 30px; }
   }
   @media (max-width: 639px) and (max-height: 600px) {
     .cj-sub { display: none; }
+    .tb-hd { padding: 5px 10px 6px; }
+    .tb-hd b { font-size: 13px; }
+    .ft-c { padding: 4px 9px 5px; }
     .cell { min-height: 76px; padding: 5px 4px 6px; }
     .c-n { font-size: 9px; }
   }
@@ -213,12 +210,11 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
     .tb-r { font-size: 17px; }
     .tb-grid { grid-template-columns: repeat(var(--dc), minmax(0, 1fr)); }
     /* rejilla de líneas: cada casilla dibuja su borde derecho e inferior; la tabla recorta el sobrante */
-    .cell { min-height: 150px; padding: 10px 10px 12px; }
+    .cell { min-height: clamp(120px, 18svh, 150px); padding: 10px 10px 12px; }
     .cell-tu { grid-column: span var(--tsd); display: grid; }
-    .no-tu .cell-tu { display: none; }
     .c-l { font-size: 10px; }
     .c-n { font-size: 11.5px; }
-    .c-logo :is(:global(img), .c-person) { height: calc(58px * var(--k)); }
+    .c-logo :global(img) { height: calc(58px * var(--k)); }
     .tb-ft { grid-column: 1 / -1; box-shadow: inset 0 1px 0 var(--line); }
     .ft-c { padding: 10px 18px 12px; }
     .ft-c b { font-size: 15px; }

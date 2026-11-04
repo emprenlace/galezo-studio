@@ -8,7 +8,7 @@
 import { Image } from 'astro:assets';
 import Plomada from './Plomada.astro';
 import Trazos from './Trazos.astro';
-import ulises from '../assets/ulises-rostro.jpg';
+import ulises from '../assets/ulises-torso.jpg';
 import mono from '../assets/brand/monogram-d.txt?raw';
 
 // de arriba hacia abajo (el corte se lee como un edificio): lo que respalda el diseño de tu casa, sin hoja de vida
@@ -35,7 +35,7 @@ const { n = '06', cta = true } = Astro.props as { n?: string; cta?: boolean };
       <!-- Perfil -->
       <div class="perfil es-rv">
         <div class="pf-photo">
-          <Image src={ulises} alt="Ulises Galezo Cifuentes, arquitecto" widths={[160, 320]} sizes="(min-width: 1024px) 150px, 76px" class="pf-img" />
+          <Image src={ulises} alt="Ulises Galezo Cifuentes, arquitecto" widths={[200, 400]} sizes="(min-width: 1024px) 150px, 84px" class="pf-img" />
         </div>
         <div class="pf-tx">
           <p class="pf-name">Ulises Galezo Cifuentes</p>
@@ -112,9 +112,9 @@ const { n = '06', cta = true } = Astro.props as { n?: string; cta?: boolean };
   .es-h2 .accent { color: var(--color-brand); font-size: 1.08em; letter-spacing: -0.012em; }
 
   /* ---------- Perfil ---------- */
-  .perfil { display: grid; grid-template-columns: 76px 1fr; gap: 6px 14px; align-items: center; }
-  .pf-photo { --cut: 10px; position: relative; width: 76px; aspect-ratio: 1; overflow: hidden; clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); background: var(--color-brand-soft); }
-  .pf-photo :global(.pf-img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; filter: grayscale(1) contrast(1.05); mix-blend-mode: multiply; }
+  .perfil { display: grid; grid-template-columns: 84px 1fr; gap: 6px 14px; align-items: center; }
+  .pf-photo { --cut: 10px; position: relative; width: 84px; aspect-ratio: 4 / 5; overflow: hidden; clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); background: var(--color-brand-soft); }
+  .pf-photo :global(.pf-img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 0%; }
   .pf-name { font-size: 1.12rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.15; }
   .pf-role { font-size: 13px; color: var(--color-ink-mute); margin-top: 1px; }
   .pf-years { font-size: 13.5px; color: var(--color-ink-soft); margin-top: 4px; line-height: 1.35; }
@@ -215,7 +215,8 @@ const { n = '06', cta = true } = Astro.props as { n?: string; cta?: boolean };
   @media (max-width: 639px) {
     /* sin escalera (a este tamaño ensucia); cada piso: nivel + título y su descripción debajo */
     .ct-stair { display: none; }
-    .corte { height: clamp(222px, calc(100svh - 432px), 400px); }
+    /* la foto a medio torso es más alta: el corte cede ese espacio */
+    .corte { height: clamp(186px, calc(100svh - 476px), 400px); }
     /* más limpio: sin símbolos de fondo, el corte en línea fina y sin vanos ni terreno achurado */
     .es > :global(.trz) { display: none; }
     .corte { --wall: 1.5px; --slab: 1px; }
@@ -241,8 +242,10 @@ const { n = '06', cta = true } = Astro.props as { n?: string; cta?: boolean };
     .ct-d { display: none; }
     .es-note { display: none; }
     .es :global(.trz) { display: none; }
-    .corte { height: clamp(140px, calc(100svh - 524px), 380px); }
+    .corte { height: clamp(120px, calc(100svh - 540px), 380px); }
     .pf-role { font-size: 0.82rem; }
+    .perfil { grid-template-columns: 64px 1fr; }
+    .pf-photo { width: 64px; }
   }
   @media (min-width: 640px) {
     .es { --pad: 28px; padding-bottom: 16px; }
@@ -260,8 +263,8 @@ const { n = '06', cta = true } = Astro.props as { n?: string; cta?: boolean };
     .es-in { gap: clamp(12px, 2.4svh, 28px); }
     .es-body { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
     .corte { order: 0; height: clamp(320px, calc(100svh - var(--hdr) - 190px - 12svh), 560px); }
-    .perfil { grid-template-columns: 120px 1fr; gap: 14px 22px; align-content: center; }
-    .pf-photo { width: 120px; }
+    .perfil { grid-template-columns: 150px 1fr; gap: 14px 22px; align-content: center; }
+    .pf-photo { width: 150px; }
     .pf-name { font-size: 1.5rem; }
     .pf-role { font-size: 14px; }
     .pf-years { font-size: 15px; }

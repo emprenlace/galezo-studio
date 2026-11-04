@@ -1,14 +1,23 @@
 ---
 /**
  * Héroe "La lámina".
- * Escena 1: todo el héroe es una lámina de dibujo; la casa campestre y su paisaje se dibujan a mano
- * de borde a borde (boceto en vector generado al compilar), el lápiz recorre los trazos y al final
- * entra la aguada de acuarela. El título y los botones quedan centrados en el cielo de la lámina.
- * Al salir con el scroll, el texto se desvanece y el dibujo se desplaza en parallax; el entregable se cuenta en la sección siguiente.
+ * La lámina es un dibujo a línea de una casa diseñada por Ulises: computador 2880 × 1800 (casa centrada, del 24 al 76 %
+ * del ancho) y celular 1200 × 1500 (casa de lado a lado). Ambas en tinta sobre transparencia, para fundirse con el papel.
+ * 1. El calco de su arquitectura (lib/calco.ts) se dibuja solo con el lápiz de la marca: suelo → pórticos → volumen → muros → vanos → lamas.
+ * 2. Entra su dibujo completo (árboles, piedra, matas) y el calco se retira.
+ * 3. La aguada (color sacado de su versión a color, sin líneas ni cielo) se pinta de izquierda a derecha con el lápiz en el borde;
+ *    el cajetín pasa de "Boceto" a "Fachada".
+ * 4. En computador, notas a mano sobre el dibujo; al pasar el mouse por una se resalta esa parte de la casa.
+ * El script ubica la lámina para que cubra el panel y el techo quede siempre bajo los botones.
+ * Al salir con el scroll, el texto se desvanece y el dibujo hace parallax.
  */
 import { Image } from 'astro:assets';
 import ulises from '../assets/ulises-rostro.jpg';
-import Sketch from './Sketch.astro';
+import laminaAncha from '../assets/hero/lamina-ancha.png';
+import laminaAlta from '../assets/hero/lamina-alta.png';
+import aguadaAncha from '../assets/hero/aguada-ancha.png';
+import aguadaAlta from '../assets/hero/aguada-alta.png';
+import { ancha, alta, type Grupo } from '../lib/calco';
 import obra1 from '../assets/obras/mirador-ecce-homo.jpg';
 import obra2 from '../assets/obras/ie-instpecam.jpg';
 import obra3 from '../assets/obras/ie-alfonso-lopez.jpg';
@@ -20,12 +29,38 @@ const obras = [
   { src: obra3, alt: 'Institución educativa Alfonso López Pumarejo, Valledupar', pos: '58% 60%' },
 ];
 
-const finishes = [
-  ['madera', 'sw-wood'],
-  ['concreto', 'sw-concrete'],
-  ['piedra', 'sw-stone'],
-  ['vidrio', 'sw-glass'],
-] as const;
+// Notas del dibujo (computador): etiqueta (lx, ly) y punto sobre el elemento (x2, y2), en px de la lámina de 2880 × 1800
+const notas = [
+  { t: 'muro en piedra', lx: 1150, ly: 1160, x2: 1240, y2: 1390 },
+  { t: 'celosía en madera', lx: 1880, ly: 1100, x2: 1880, y2: 1265 },
+];
+const pct = (v: number, t: number) => +((v / t) * 100).toFixed(2);
+
+// Tiempos del calco: cada grupo arranca a su hora; dentro del grupo las líneas se encadenan. Todo cabe en 3 s.
+const inicio: Record<string, number> = { suelo: 0.2, 'portico-izq': 0.6, 'portico-centro': 0.95, 'portico-der': 1.25, volumen: 1.55, muros: 1.85, vanos: 2.05, lamas: 2.35, celosia: 2.45 };
+function tiempos(grupos: Grupo[], ancho: number) {
+  const trazos: { d: string; a: number; t: number; fino: boolean }[] = [];
+  const ruta: { a: number; d: number; s: number[] }[] = [];
+  for (const g of grupos) {
+    let a = inicio[g.g] ?? 2;
+    for (const [x1, y1, x2, y2] of g.l) {
+      const t = g.fino ? 0.2 : Math.min(0.5, Math.max(0.14, Math.hypot(x2 - x1, y2 - y1) / (ancho * 0.55)));
+      trazos.push({ d: `M${x1} ${y1}L${x2} ${y2}`, a, t, fino: !!g.fino });
+      if (!g.fino) ruta.push({ a, d: t, s: [x1, y1, x2, y2] });
+      a += g.fino ? 0.014 : t * 0.5;
+    }
+  }
+  const f = Math.min(1, 3 / Math.max(...trazos.map((x) => x.a + x.t)));
+  for (const x of trazos) { x.a = +(x.a * f).toFixed(3); x.t = +Math.max(0.12, x.t * f).toFixed(3); }
+  for (const r of ruta) { r.a = +(r.a * f).toFixed(3); r.d = +Math.max(0.12, r.d * f).toFixed(3); }
+  return { trazos, ruta };
+}
+// cada lámina: techo (palmas incluidas) y lo más bajo que no se debe cortar, en px de la lámina
+const laminas = [
+  { id: 'ancha', src: laminaAncha, aguada: aguadaAncha, ...ancha, ...tiempos(ancha.grupos, 1680), techo: 1150, base: 1580, widths: [1440, 2160, 2880] },
+  { id: 'alta', src: laminaAlta, aguada: aguadaAlta, ...alta, ...tiempos(alta.grupos, 1200), techo: 850, base: 1352, widths: [600, 900, 1200] },
+];
+const lapiz = '<g transform="rotate(-38)"><ellipse cx="190" cy="34" rx="150" ry="8" fill="#1e2228" opacity="0.07"/><path d="M60 -10 H330 Q342 -10 342 0 Q342 10 330 10 H60 Z" fill="#36727c"/><path d="M60 -3.5 H342 M60 3.5 H342" stroke="#2c5f68" stroke-width="1.4"/><path d="M60 -10 L4 0 L60 10 Z" fill="#e8d2ad"/><path d="M18 -2.6 L0 0 L18 2.6 Z" fill="#2b2f36"/><path d="M318 -10 H332 V10 H318 Z" fill="#c8ccd2"/></g>';
 
 ---
 
@@ -34,32 +69,49 @@ const finishes = [
     <div class="panel">
       <div class="paper" aria-hidden="true"></div>
 
-      <!-- El dibujo de borde a borde -->
-      <div class="art art-tall" data-art aria-hidden="true">
-        <Sketch pencil variant="tall" />
-      </div>
-      <div class="art art-wide" data-art>
-        <Sketch pencil />
-        <!-- Tablero de acabados: cambia la fachada del volumen privado en el dibujo -->
-        <svg class="board-leader" aria-hidden="true"><path data-leader-path pathLength="1" d="M0 0"></path><circle data-leader-dot r="4"></circle></svg>
-        <div class="board" data-board>
-          <p class="board-t" id="board-t">prueba otro acabado<br />en la fachada</p>
-          <div role="group" aria-labelledby="board-t"><ul class="board-chips">
-            {
-              finishes.map(([m, c], i) => (
-                <li style={`--i:${i}`}>
-                  <button type="button" class="chip" data-mat={m} aria-pressed={m === 'madera' ? 'true' : 'false'}>
-                    <span class="chip-frame">
-                      <span class={`chip-sw ${c}`} />
-                    </span>
-                    <span class="chip-l">{m}</span>
-                  </button>
-                </li>
-              ))
-            }
-          </ul></div>
-        </div>
-      </div>
+      <!-- La lámina: computador (ancha) y celular o tableta vertical (alta) -->
+      {
+        laminas.map((L) => (
+          <div class:list={['casa', `casa-${L.id}`]} data-art={L.id} data-w={L.w} data-h={L.h} data-techo={L.techo} data-base={L.base}>
+            <div class="ca-box" data-box>
+              <!-- la aguada (color) va debajo del trazo y se pinta de izquierda a derecha -->
+              <div class="ca-ag" data-wipe>
+                <div class="ca-ag-in">
+                  <Image src={L.aguada} alt="" widths={L.widths} sizes="100vw" loading="eager" class="ca-agimg" />
+                </div>
+              </div>
+              <div class="ca-edge" aria-hidden="true"><svg class="ca-pencil" viewBox="0 0 1 1" overflow="visible" focusable="false" set:html={lapiz} /></div>
+              <Image src={L.src} alt={L.id === 'ancha' ? 'Fachada de una casa diseñada por Ulises Galezo, dibujada a línea' : ''} widths={L.widths} sizes="100vw" loading="eager" fetchpriority={L.id === 'ancha' ? 'high' : undefined} class="ca-dib" />
+              <span class="ca-spot" data-spot aria-hidden="true"></span>
+              <svg class="ca-calco" viewBox={`0 0 ${L.w} ${L.h}`} aria-hidden="true" focusable="false">
+                {L.trazos.map((x) => <path class:list={{ fino: x.fino }} d={x.d} pathLength="1" style={`--a:${x.a}s;--t:${x.t}s`} />)}
+              </svg>
+              <div class="ca-pen" data-pen data-route={JSON.stringify(L.ruta)} aria-hidden="true">
+                <svg viewBox="0 0 1 1" overflow="visible" focusable="false" set:html={lapiz} />
+              </div>
+              {L.id === 'ancha' && (
+                <>
+                  <svg class="ca-leaders" viewBox={`0 0 ${L.w} ${L.h}`} preserveAspectRatio="none" aria-hidden="true">
+                    {notas.map((n, i) => (
+                      <g class="ld" data-ld={i} style={`--i:${i}`}>
+                        <path d={`M${n.lx} ${n.ly + 22} C${n.lx} ${n.ly + (n.y2 - n.ly) * 0.6}, ${n.x2} ${n.ly + 36}, ${n.x2} ${n.y2}`} />
+                        <circle cx={n.x2} cy={n.y2} r="6" />
+                      </g>
+                    ))}
+                  </svg>
+                  <ul class="ca-notes" role="list">
+                    {notas.map((n, i) => (
+                      <li class="nt" style={`--i:${i};left:${pct(n.lx, L.w)}%;top:${pct(n.ly, L.h)}%`}>
+                        <button type="button" class="nt-b" data-note={i} data-x={pct(n.x2, L.w)} data-y={pct(n.y2, L.h)}>{n.t}</button>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
+          </div>
+        ))
+      }
 
       <!-- Instrumentos sobre la lámina (escritorio) -->
       <div class="tools" data-tools aria-hidden="true">
@@ -172,31 +224,103 @@ const finishes = [
   .cut-tl { top: -1px; left: -1px; clip-path: polygon(0 0, 100% 0, 0 100%); }
   .cut-br { bottom: -1px; right: -1px; clip-path: polygon(100% 0, 100% 100%, 0 100%); }
 
-  /* ---------- El dibujo ---------- */
-  .art {
+  /* ---------- La lámina ---------- */
+  /* Ocupa todo el panel; la caja interna (data-box) tiene la proporción de su dibujo y la ubica el script.
+     Sin JS: la caja cubre el panel apoyada abajo. */
+  .casa { position: absolute; inset: 0; z-index: 0; overflow: hidden; transform-origin: 50% 90%; will-change: transform, opacity; }
+  .casa-ancha { display: none; }
+  .ca-box { position: absolute; left: 50%; bottom: 56px; width: 100%; translate: -50% 0; }
+  .casa-alta .ca-box { aspect-ratio: 1200 / 1500; }
+  .casa-ancha .ca-box { aspect-ratio: 2880 / 1800; }
+  .ca-dib { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  /* Aguada: la caja avanza a la derecha y su contenido retrocede lo mismo (dos translate, compuesto).
+     Es 80 px más ancha que el dibujo: ese sobrante lleva el borde suave del color. */
+  .ca-ag { position: absolute; top: 0; bottom: 0; left: 0; width: calc(100% + 80px); overflow: hidden; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 80px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 80px), transparent); will-change: transform; }
+  .ca-ag-in { position: absolute; inset: 0; will-change: transform; }
+  .ca-ag-in :global(img) { position: absolute; left: 0; top: 0; width: calc(100% - 80px); height: 100%; display: block; }
+  .ca-edge { position: absolute; top: 0; bottom: 0; left: 0; width: 100%; pointer-events: none; opacity: 0; will-change: transform, opacity; }
+  .ca-pencil { position: absolute; right: 0; top: 72%; width: 1px; height: 1px; overflow: visible; scale: var(--pk, 0.3); }
+  /* trazos del calco en unidades de la lámina: el grosor sigue la escala (--sw) */
+  .ca-calco { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .ca-calco path { fill: none; stroke: #262a30; stroke-width: var(--sw, 3); stroke-linecap: round; }
+  .ca-calco .fino { stroke-width: calc(var(--sw, 3) * 0.5); opacity: 0.6; }
+  .ca-pen { position: absolute; left: 0; top: 0; width: 1px; height: 1px; transform-origin: 0 0; will-change: transform, opacity; opacity: 0; pointer-events: none; z-index: 2; }
+  .ca-pen svg { display: block; overflow: visible; }
+  /* resaltado: todo se atenúa menos el elemento de la nota */
+  .ca-spot {
     position: absolute;
-    inset: auto 0 64px 0;
-    transform-origin: 50% 90%;
-    will-change: transform, opacity;
-    z-index: 0;
+    inset: 0;
+    background: rgb(244 242 238 / 0.8);
+    opacity: 0;
+    transition: opacity 0.45s var(--ease-out-expo);
+    -webkit-mask-image: radial-gradient(circle at var(--sx, 50%) var(--sy, 50%), transparent 0 5%, #000 11%);
+    mask-image: radial-gradient(circle at var(--sx, 50%) var(--sy, 50%), transparent 0 5%, #000 11%);
+    pointer-events: none;
   }
-  .art-tall { aspect-ratio: 4 / 5; }
+  .casa.is-spot .ca-spot { opacity: 1; }
+  .ca-leaders, .ca-notes { display: none; }
+  .ca-leaders { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .ld path { fill: none; stroke: var(--color-brand); stroke-width: 1.3; vector-effect: non-scaling-stroke; stroke-linecap: round; opacity: 0.8; transition: opacity 0.3s, stroke-width 0.3s; }
+  .ld circle { fill: var(--color-brand); }
+  .ld.is-on path { opacity: 1; stroke-width: 2; }
+  .ca-notes { position: absolute; inset: 0; pointer-events: none; }
+  .nt { position: absolute; translate: -50% -50%; }
+  .nt-b {
+    pointer-events: auto;
+    padding: 2px 6px;
+    font-family: 'Architects Daughter', var(--font-sans);
+    font-size: 16px;
+    line-height: 1.1;
+    white-space: nowrap;
+    color: var(--color-brand);
+    cursor: pointer;
+    rotate: -2deg;
+    transition: color 0.3s, translate 0.4s var(--ease-out-expo);
+  }
+  .nt-b:hover, .nt-b:focus-visible, .nt-b.is-on { color: var(--color-ink); }
+  .nt-b.is-on { translate: 0 -3px; }
+
+  /* ---------- Entrada (solo con JS; sin JS se ve el dibujo completo) ----------
+     0,2–3,2 s el calco se dibuja con el lápiz · 2,8 s entra su dibujo y el calco se retira · 4–6,2 s el color · 6,1 s notas */
+  :global(html.js) .casa .ca-calco path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  :global(html.js) .casa.go .ca-calco path { animation: ca-draw var(--t) var(--a) cubic-bezier(0.45, 0.05, 0.3, 1) forwards; }
+  :global(html.js) .casa.go .ca-calco { animation: ca-out 1.4s 3.4s ease forwards; }
+  :global(html.js) .casa .ca-dib { opacity: 0; }
+  :global(html.js) .casa.go .ca-dib { animation: ca-in 1.6s 2.8s ease both; }
+  :global(html.js) .casa .ca-ag { transform: translateX(-100%); }
+  :global(html.js) .casa .ca-ag-in { transform: translateX(100%); }
+  :global(html.js) .casa .ca-edge { transform: translateX(-100%); }
+  :global(html.js) .casa.go :is(.ca-ag, .ca-ag-in) { animation: ca-wipe 2.2s 4s cubic-bezier(0.55, 0.05, 0.3, 1) forwards; }
+  :global(html.js) .casa.go .ca-edge { animation: ca-wipe 2.2s 4s cubic-bezier(0.55, 0.05, 0.3, 1) forwards, ca-pen 2.5s 3.85s ease both; }
+  @keyframes ca-wipe { to { transform: none; } }
+  @keyframes ca-pen { 0% { opacity: 0; } 12% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; } }
+  :global(html.js) .casa .ld, :global(html.js) .casa .nt { opacity: 0; }
+  :global(html.js) .casa.go .ld, :global(html.js) .casa.go .nt { animation: ca-in 0.8s ease both; animation-delay: calc(6.1s + var(--i) * 0.16s); }
+  @keyframes ca-draw { to { stroke-dashoffset: 0; } }
+  @keyframes ca-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes ca-out { to { opacity: 0; } }
+  :global(html:not(.js)) .casa :is(.ca-calco, .ca-pen, .ca-edge) { display: none; }
+  :global(html.rm) .casa :is(.ca-calco, .ca-pen, .ca-edge) { display: none; }
+  :global(html.rm) .casa :is(.ca-ag, .ca-ag-in) { animation: none !important; transform: none !important; }
+  :global(html.rm) .casa :is(.ca-dib, .ld, .nt) { animation: none !important; opacity: 1 !important; }
+
+  /* Lámina ancha en pantallas horizontales; la alta en celular y tableta vertical */
+  @media (orientation: landscape) and (min-width: 640px) {
+    .casa-alta { display: none; }
+    .casa-ancha { display: block; }
+    .ca-box { bottom: 0; }
+  }
+
   /* Celular y tableta: el título queda centrado en el cielo, entre la cabecera y el techo de la casa */
   @media (max-width: 1023px) {
     .hero-s1 {
       top: calc(var(--hd) + env(safe-area-inset-top));
-      bottom: calc(64px + 100vw * 1.25 * 0.5);
+      bottom: var(--s1b, 45%);
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
   }
-  @media (min-width: 640px) and (max-width: 1023px) {
-    .hero-s1 { bottom: calc(56px + 125vw * 0.625 * 0.44); }
-  }
-  .art-wide { display: none; }
-  .art :global(.sk) { --sk-paper: var(--color-bone); }
-  .art-tall :global(.sk-note text) { font-size: 38px; }
 
   .tools { position: absolute; inset: 0; pointer-events: none; z-index: 1; display: none; }
   .tool { position: absolute; overflow: visible; filter: drop-shadow(0 8px 10px rgb(30 34 40 / 0.12)); }
@@ -207,77 +331,6 @@ const finishes = [
     rotate: -18deg;
     translate: calc(var(--mx, 0) * -8px) calc(var(--my, 0) * -5px);
     transition: translate 0.8s var(--ease-out-expo);
-  }
-  /* ---------- Tablero de acabados ---------- */
-  .board, .board-leader { display: none; }
-  .board {
-    position: absolute;
-    right: 4.5%;
-    top: 21%;
-    z-index: 2;
-    text-align: center;
-  }
-  .board-t {
-    font-family: 'Architects Daughter', var(--font-sans);
-    font-size: 15px;
-    line-height: 1.25;
-    color: var(--color-brand);
-    rotate: -2deg;
-  }
-  .board-chips { margin-top: 10px; display: flex; gap: 10px; }
-  .chip {
-    display: grid;
-    justify-items: center;
-    gap: 5px;
-    cursor: pointer;
-    border-radius: 2px;
-  }
-  .chip-frame {
-    display: block;
-    padding: 2px;
-    clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
-    background: rgb(11 13 16 / 0.12);
-    transition: background-color 0.35s var(--ease-out-expo), translate 0.45s var(--ease-out-expo);
-  }
-  .chip-sw {
-    display: block;
-    width: 44px;
-    height: 44px;
-    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
-  }
-  .chip-l {
-    font-family: 'Architects Daughter', var(--font-sans);
-    font-size: 12.5px;
-    color: var(--color-ink-mute);
-    transition: color 0.3s;
-  }
-  .chip:hover .chip-frame, .chip:focus-visible .chip-frame { translate: 0 -3px; }
-  .chip[aria-pressed='true'] .chip-frame { background: var(--color-brand); }
-  .chip[aria-pressed='true'] .chip-l { color: var(--color-brand-ink); }
-  .board-leader { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 1; }
-  .board-leader path { fill: none; stroke: var(--color-brand); stroke-width: 1.2; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0.85; }
-  .board-leader circle { fill: var(--color-brand); opacity: 0; }
-  :global(html.js) .board { animation: tool-in 1.4s 2.4s var(--ease-out-expo) both; }
-  :global(html.js) .board-leader path { animation: draw-line 1s 3s cubic-bezier(0.6, 0, 0.3, 1) forwards; }
-  :global(html.js) .board-leader circle { animation: hero-ink 0.4s 3.9s ease forwards; }
-  :global(html:not(.js)) .board-leader path, :global(html.rm) .board-leader path { stroke-dashoffset: 0; animation: none; }
-  :global(html:not(.js)) .board-leader circle, :global(html.rm) .board-leader circle { opacity: 1; animation: none; }
-  .sw-wood {
-    background:
-      repeating-linear-gradient(92deg, rgb(255 255 255 / 0) 0 7px, rgb(90 55 28 / 0.18) 7px 8px),
-      repeating-linear-gradient(88deg, rgb(255 255 255 / 0.06) 0 3px, rgb(255 255 255 / 0) 3px 11px),
-      linear-gradient(180deg, #b98a5e, #a0724a);
-  }
-  .sw-concrete {
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.28 0'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)'/%3E%3C/svg%3E"), linear-gradient(160deg, #bdbab4, #a5a29c);
-  }
-  .sw-stone {
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.28 0'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)'/%3E%3C/svg%3E"), radial-gradient(ellipse at 25% 30%, rgb(255 255 255 / 0.3), transparent 45%), linear-gradient(140deg, #dccfba, #c4b59c);
-  }
-  .sw-glass {
-    background:
-      linear-gradient(125deg, rgb(255 255 255 / 0.55) 0 22%, transparent 23% 40%, rgb(255 255 255 / 0.3) 41% 46%, transparent 47%),
-      linear-gradient(180deg, rgb(160 200 205 / 0.85), rgb(115 165 172 / 0.85));
   }
 
   /* ---------- Escena 1 ---------- */
@@ -306,6 +359,8 @@ const finishes = [
   .hero-h1 .accent { position: relative; display: inline-block; color: var(--color-brand); font-size: 1.1em; line-height: 0.95; letter-spacing: -0.012em; }
   /* Celulares bajitos (iPhone SE): el título de tres líneas baja un punto para no tocar la cabecera */
   @media (max-width: 360px) and (max-height: 640px) {
+    /* sin espacio para las fotos de obra sobre la casa: aparecen más abajo, en Proyectos */
+    .hero-s1 .hero-proof { display: none; }
     .hero-h1 { font-size: 1.72rem; }
     .hero-sub { font-size: 0.9rem; }
     .hero-s1 { top: calc(var(--hd) + 6px); bottom: auto; justify-content: flex-start; }
@@ -449,24 +504,23 @@ const finishes = [
   :global(html.js) .escuadra { animation: tool-in 1.6s 1.4s var(--ease-out-expo) both; }
     @keyframes tool-in { from { opacity: 0; transform: translateY(26px); } }
   :global(html.rm) .hl-in, :global(html.rm) .hk-3, :global(html.rm) .hk-4, :global(html.rm) .hk-5, :global(html.rm) .hk-6,
-  :global(html.rm) .escuadra, :global(html.rm) .board { animation: none; }
+  :global(html.rm) .escuadra { animation: none; }
   :global(html.rm) .underline path { animation: none; stroke-dashoffset: 0; }
 
   /* Sin JS: todo apilado y visible */
   :global(html:not(.js)) .hero { height: auto; }
   :global(html:not(.js)) .hero-pin { position: relative; height: auto; }
   :global(html:not(.js)) .panel { position: relative; inset: auto; margin: var(--g); padding-bottom: 60px; }
-  :global(html:not(.js)) .hero-s1, :global(html:not(.js)) .art { position: relative; inset: auto; translate: none; left: auto; width: 100%; }
+  :global(html:not(.js)) .hero-s1 { position: relative; inset: auto; translate: none; left: auto; width: 100%; }
+  :global(html:not(.js)) .casa { position: relative; height: 70vw; }
   :global(html:not(.js)) .hero-s1 { padding-top: calc(var(--hd) + 40px); }
 
   @media (min-width: 640px) {
     .hero { --pad: 28px; }
-    .art-tall { display: none; }
-    .art-wide { display: block; left: 50%; right: auto; width: 125vw; aspect-ratio: 8 / 5; translate: -50% 0; bottom: 56px; }
-    .art-wide :global(.sk-note text) { font-size: 40px; }
     .cajetin { display: grid; }
     .caj-brand { display: none; }
-    .hero-who { left: var(--pad); translate: none; }
+    /* sobre el dibujo: la firma va en papel, como el cajetín */
+    .hero-who { left: var(--pad); translate: none; padding: 6px 12px 6px 6px; background: rgb(255 253 249 / 0.92); border: 1px solid rgb(35 38 43 / 0.18); }
   }
 
 
@@ -475,11 +529,11 @@ const finishes = [
     /* El bloque de texto baja al centro del cielo de la lámina */
     .hero-s1 { top: calc(var(--hd) + clamp(20px, 6.5svh, 70px)); }
     .cut { width: 34px; height: 34px; }
-    /* El dibujo llena la lámina; la casa se apoya abajo */
-    .art-wide { inset: 0; width: auto; aspect-ratio: auto; translate: none; left: 0; bottom: 0; }
-    .art-wide :global(.sk-note text) { font-size: 30px; }
+    /* La casa abajo; a los lados quedan las notas y las líneas de la lámina */
+    /* ancho según el alto de la pantalla: el techo siempre queda debajo de los botones (medido de 720 a 1080 px de alto) */
+    .casa-ancha :is(.ca-leaders, .ca-notes) { display: block; }
     .tools { display: block; }
-    .board, .board-leader { display: block; }
+    .escuadra { top: 24%; }
       .caj-brand { display: block; }
   }
   @media (min-width: 1024px) and (max-height: 760px) {
@@ -492,10 +546,10 @@ const finishes = [
   const s1 = hero.querySelector<HTMLElement>('[data-s1]')!;
   const who = hero.querySelector<HTMLElement>('[data-who]')!;
   const arts = [...hero.querySelectorAll<HTMLElement>('[data-art]')];
-  const art = arts.find((a) => getComputedStyle(a).display !== 'none') || arts[0];
+  let art = arts[0];
+  const pickArt = () => (art = arts.find((a) => getComputedStyle(a).display !== 'none') || arts[0]);
+  pickArt();
   const tools = hero.querySelector<HTMLElement>('[data-tools]')!;
-  const sketch = art.querySelector<HTMLElement>('[data-sketch]')!;
-  const pencil = sketch.querySelector<HTMLElement>('[data-pencil]');
   const cajC = hero.querySelector<HTMLElement>('[data-caj-c]')!;
 
   const root = document.documentElement;
@@ -503,175 +557,143 @@ const finishes = [
   const reduced = root.classList.contains('rm');
   const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
   const ease = (t: number) => 1 - Math.pow(1 - t, 3);
-  const easeIO = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
-  // ---------- Arranque del dibujo ----------
-  // Empieza después del primer pintado y de las fuentes, para no competir con la carga.
-  const go = () => {
-    for (const a of arts) a.querySelector('[data-sketch]')?.classList.add('go');
-    startPencil();
+  // ---------- Ubicación de la lámina ----------
+  // La caja del dibujo cubre el panel (escala "cover") y se apoya abajo. Si así el techo tocaría el texto, sube el texto
+  // de margen: la lámina baja y se recorta el suelo; si ni recortando cabe, se achica lo justo.
+  const panelEl = hero.querySelector<HTMLElement>('.panel')!;
+  const textBottom = () => {
+    const els = [...s1.querySelectorAll<HTMLElement>('.hero-ctas, .hero-proof')].filter((e) => e.offsetParent);
+    return s1.offsetTop + Math.max(...els.map((e) => e.offsetTop + e.offsetHeight));
   };
+  let k = 1;
+  const placeArt = () => {
+    pickArt();
+    const box = art.querySelector<HTMLElement>('[data-box]')!;
+    const W = +art.dataset.w!, H = +art.dataset.h!, techo = +art.dataset.techo!, base = +art.dataset.base!;
+    const PW = panelEl.clientWidth, PH = panelEl.clientHeight;
+    const alta = art.dataset.art === 'alta';
+    // celular: ancho completo y sobre la firma; computador: cubre todo el panel
+    const foot = alta ? 56 : 0;
+    let s = alta ? PW / W : Math.max(PW / W, PH / H);
+    // la base del dibujo (no el borde de la imagen) se apoya sobre la firma en celular y en el borde en computador
+    let top = alta ? PH - foot - base * s : PH - H * s;
+    if (alta) {
+      // el texto ocupa el cielo; la lámina no puede quedar por encima de donde termina
+      s1.style.setProperty('--s1b', `${(PH - (top + techo * s) + 10).toFixed(0)}px`);
+    } else {
+      const tb = textBottom() + 18;
+      top = Math.max(top, tb - techo * s);
+      if (top + base * s > PH) {
+        s = (PH - tb) / (base - techo);
+        top = tb - techo * s;
+      }
+    }
+    k = s;
+    art.style.setProperty('--pk', Math.min(0.36, Math.max(0.2, 0.3 * Math.sqrt(innerWidth / 1440))).toFixed(3));
+    box.style.cssText = `left:${((PW - W * s) / 2).toFixed(1)}px;top:${top.toFixed(1)}px;width:${(W * s).toFixed(1)}px;height:${(H * s).toFixed(1)}px;bottom:auto;translate:none;--sw:${(1.6 / s).toFixed(2)};`;
+  };
+  // Notas: si en esta pantalla una cae sobre el texto o sus fotos, se oculta (con su línea)
+  const fitNotes = () => {
+    const blocks = [...s1.querySelectorAll<HTMLElement>('.hero-sub, .hero-ctas, .hero-proof')].filter((e) => e.offsetParent).map((e) => e.getBoundingClientRect());
+    for (const li of art.querySelectorAll<HTMLElement>('.nt')) {
+      li.style.visibility = '';
+      const r = li.getBoundingClientRect();
+      const hit = blocks.some((b) => r.left < b.right + 12 && r.right > b.left - 12 && r.top < b.bottom + 10 && r.bottom > b.top - 10);
+      li.style.visibility = hit ? 'hidden' : '';
+      const ld = art.querySelector<SVGGElement>(`[data-ld="${li.querySelector<HTMLElement>('[data-note]')!.dataset.note}"]`);
+      if (ld) ld.style.visibility = hit ? 'hidden' : '';
+    }
+  };
+  const placeAll = () => { placeArt(); fitNotes(); };
+  placeAll();
+  document.fonts?.ready.then(placeAll);
+  addEventListener('resize', placeAll, { passive: true });
+
+  // ---------- Arranque: el calco se dibuja con el lápiz; luego entra su dibujo ----------
+  // Empieza después del primer pintado, cuando el dibujo ya cargó, para no competir con la carga.
   let started = false;
-  const kickoff = () => {
+  const go = () => {
     if (started) return;
     started = true;
-    requestAnimationFrame(() => requestAnimationFrame(go));
+    requestAnimationFrame(() =>
+      requestAnimationFrame((now) => {
+        art.classList.add('go');
+        const pen = art.querySelector<HTMLElement>('[data-pen]');
+        if (pen && !reduced) drawPen(pen, now);
+      }),
+    );
   };
-  document.fonts?.ready.then(kickoff);
-  setTimeout(kickoff, 500);
+  const dib = art.querySelector<HTMLImageElement>('.ca-dib');
+  if (!dib || dib.complete) go();
+  else dib.addEventListener('load', go, { once: true });
+  setTimeout(go, 1500);
 
-  // ---------- El lápiz recorre los trazos mientras se dibujan ----------
-  // Capa propia movida con transform (no repinta el dibujo). Se sincroniza con el reloj real de las animaciones CSS.
-  function startPencil() {
-    if (!pencil) return;
-    type Step = { a: number; d: number; s: number[]; L: number[]; tot: number };
-    const route: Step[] = JSON.parse(sketch.dataset.route || '[]').map((r: { a: number; d: number; s: number[] }) => {
-      const L: number[] = [];
-      let tot = 0;
-      for (let i = 0; i < r.s.length; i += 4) {
-        const l = Math.hypot(r.s[i + 2] - r.s[i], r.s[i + 3] - r.s[i + 1]);
-        L.push(l);
-        tot += l;
-      }
-      return { ...r, L, tot };
-    });
+  // El lápiz sigue cada línea del calco mientras se dibuja (solo transform: no repinta)
+  function drawPen(pen: HTMLElement, t0: number) {
+    const route: { a: number; d: number; s: number[] }[] = JSON.parse(pen.dataset.route || '[]');
     if (!route.length) return;
-    const rest = (sketch.dataset.rest || '0,0').split(',').map(Number);
-    const [VW, VH] = (sketch.dataset.vb || '1,1').split(',').map(Number);
-    // Unidades del dibujo → px dentro de la capa (preserveAspectRatio xMidYMax meet)
-    let k = 1;
-    let ox = 0;
-    let oy = 0;
-    // Punto de reposo ajustado para que el lápiz quede entero dentro del panel visible (nunca en la esquina ni cortado)
-    let restX = rest[0];
-    const panelEl = hero.querySelector<HTMLElement>('.panel')!;
-    const fit = () => {
-      const w = sketch.offsetWidth;
-      const h = sketch.offsetHeight;
-      k = Math.min(w / VW, h / VH);
-      ox = (w - VW * k) / 2;
-      oy = h - VH * k;
-      const pr = panelEl.getBoundingClientRect();
-      const sr = sketch.getBoundingClientRect();
-      const maxPx = pr.right - sr.left - 330 * 0.79 * k - Math.max(28, pr.width * 0.06);
-      restX = Math.min(rest[0], (maxPx - ox) / k);
-    };
-    fit();
-    new ResizeObserver(fit).observe(sketch);
-
-    const pointAt = (r: Step, f: number) => {
-      let d = f * r.tot;
-      for (let i = 0; i < r.L.length; i++) {
-        if (d <= r.L[i] || i === r.L.length - 1) {
-          const u = r.L[i] ? Math.min(1, d / r.L[i]) : 0;
-          const j = i * 4;
-          return [r.s[j] + (r.s[j + 2] - r.s[j]) * u, r.s[j + 1] + (r.s[j + 3] - r.s[j + 1]) * u];
-        }
-        d -= r.L[i];
-      }
-      return rest;
-    };
     const end = Math.max(...route.map((r) => r.a + r.d));
-    const target = (t: number) => {
-      let act: Step | null = null;
+    const io = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+    const target = (t: number): [number, number] => {
+      let act = null;
       for (const r of route) if (r.a <= t && t < r.a + r.d) act = r;
-      if (act) return pointAt(act, easeIO((t - act.a) / act.d));
-      if (t >= end) return [restX, rest[1]];
+      if (act) {
+        const u = io((t - act.a) / act.d);
+        return [act.s[0] + (act.s[2] - act.s[0]) * u, act.s[1] + (act.s[3] - act.s[1]) * u];
+      }
       const next = route.find((r) => r.a > t);
-      return next ? [next.s[0], next.s[1]] : [restX, rest[1]];
+      return next ? [next.s[0], next.s[1]] : [route[route.length - 1].s[2], route[route.length - 1].s[3]];
     };
-
-    // Reloj: el inicio real de la primera animación de línea
-    const place = (x: number, y: number) => {
-      pencil.style.transform = `translate3d(${(ox + x * k).toFixed(2)}px, ${(oy + y * k).toFixed(2)}px, 0) scale(${k.toFixed(4)})`;
-    };
-    if (reduced) {
-      place(restX, rest[1]);
-      return;
-    }
-    const ref = sketch.querySelector('.sk-l');
-    let t0: number | null = null;
-    let pos = [route[0].s[0] + 120, route[0].s[1] - 160];
-    let last = 0;
+    let pos: [number, number] = [route[0].s[0] + 200, route[0].s[1] - 300];
+    let last = t0;
+    pen.style.opacity = '1';
+    pen.style.transition = 'opacity 0.4s ease';
     const step = (now: number) => {
-      if (t0 === null) {
-        const anim = ref?.getAnimations?.()[0];
-        const st = anim && anim.startTime != null ? Number(anim.startTime) : null;
-        t0 = st ?? now;
-      }
       const t = (now - t0) / 1000;
-      const dt = Math.min(0.05, last ? (now - last) / 1000 : 0.016);
+      const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
-      const [tx, ty] = target(Math.max(0, t));
-      const s = 1 - Math.exp(-dt * (t >= end ? 4 : 16));
-      pos = [pos[0] + (tx - pos[0]) * s, pos[1] + (ty - pos[1]) * s];
-      place(pos[0], pos[1]);
-      // En el dibujo vertical (celular) no hay espacio libre para apoyarlo: se retira al terminar
-      if (VW < VH && t >= end && !pencil.dataset.out) {
-        pencil.dataset.out = '1';
-        pencil.style.transition = 'opacity 0.6s ease';
-        pencil.style.opacity = '0';
-        pencil.style.animation = 'none';
-      }
-      if (t < end + 2.4) requestAnimationFrame(step);
+      const [tx, ty] = target(t);
+      const e = 1 - Math.exp(-dt * 18);
+      pos = [pos[0] + (tx - pos[0]) * e, pos[1] + (ty - pos[1]) * e];
+      const ps = Math.min(0.36, Math.max(0.2, 0.3 * Math.sqrt(innerWidth / 1440)));
+      pen.style.transform = `translate3d(${(pos[0] * k).toFixed(1)}px, ${(pos[1] * k).toFixed(1)}px, 0) scale(${ps.toFixed(3)})`;
+      if (t > end + 0.05 && pen.style.opacity !== '0') pen.style.opacity = '0';
+      if (t < end + 1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
   }
+  // El cajetín cambia de "Boceto" a "Fachada" cuando termina de pintarse el color
+  const toFachada = () => {
+    cajC.textContent = 'Fachada';
+    cajC.classList.remove('roll');
+    void cajC.offsetWidth;
+    cajC.classList.add('roll');
+  };
+  if (reduced) cajC.textContent = 'Fachada';
+  else art.querySelector('[data-wipe]')?.addEventListener('animationend', toFachada, { once: true });
 
-  // ---------- Tableros de acabados: cambian la fachada en el dibujo ----------
-  // Hay uno en escritorio (sobre la lámina) y otro en celular y tableta (debajo de los botones); se mantienen sincronizados.
+  // ---------- Notas: resaltan el elemento del dibujo ----------
   {
-    const groups = [...hero.querySelectorAll<SVGGElement>('.sk-mat')];
-    const notes = [...hero.querySelectorAll<SVGTextElement>('[data-note="mat"] text')];
-    const chips = [...hero.querySelectorAll<HTMLButtonElement>('button[data-mat]')];
-    const labels: Record<string, string> = {
-      madera: 'celosía en madera',
-      concreto: 'muro en concreto',
-      piedra: 'enchape en piedra',
-      vidrio: 'fachada en vidrio',
+    const spot = art.querySelector<HTMLElement>('[data-spot]')!;
+    const notes = [...art.querySelectorAll<HTMLButtonElement>('[data-note]')];
+    const leaders = [...art.querySelectorAll<SVGGElement>('[data-ld]')];
+    const show = (b: HTMLButtonElement | null) => {
+      for (const n of notes) n.classList.toggle('is-on', n === b);
+      for (const l of leaders) l.classList.toggle('is-on', !!b && l.dataset.ld === b.dataset.note);
+      if (b) {
+        spot.style.setProperty('--sx', `${b.dataset.x}%`);
+        spot.style.setProperty('--sy', `${b.dataset.y}%`);
+      }
+      art.classList.toggle('is-spot', !!b);
     };
-    let current = 'madera';
-    const setMat = (m: string) => {
-      if (m === current) return;
-      current = m;
-      for (const g of groups) g.classList.toggle('on', g.dataset.mat === m);
-      for (const c of chips) c.setAttribute('aria-pressed', String(c.dataset.mat === m));
-      for (const n of notes) n.textContent = labels[m];
-    };
-    const fine = matchMedia('(pointer: fine)').matches;
-    for (const c of chips) {
-      c.addEventListener('click', () => setMat(c.dataset.mat!));
-      c.addEventListener('focus', () => setMat(c.dataset.mat!));
-      if (fine) c.addEventListener('pointerenter', () => setMat(c.dataset.mat!));
+    for (const n of notes) {
+      n.addEventListener('pointerenter', () => show(n));
+      n.addEventListener('focus', () => show(n));
+      n.addEventListener('click', () => show(n.classList.contains('is-on') ? null : n));
+      n.addEventListener('pointerleave', () => show(null));
+      n.addEventListener('blur', () => show(null));
     }
-  }
-  const board = hero.querySelector<HTMLElement>('[data-board]');
-  if (board) {
-    const wide = board.closest<HTMLElement>('[data-art]')!;
-    const sk = wide.querySelector<HTMLElement>('[data-sketch]')!;
-    // Línea de referencia del tablero a la fachada
-    const path = wide.querySelector<SVGPathElement>('[data-leader-path]')!;
-    const dot = wide.querySelector<SVGCircleElement>('[data-leader-dot]')!;
-    const [VW, VH] = (sk.dataset.vb || '1,1').split(',').map(Number);
-    const [ax, ay] = (sk.dataset.matAnchor || '0,0').split(',').map(Number);
-    const ul = board.querySelector<HTMLElement>('.board-chips')!;
-    const drawLeader = () => {
-      if (getComputedStyle(board).display === 'none') return;
-      const w = sk.offsetWidth;
-      const h = sk.offsetHeight;
-      const k = Math.min(w / VW, h / VH);
-      const px = (w - VW * k) / 2 + ax * k;
-      const py = h - VH * k + ay * k;
-      // Sale por debajo del tablero, baja por la derecha (sin cruzar la nota) y entra a la fachada
-      const sx = board.offsetLeft + board.offsetWidth / 2;
-      const sy = board.offsetTop + board.offsetHeight + 6;
-      path.setAttribute('d', `M${sx} ${sy} C${sx} ${sy + (py - sy) * 0.75}, ${px + (sx - px) * 0.55} ${py + 4}, ${px} ${py}`);
-      dot.setAttribute('cx', String(px));
-      dot.setAttribute('cy', String(py));
-    };
-    new ResizeObserver(drawLeader).observe(wide);
-    document.fonts?.ready.then(drawLeader);
-    drawLeader();
   }
 
   // ---------- Scroll: del boceto a las láminas del entregable ----------
