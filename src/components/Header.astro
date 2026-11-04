@@ -155,13 +155,13 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
   }
 
   .hd-logo {
-    font-size: 14px;
+    font-size: 16.5px;
     border-radius: 4px;
     flex: none;
   }
   .hd-logo :global(.logo-word) {
     transition: opacity 0.22s ease, max-width 0.45s var(--ease-out-expo), margin 0.45s var(--ease-out-expo);
-    max-width: 120px;
+    max-width: 150px;
     overflow: hidden;
   }
 
@@ -335,7 +335,7 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
     .hd { --g: 10px; --top-h: 76px; --dock-h: 58px; }
     /* Arriba: mismo contenedor que el héroe (logo y botón alineados con el contenido, no pegados al borde) */
     .hd-shell { width: min(1200px, calc(100% - 80px)); padding: 0; gap: 0; }
-    .hd-logo { font-size: 15.5px; }
+    .hd-logo { font-size: 19px; }
     .hd-menu, .hd-label { display: none !important; }
     .hd-nav {
       display: block;

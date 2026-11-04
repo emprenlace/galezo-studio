@@ -275,7 +275,7 @@ const leadsUrl = import.meta.env.PUBLIC_LEADS_URL || '';
     service: () => ({ q: '¿Qué quieres diseñar?', sub: 'Elige una opción; te tomará menos de un minuto.', list: SERVICES }),
     stage: () => ({ q: a.service === 'remodelacion' ? '¿Cómo está tu espacio hoy?' : '¿En qué etapa estás?', list: stagesFor(a.service) }),
     size: () => ({ q: isNew() ? '¿De qué tamaño sería tu proyecto?' : '¿Qué área vamos a intervenir?', sub: 'Un aproximado está bien.', list: SIZES, two: true }),
-    location: () => ({ q: '¿Dónde será la obra?', sub: 'Diseñamos en todo Colombia.', list: PLACES }),
+    location: () => ({ q: '¿Dónde será la obra?', sub: 'Diseñamos internacionalmente.', list: PLACES }),
     timing: () => ({ q: '¿Cuándo te gustaría empezar?', list: TIMINGS }),
   };
   const field = { service: 'service', stage: 'stage', size: 'size', location: 'location', timing: 'timing' } as const;

@@ -364,3 +364,9 @@ Por hacer cuando respondan: proceso en 9 etapas (inicio), fachada frontal en viv
 - Sin color por ahora (el usuario lo pidió así para que no se pierdan los demás elementos). Opcional: aguada suave al final.
 - Color (2026-11-04): aguada sacada de la versión a color de la misma casa (sin líneas ni cielo, bordes que se pierden como acuarela), alineada con las láminas y puesta debajo del trazo (aguada-ancha.png / aguada-alta.png). Se pinta de izquierda a derecha a los 4 s con el lápiz en el borde; los árboles de los costados quedan a línea, como el héroe original. El cielo queda en papel para que el texto se lea.
 - Corrección (2026-11-04, "deja todo mocho"): el color se cortaba a mitad de los árboles. Ahora toda la lámina lleva aguada: verde en los árboles de los costados y en las matas del frente (sale de la densidad del propio trazo, con dos verdes mezclados), la casa con los colores de su versión a color. Sin halos sobre muros ni líneas del suelo. Las notas se ocultan solas si en una pantalla caen sobre el texto o las fotos de obra.
+
+## Correcciones de Ulises (2026-11-04)
+- "Diseñamos en todo Colombia" → "Diseñamos internacionalmente" (pie, cotizador, preguntas frecuentes, contacto). Las descripciones para Google siguen diciendo "en Colombia" (ahí está la búsqueda).
+- Experiencia: +6 años (dato del portafolio; reemplaza +10 en héroe, Quién diseña, cajetín de clientes y Cifras de comercial).
+- Proyectos: +60 diseñados (reemplaza +70 en héroes de servicio, fila de clientes, cajetín y Cifras).
+- Logo de la cabecera más grande: 16,5 px de base en celular (antes 14) y 19 px en computador (antes 15,5).
