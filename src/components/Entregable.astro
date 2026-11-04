@@ -67,7 +67,7 @@ const sizesPlan = '(min-width: 1024px) 760px, 92vw';
 const laminas = [
   { k: 'Planta', note: 'planta general' },
   { k: 'Corte', note: 'corte', src: corte },
-  { k: 'Fachada', note: 'fachada', src: fachada },
+  { k: 'Fachada', note: 'fachadas este y oeste', src: fachada },
 ];
 // número de la sección (cambia cuando se reutiliza en otra página)
 // cta: false en páginas donde el botón de la cabecera basta
@@ -107,7 +107,7 @@ const { n = '02', variant = 'plomada', ejemplo = 'proyecto de ejemplo', cta = tr
                       </div>
                     </div>
                     <div class="rp-sl" data-sl="1"><Image src={corte} alt="Corte arquitectónico" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-full" loading="lazy" /></div>
-                    <div class="rp-sl" data-sl="2"><Image src={fachada} alt="Fachada" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-full" loading="lazy" /></div>
+                    <div class="rp-sl" data-sl="2"><Image src={fachada} alt="Fachadas de frente, este y oeste, de una casa diseñada por Galezo Studio" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-full" loading="lazy" /></div>
                   </div>
                   <div class="rp-chips" role="group" aria-label="Láminas del juego de planos">
                     {laminas.map((l, i) => (
