@@ -370,3 +370,8 @@ Por hacer cuando respondan: proceso en 9 etapas (inicio), fachada frontal en viv
 - Experiencia: +6 años (dato del portafolio; reemplaza +10 en héroe, Quién diseña, cajetín de clientes y Cifras de comercial).
 - Proyectos: +60 diseñados (reemplaza +70 en héroes de servicio, fila de clientes, cajetín y Cifras).
 - Logo de la cabecera más grande: 16,5 px de base en celular (antes 14) y 19 px en computador (antes 15,5).
+
+## WhatsApp flotante y medición de contacto directo (2026-11-04)
+- Botón flotante de WhatsApp directo (pedido de Ulises): círculo verde abajo a la derecha; en computador "Escríbenos" se despliega al pasar el mouse (la píldora fija tapaba contenido). Aparece después del héroe, se esconde con el chat abierto y en el cierre, y no está en /contacto. Saludo según la página (lib/contacto.ts → saludos): general, vivienda, remodelación, comercial, ejecutivo y perfil de Ulises; todos terminan en pregunta.
+- Medición: todos los enlaces directos (flotante, /contacto, Instagram del pie, correo de la política) llevan data-contact + data-cta y Base.astro registra un evento por canal: contact_whatsapp, contact_email, contact_instagram (link_type, cta_id = qué botón). Probado: sin número ni correo en el dataLayer. Tabla y activador CE - contacto en docs/medicion.md. No es conversión de pauta.
+- "Diseñamos internacionalmente" confirmado. Descripciones para Google: "en Colombia y el exterior" (mantiene la palabra que se busca).

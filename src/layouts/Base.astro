@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Cotizador from '../components/Cotizador.astro';
+import WhatsAppFlotante from '../components/WhatsAppFlotante.astro';
 
 interface Props {
   title: string;
@@ -27,6 +28,8 @@ const robots = noindex || preview ? 'noindex, follow' : '';
 // pruebas en local no ensucien los datos; en local se enciende con PUBLIC_GTM_DEV=true.
 const gtmOn = import.meta.env.PROD || import.meta.env.PUBLIC_GTM_DEV === 'true';
 const gtm = gtmOn ? import.meta.env.PUBLIC_GTM_ID || 'GTM-PJGGMMKH' : '';
+// saludo del WhatsApp flotante: por servicio, o por tipo de página
+const saludo = serviceId || pageType;
 const pageContext = { event: 'page_context', page_type: pageType, content_group: pageType, service_id: serviceId };
 ---
 
@@ -103,5 +106,16 @@ const pageContext = { event: 'page_context', page_type: pageType, content_group:
   <body>
     <slot />
     <Cotizador />
+    {pageType !== 'contact' && <WhatsAppFlotante clave={saludo} />}
   </body>
 </html>
+
+<script>
+  // Enlaces de contacto directo: un evento por canal (contact_whatsapp, contact_email, contact_instagram) y el botón en cta_id.
+  // Un solo registro para todo el sitio. Nunca viaja el número ni el correo. No es conversión de pauta (no está calificado).
+  import { track } from '../lib/track';
+  document.addEventListener('click', (e) => {
+    const a = (e.target as HTMLElement).closest<HTMLElement>('[data-contact]');
+    if (a) track(`contact_${a.dataset.contact}`, { link_type: a.dataset.contact, cta_id: a.dataset.cta || 'otro' });
+  });
+</script>

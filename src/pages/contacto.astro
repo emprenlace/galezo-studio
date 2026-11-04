@@ -3,7 +3,8 @@
  * Contacto: todos los datos del estudio en un solo lugar (pedido de Ulises: "se pierde la información").
  * Idea visual: la valla de obra, el letrero que se para en cada construcción con el arquitecto responsable
  * y cómo contactarlo. Al entrar, los parales suben desde el terreno, la valla se monta y cada dato aparece en orden.
- * El botón principal sigue siendo el chat (cotización); los datos van directo a WhatsApp, correo e Instagram.
+ * El botón principal sigue siendo el chat (cotización); los datos van directo a WhatsApp, correo e Instagram
+ * (contact_whatsapp / contact_email / contact_instagram con cta_id=contacto, lo registra Base.astro).
  * noindex hasta que se apruebe y los datos sean los definitivos (correo corporativo y WhatsApp Business).
  */
 import Base from '../layouts/Base.astro';
@@ -50,7 +51,7 @@ const datos = [
                 datos.map((d, i) => (
                   <li style={`--i:${i}`}>
                     {d.href ? (
-                      <a class="vl-row" href={d.href} target={d.ext ? '_blank' : undefined} rel={d.ext ? 'noopener' : undefined} data-contact={d.id}>
+                      <a class="vl-row" href={d.href} target={d.ext ? '_blank' : undefined} rel={d.ext ? 'noopener' : undefined} data-contact={d.id} data-cta="contacto">
                         <span class="vl-ic" aria-hidden="true">
                           {d.id === 'whatsapp' && <svg viewBox="0 0 24 24"><path d="M4.5 19.5l1.1-3.6A8 8 0 1 1 8.3 18.6z" /><path d="M9.2 8.6c.3 2.6 2.4 4.9 5.2 5.4l1-1.2 1.9.9-.4 1.6c-3.9.4-8-3.4-8.2-7.6l1.6-.5.9 1.9z" /></svg>}
                           {d.id === 'email' && <svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="1.5" /><path d="m3.6 6.4 8.4 6.8 8.4-6.8" /></svg>}
@@ -182,12 +183,7 @@ const datos = [
 </style>
 
 <script>
-  import { track } from '../lib/track';
   document.documentElement.classList.add('ready');
   const sec = document.querySelector<HTMLElement>('[data-ct]');
   if (sec) requestAnimationFrame(() => sec.classList.add('is-in'));
-  // clic en un dato de contacto: solo el canal, nunca el dato
-  document.querySelectorAll<HTMLAnchorElement>('[data-contact]').forEach((a) =>
-    a.addEventListener('click', () => track('contact_click', { link_type: a.dataset.contact })),
-  );
 </script>
