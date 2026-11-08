@@ -1,8 +1,9 @@
 ---
 /**
- * Sección 4 · "Proyectos": del dibujo a la obra, en pantalla grande.
- * Cada obra entra como dibujo a lápiz (sacado de su propia foto: trazo, achurado y grano de papel) y una línea de obra con luz la recorre:
- * lo que queda atrás ya es la foto real, con un acercamiento lento de cine. La línea se puede arrastrar.
+ * Sección 4 · "Proyectos": del diseño a la obra, en pantalla grande.
+ * Cada obra entra como su render (alineado en perspectiva sobre la foto, ver docs/proyectos.md) o, si el render se tomó desde otro
+ * ángulo, como dibujo a lápiz sacado de su propia foto. Una línea de obra con luz la recorre: lo que queda atrás ya es la foto real,
+ * con un acercamiento lento de cine. La línea se puede arrastrar.
  * La ficha va sobre la imagen; el selector es una tira de obras con barra de avance (como historias).
  */
 import { Image, getImage } from 'astro:assets';
@@ -30,20 +31,29 @@ import alfonso from '../assets/obras/ln/alfonso-lopez.jpg';
 import alfonsoL from '../assets/obras/ln/alfonso-lopez-dibujo.jpg';
 import jose from '../assets/obras/ln/jose-eugenio.jpg';
 import joseL from '../assets/obras/ln/jose-eugenio-dibujo.jpg';
-import coliseo from '../assets/obras/ln/coliseo.jpg';
-import coliseoL from '../assets/obras/ln/coliseo-dibujo.jpg';
+import coliseo from '../assets/obras/ln/coliseo-obra.jpg';
+import coliseoR from '../assets/obras/ln/coliseo-render.jpg';
+import multicampus from '../assets/obras/ln/multicampus.jpg';
+import multicampusR from '../assets/obras/ln/multicampus-render.jpg';
+import corales from '../assets/obras/ln/corales.jpg';
+import coralesR from '../assets/obras/ln/corales-render.jpg';
 
 type Estado = 'c' | 'o' | 'd';
 const estados: Record<Estado, string> = { c: 'Construido', o: 'En construcción', d: 'Diseñado' };
 const colegio = 'Colegio en claustro de tres pisos: rediseñamos espacios interiores, fachadas, plazas, canchas y cafetería.';
 
-const obras: { id: string; name: string; short: string; city: string; year: number; m2: string; st: Estado; render?: boolean; what: string; photo: ImageMetadata; line: ImageMetadata; pos?: string }[] = [
-  { id: 'instpecam', name: 'I.E. Instpecam', short: 'Instpecam', city: 'Valledupar', year: 2022, m2: '15.097', st: 'c', what: colegio, photo: instpecam, line: instpecamL },
-  { id: 'mirador', name: 'Mirador al Santo Ecce Homo', short: 'Mirador Ecce Homo', city: 'Valledupar', year: 2023, m2: '1.988', st: 'c', what: 'Terminamos una obra abandonada en obra gris desde 2008: diseño arquitectónico y ornamental del mirador.', photo: mirador, line: miradorL, pos: '62% 30%' },
-  { id: 'casd', name: 'I.E. CASD', short: 'CASD', city: 'Valledupar', year: 2022, m2: '15.097', st: 'c', what: colegio, photo: casd, line: casdL },
-  { id: 'alfonso', name: 'I.E. Alfonso López Pumarejo', short: 'Alfonso López Pumarejo', city: 'Valledupar', year: 2022, m2: '15.097', st: 'c', what: colegio, photo: alfonso, line: alfonsoL },
-  { id: 'jose', name: 'I.E. José Eugenio Martínez', short: 'José Eugenio Martínez', city: 'Valledupar', year: 2024, m2: '15.097', st: 'o', what: colegio, photo: jose, line: joseL },
-  { id: 'coliseo', name: 'Coliseo de Tenis de Mesa', short: 'Coliseo de tenis de mesa', city: 'Valledupar', year: 2025, m2: '8.959', st: 'o', render: true, what: 'Una caja de cristal para entrenar y competir con las reglas nacionales e internacionales.', photo: coliseo, line: coliseoL },
+// before: lo que hay a la derecha de la línea. kind 'render' = render de Ulises alineado sobre la foto; 'dibujo' = lápiz sacado de la foto.
+// city, year y m2 solo cuando están confirmados (portafolio); los proyectos sin datos muestran lo que se ve en la obra.
+type Obra = { id: string; name: string; short: string; city?: string; year?: number; m2?: string; st: Estado; what: string; photo: ImageMetadata; before: ImageMetadata; kind: 'render' | 'dibujo'; pos?: string };
+const obras: Obra[] = [
+  { id: 'corales', name: 'Pórtico Los Corales', short: 'Pórtico Los Corales', st: 'c', what: 'Cambiamos la entrada del conjunto: de los arcos de antes a un pórtico de ladrillo y concreto, con reja e iluminación nuevas.', photo: corales, before: coralesR, kind: 'render' },
+  { id: 'multicampus', name: 'Multicampus Universitario Codazzi', short: 'Multicampus Codazzi', city: 'Agustín Codazzi', st: 'c', what: 'Sede universitaria con acceso cubierto, bloque de aulas y una fachada de paneles en tonos de azul.', photo: multicampus, before: multicampusR, kind: 'render' },
+  { id: 'coliseo', name: 'Coliseo de Tenis de Mesa', short: 'Coliseo de tenis de mesa', city: 'Valledupar', year: 2025, m2: '8.959', st: 'o', what: 'Una caja de cristal para entrenar y competir con las reglas nacionales e internacionales.', photo: coliseo, before: coliseoR, kind: 'render', pos: '40% 50%' },
+  { id: 'instpecam', name: 'I.E. Instpecam', short: 'Instpecam', city: 'Valledupar', year: 2022, m2: '15.097', st: 'c', what: colegio, photo: instpecam, before: instpecamL, kind: 'dibujo' },
+  { id: 'mirador', name: 'Mirador al Santo Ecce Homo', short: 'Mirador Ecce Homo', city: 'Valledupar', year: 2023, m2: '1.988', st: 'c', what: 'Terminamos una obra abandonada en obra gris desde 2008: diseño arquitectónico y ornamental del mirador.', photo: mirador, before: miradorL, kind: 'dibujo', pos: '62% 30%' },
+  { id: 'casd', name: 'I.E. CASD', short: 'CASD', city: 'Valledupar', year: 2022, m2: '15.097', st: 'c', what: colegio, photo: casd, before: casdL, kind: 'dibujo' },
+  { id: 'alfonso', name: 'I.E. Alfonso López Pumarejo', short: 'Alfonso López Pumarejo', city: 'Valledupar', year: 2022, m2: '15.097', st: 'c', what: colegio, photo: alfonso, before: alfonsoL, kind: 'dibujo' },
+  { id: 'jose', name: 'I.E. José Eugenio Martínez', short: 'José Eugenio Martínez', city: 'Valledupar', year: 2024, m2: '15.097', st: 'o', what: colegio, photo: jose, before: joseL, kind: 'dibujo' },
 ];
 const built = obras.filter((o) => o.st === 'c').length;
 const inWork = obras.filter((o) => o.st === 'o').length;
@@ -60,14 +70,17 @@ const clientes = [
   { src: hrs, name: 'HRS Ingeniería', k: 0.5 },
   { src: marbal, name: 'Marbal Ingeniería', k: 0.42 },
 ];
-const words = ['cero', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete'];
+const cap = (w: string) => w[0].toUpperCase() + w.slice(1);
+const words = ['cero', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'];
+// "Valledupar · 2022" con lo que haya
+const meta = (o: Obra) => [o.city, o.year].filter(Boolean).join(' · ');
 const pad = (i: number) => String(i + 1).padStart(2, '0');
 const sizes = '(min-width: 1024px) 880px, 100vw';
 // Las fotos grandes se piden por JS cuando la sección se acerca (no compiten con la carga del héroe)
 const pics = await Promise.all(
   obras.map(async (o) => {
     const opts = { widths: [640, 960, 1280, 1600], format: 'webp' as const };
-    const [ph, ln] = await Promise.all([getImage({ src: o.photo, ...opts, quality: 72 }), getImage({ src: o.line, ...opts, quality: 62 })]);
+    const [ph, ln] = await Promise.all([getImage({ src: o.photo, ...opts, quality: 72 }), getImage({ src: o.before, ...opts, quality: o.kind === 'render' ? 72 : 62 })]);
     return { ph: { src: ph.src, set: ph.srcSet.attribute }, ln: { src: ln.src, set: ln.srcSet.attribute } };
   }),
 );
@@ -82,7 +95,7 @@ const { n = '04', cta = true, conClientes = true } = Astro.props as { n?: string
     <Plomada n={n} label="Proyectos" variant="obra" />
     <header class="ob-head ob-rv">
       <h2 id="ob-title" class="ob-h2">Lo que diseñamos <span class="accent">se construye</span></h2>
-      <p class="ob-sub">{words[obras.length][0].toUpperCase() + words[obras.length].slice(1)} proyectos de obra pública en el Cesar: {words[built]} construidos y {words[inWork]} en obra.</p>
+      <p class="ob-sub">{cap(words[obras.length])} proyectos que diseñamos: {words[built]} ya construidos y {words[inWork]} en obra.</p>
     </header>
 
     <div class="ob-body">
@@ -90,14 +103,14 @@ const { n = '04', cta = true, conClientes = true } = Astro.props as { n?: string
       <div class="stage is-idle ob-rv" data-ob-stage>
         {
           obras.map((o, i) => (
-            <figure class:list={['slide', { 'is-on': i === 0 }]} data-slide={i} aria-hidden={i === 0 ? 'false' : 'true'}>
+            <figure class:list={['slide', { 'is-on': i === 0 }]} data-slide={i} data-kind={o.kind} aria-hidden={i === 0 ? 'false' : 'true'}>
               <div class="kb">
-                <img data-src={pics[i].ph.src} data-srcset={pics[i].ph.set} sizes={sizes} alt={`${o.name}, ${o.city}${o.render ? ' (render)' : ''}`} width={o.photo.width} height={o.photo.height} decoding="async" class="ph" style={o.pos && `object-position:${o.pos}`} />
+                <img data-src={pics[i].ph.src} data-srcset={pics[i].ph.set} sizes={sizes} alt={[o.name, o.city].filter(Boolean).join(', ') + ' (obra)'} width={o.photo.width} height={o.photo.height} decoding="async" class="ph" style={o.pos && `object-position:${o.pos}`} />
               </div>
               <div class="cut" data-cut>
                 <div class="cut-in" data-cut-in>
                   <div class="kb">
-                    <img data-src={pics[i].ln.src} data-srcset={pics[i].ln.set} sizes={sizes} alt="" width={o.line.width} height={o.line.height} decoding="async" class="ph" style={o.pos && `object-position:${o.pos}`} />
+                    <img data-src={pics[i].ln.src} data-srcset={pics[i].ln.set} sizes={sizes} alt="" width={o.before.width} height={o.before.height} decoding="async" class="ph" style={o.pos && `object-position:${o.pos}`} />
                   </div>
                 </div>
               </div>
@@ -110,9 +123,9 @@ const { n = '04', cta = true, conClientes = true } = Astro.props as { n?: string
         <div class="rule" data-rule>
           <span class="rule-glow" aria-hidden="true"></span>
           <span class="rule-ticks" aria-hidden="true"></span>
-          <span class="rule-tag rule-a" data-tag-a>{obras[0].render ? 'render' : 'obra'}</span>
-          <span class="rule-tag rule-b">dibujo</span>
-          <button type="button" class="knob" role="slider" aria-label="Comparar dibujo y obra" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-knob>
+          <span class="rule-tag rule-a">obra</span>
+          <span class="rule-tag rule-b" data-tag-b>{obras[0].kind}</span>
+          <button type="button" class="knob" role="slider" aria-label="Comparar el diseño con la obra" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-knob>
             <svg class="kn-chev kn-l" viewBox="0 0 8 14" aria-hidden="true"><path d="M7 1 1 7l6 6"></path></svg>
             <span class="kn-tile" aria-hidden="true">
               <svg class="kn-mono" viewBox="0 0 1647 1914"><path transform="matrix(1 0 0 -1 0 1914)" d={mono.trim()}></path></svg>
@@ -126,11 +139,11 @@ const { n = '04', cta = true, conClientes = true } = Astro.props as { n?: string
           {
             obras.map((o, i) => (
               <div class:list={['fi', { 'is-on': i === 0 }]} data-fi={i} aria-hidden={i === 0 ? 'false' : 'true'}>
-                <p class="fi-meta"><span class="fi-n">{pad(i)}</span> {o.city} · {o.year}</p>
+                <p class="fi-meta"><span class="fi-n">{pad(i)}</span> {meta(o)}</p>
                 <h3 class="fi-t">{o.name}</h3>
                 <p class="fi-d">
                   <span class={`st st-${o.st}`}>{estados[o.st]}</span>
-                  <span>{o.m2} m²<span class="lg"> de intervención</span></span>
+                  {o.m2 && <span>{o.m2} m²<span class="lg"> de intervención</span></span>}
                 </p>
                 <p class="fi-w">{o.what}</p>
               </div>
@@ -141,11 +154,11 @@ const { n = '04', cta = true, conClientes = true } = Astro.props as { n?: string
 
       <!-- Tira de obras + botón -->
       <div class="side ob-rv">
-        <ol class="strip" role="list" aria-label="Obras" data-strip>
+        <ol class="strip" role="list" aria-label="Obras" data-strip style={`--n:${obras.length}`}>
           {
             obras.map((o, i) => (
               <li>
-                <button type="button" class:list={['ch', { 'is-on': i === 0 }]} aria-current={i === 0 ? 'true' : undefined} aria-label={`${o.name}, ${o.city}`} data-ob-pick={i}>
+                <button type="button" class:list={['ch', { 'is-on': i === 0 }]} aria-current={i === 0 ? 'true' : undefined} aria-label={[o.name, o.city].filter(Boolean).join(', ')} data-ob-pick={i}>
                   <span class="ch-th">
                     <Image src={o.photo} alt="" widths={[96, 160]} sizes="80px" quality={60} loading="lazy" style={o.pos && `object-position:${o.pos}`} />
                     <span class="ch-n">{pad(i)}</span>
@@ -153,7 +166,7 @@ const { n = '04', cta = true, conClientes = true } = Astro.props as { n?: string
                   <span class="ch-tx">
                     <span class="ch-t">{o.short}</span>
                     <span class="ch-m">
-                      {o.city !== 'Valledupar' ? o.city : o.year} · <span class={`ch-s st-${o.st}`}>{estados[o.st]}</span>
+                      {(o.city && o.city !== 'Valledupar' ? o.city : o.year) && <>{o.city && o.city !== 'Valledupar' ? o.city : o.year} · </>}<span class={`ch-s st-${o.st}`}>{estados[o.st]}</span>
                     </span>
                   </span>
                   <span class="ch-bar" aria-hidden="true"><i /></span>
@@ -370,14 +383,14 @@ const { n = '04', cta = true, conClientes = true } = Astro.props as { n?: string
   .slide.is-prev { opacity: 1; z-index: 1; transition: none; }
   .kb { position: absolute; inset: 0; transform-origin: 50% 60%; }
   .slide :global(.ph) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
-  /* Acercamiento lento de cine: foto y dibujo a la vez, siempre alineados */
+  /* Acercamiento lento de cine: foto y render (o dibujo) a la vez, siempre alineados */
   :global(html.js:not(.rm)) .slide.is-on .kb,
   :global(html.js:not(.rm)) .slide.is-prev .kb { animation: ob-kb 7s cubic-bezier(0.2, 0.6, 0.3, 1) forwards; }
   @keyframes ob-kb { from { transform: scale(1); } to { transform: scale(1.08); } }
 
-  /* El dibujo vive a la derecha de la línea: el marco se corre y su contenido se corre al revés (solo transform) */
+  /* El render o el dibujo vive a la derecha de la línea: el marco se corre y su contenido se corre al revés (solo transform) */
   .cut, .cut-in { position: absolute; inset: 0; overflow: hidden; will-change: transform; }
-  /* Sin JS: se ve la foto con una franja de dibujo */
+  /* Sin JS: se ve la foto con una franja del diseño */
   .cut { transform: translate3d(80%, 0, 0); }
   .cut-in { transform: translate3d(-80%, 0, 0); }
 
@@ -387,7 +400,7 @@ const { n = '04', cta = true, conClientes = true } = Astro.props as { n?: string
   /* ---------- Línea de obra con luz ---------- */
   .rule { position: absolute; inset: 0; z-index: 4; pointer-events: none; transform: translate3d(80%, 0, 0); will-change: transform; }
   .rule::before { content: ''; position: absolute; left: -1px; top: 0; bottom: 0; width: 2px; background: #fff; box-shadow: 0 0 0 1px rgb(54 114 124 / 0.9), 0 0 18px 2px rgb(54 114 124 / 0.55); }
-  /* Haz de luz que barre sobre el dibujo mientras la obra se construye */
+  /* Haz de luz que barre sobre el diseño mientras la obra se construye */
   .rule-glow {
     position: absolute;
     left: 0;
@@ -496,9 +509,9 @@ const { n = '04', cta = true, conClientes = true } = Astro.props as { n?: string
   .st.st-d { background: rgb(255 255 255 / 0.22); color: #fff; }
   .fi-d .lg { display: none; }
 
-  /* ---------- Tira de obras (como historias): las siete a la vista ---------- */
+  /* ---------- Tira de obras (como historias): todas a la vista ---------- */
   .side { display: flex; flex-direction: column; gap: 12px; }
-  .strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+  .strip { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 6px; }
   .ch { position: relative; display: block; width: 100%; padding: 0 0 7px; border: 0; background: none; cursor: pointer; text-align: left; font: inherit; color: inherit; }
   .ch-th { position: relative; display: block; aspect-ratio: 1; overflow: hidden; background: #eee; transition: opacity 0.35s, transform 0.5s var(--ease-out-expo); }
   .ch-th :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease-out-expo); }
@@ -597,8 +610,7 @@ const { n = '04', cta = true, conClientes = true } = Astro.props as { n?: string
   const strip = sec.querySelector<HTMLElement>('[data-strip]')!;
   const rule = sec.querySelector<HTMLElement>('[data-rule]')!;
   const knob = sec.querySelector<HTMLButtonElement>('[data-knob]')!;
-  const tagA = sec.querySelector<HTMLElement>('[data-tag-a]')!;
-  const renders = new Set([5, 6]);
+  const tagB = sec.querySelector<HTMLElement>('[data-tag-b]')!;
   const reduced = document.documentElement.classList.contains('rm');
   const N = slides.length;
   const DELAY = 220;
@@ -607,7 +619,7 @@ const { n = '04', cta = true, conClientes = true } = Astro.props as { n?: string
   sec.style.setProperty('--cycle', `${DELAY + SWEEP + HOLD}ms`);
 
   let cur = 0;
-  let x = 0; // fracción ya construida (0 = todo dibujo, 1 = toda la foto)
+  let x = 0; // fracción ya construida (0 = todo diseño, 1 = toda la foto)
   let auto = !reduced;
   let inView = false;
   let tween = 0;
@@ -628,7 +640,7 @@ const { n = '04', cta = true, conClientes = true } = Astro.props as { n?: string
     tween = 0;
     stage.classList.remove('is-sweeping');
   };
-  // La línea de obra avanza: dibujo → obra
+  // La línea de obra avanza: diseño → obra
   const sweep = (to: number, ms: number, done?: () => void) => {
     stopTween();
     stage.classList.add('is-sweeping');
@@ -675,7 +687,7 @@ const { n = '04', cta = true, conClientes = true } = Astro.props as { n?: string
     const prev = cur;
     cur = (i + N) % N;
     fill(cur);
-    x = 0; // la obra nueva entra como dibujo completo
+    x = 0; // la obra nueva entra como diseño completo
     apply();
     // La anterior queda debajo, entera, mientras la nueva aparece encima
     slides.forEach((s, j) => {
@@ -694,7 +706,7 @@ const { n = '04', cta = true, conClientes = true } = Astro.props as { n?: string
       if (j === cur) r.setAttribute('aria-current', 'true');
       else r.removeAttribute('aria-current');
     });
-    tagA.textContent = renders.has(cur) ? 'render' : 'obra';
+    tagB.textContent = slides[cur].el.dataset.kind!;
     restartBar();
     timer = window.setTimeout(play, DELAY);
   };

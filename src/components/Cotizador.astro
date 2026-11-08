@@ -115,7 +115,7 @@ const leadsUrl = import.meta.env.PUBLIC_LEADS_URL || '';
 
   /* contacto */
   .cz-step :global(.fields) { display: grid; gap: 12px; margin-top: 18px; }
-  .cz-step :global(label.f) { display: grid; gap: 5px; font-size: 13px; font-weight: 600; color: var(--color-ink-soft); }
+  .cz-step :global(.f) { display: grid; gap: 5px; font-size: 13px; font-weight: 600; color: var(--color-ink-soft); }
   .cz-step :global(.f input), .cz-step :global(.f textarea) { width: 100%; height: 50px; padding: 0 14px; border: 1.5px solid var(--color-line); background: #fff; font: inherit; font-size: 16px; color: var(--color-ink); transition: border-color 0.2s; }
   .cz-step :global(.f textarea) { height: 82px; padding: 10px 14px; resize: vertical; }
   .cz-step :global(.f input:focus), .cz-step :global(.f textarea:focus) { outline: none; border-color: var(--color-brand); }
@@ -123,7 +123,12 @@ const leadsUrl = import.meta.env.PUBLIC_LEADS_URL || '';
   .cz-step :global(.f .err) { display: none; font-size: 12px; font-weight: 500; color: #c2410c; }
   .cz-step :global(.f.bad .err) { display: block; }
   .cz-step :global(.phone) { display: flex; }
-  .cz-step :global(.phone span) { display: grid; place-items: center; padding: 0 12px; border: 1.5px solid var(--color-line); border-right: 0; background: var(--color-bone); font-size: 15px; font-weight: 600; color: var(--color-ink-soft); }
+  /* indicativo: se ve "+34 ⌄"; encima va el select nativo transparente (en celular abre la rueda del sistema, en computador se busca escribiendo) */
+  .cz-step :global(.cc) { position: relative; flex: none; display: flex; align-items: center; gap: 5px; padding: 0 10px 0 12px; border: 1.5px solid var(--color-line); border-right: 0; background: var(--color-bone); font-size: 15px; font-weight: 600; color: var(--color-ink-soft); transition: border-color 0.2s; }
+  .cz-step :global(.cc svg) { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; opacity: 0.7; }
+  .cz-step :global(.cc select) { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; font-size: 16px; cursor: pointer; }
+  .cz-step :global(.cc:focus-within) { border-color: var(--color-brand); border-right: 0; }
+  .cz-step :global(.f.bad .cc) { border-color: #c2410c; }
   .cz-step :global(.more) { justify-self: start; border: 0; background: none; padding: 2px 0; font: inherit; font-size: 13.5px; font-weight: 600; color: var(--color-brand-ink); cursor: pointer; }
   .cz-step :global(.ok) { display: flex; gap: 10px; align-items: flex-start; font-size: 12.5px; line-height: 1.45; color: var(--color-ink-mute); font-weight: 500; }
   .cz-step :global(.ok input) { width: 18px; height: 18px; margin-top: 1px; accent-color: var(--color-brand-ink); flex: none; }
@@ -214,6 +219,7 @@ const leadsUrl = import.meta.env.PUBLIC_LEADS_URL || '';
     type ServiceId,
     type Contact,
   } from '../lib/lead';
+  import { paises, FRECUENTES, dialOf, paisPorDefecto } from '../lib/paises';
 
   captureAttribution();
 
@@ -230,7 +236,19 @@ const leadsUrl = import.meta.env.PUBLIC_LEADS_URL || '';
 
   type StepId = 'service' | 'stage' | 'size' | 'location' | 'timing' | 'contact';
   let a: Answers = {};
-  let c: Contact = { name: '', phone: '', email: '' };
+  // indicativo: el país de la zona horaria del visitante (Colombia si no se sabe); la persona lo puede cambiar
+  let iso = paisPorDefecto();
+  let c: Contact = { name: '', phone: '', email: '', dial: dialOf(iso) };
+  const PAISES = paises();
+  const ccOptions = () => {
+    // el país elegido queda marcado una sola vez: arriba si es de los más usados, si no en la lista completa
+    const inTop = FRECUENTES.includes(iso);
+    const opt = (p: { iso: string; dial: string; name: string }, sel: boolean) => `<option value="${p.iso}"${sel ? ' selected' : ''}>${esc(p.name)} (+${p.dial})</option>`;
+    const top = FRECUENTES.map((k) => PAISES.find((p) => p.iso === k)!).filter(Boolean);
+    return `<optgroup label="Más usados">${top.map((p) => opt(p, p.iso === iso)).join('')}</optgroup><optgroup label="Todos los países">${PAISES.map((p) => opt(p, !inTop && p.iso === iso)).join('')}</optgroup>`;
+  };
+  const phoneHint = () => (c.dial === '57' ? '300 123 4567' : `Tu número sin el +${c.dial}`);
+  const phoneErr = () => (c.dial === '57' ? 'Revisa el número: 10 dígitos y empieza por 3. Si no es de Colombia, cambia el +57.' : `Revisa el número. Escríbelo sin el +${c.dial}.`);
   let cta = '';
   let initial: string | undefined;
   let steps: StepId[] = [];
@@ -325,7 +343,7 @@ const leadsUrl = import.meta.env.PUBLIC_LEADS_URL || '';
       <p class="sub">Te abrimos WhatsApp con tu mensaje listo; solo tocas Enviar.</p>
       <div class="fields">
         <label class="f" data-f="name">Tu nombre<input name="name" autocomplete="name" enterkeyhint="next" value="${esc(c.name)}" /><span class="err">Escribe tu nombre.</span></label>
-        <label class="f" data-f="phone">Tu WhatsApp<span class="phone"><span>+57</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="300 123 4567" enterkeyhint="next" value="${esc(c.phone)}" /></span><span class="err">Revisa el número (10 dígitos, empieza por 3). Si no es de Colombia, escríbelo con +.</span></label>
+        <div class="f" data-f="phone"><label for="cz-phone">Tu WhatsApp</label><span class="phone"><span class="cc"><b data-cc-l>+${c.dial}</b><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5"></path></svg><select name="cc" aria-label="Indicativo del país" autocomplete="tel-country-code">${ccOptions()}</select></span><input id="cz-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="${phoneHint()}" enterkeyhint="next" value="${esc(c.phone)}" /></span><span class="err" data-phone-err>${phoneErr()}</span></div>
         <label class="f" data-f="email">Tu correo<input name="email" type="email" inputmode="email" autocomplete="email" enterkeyhint="done" value="${esc(c.email)}" /><span class="err">Revisa el correo.</span></label>
         <button type="button" class="more" data-more>+ Contarnos más de tu proyecto (opcional)</button>
         <label class="f" data-f="details" hidden>Tu proyecto<textarea name="details" maxlength="600" placeholder="Habitaciones, cómo es el lote, lo que te gusta…">${esc(a.details || '')}</textarea></label>
@@ -343,22 +361,33 @@ const leadsUrl = import.meta.env.PUBLIC_LEADS_URL || '';
       d.hidden = false;
       get('details').focus();
     });
+    const read = (): Contact => ({ name: get('name').value, phone: get('phone').value, email: get('email').value, dial: c.dial });
+    // cambiar el país: indicativo, ejemplo y mensaje de error del país elegido
+    const cc = form.querySelector<HTMLSelectElement>('[name="cc"]')!;
+    cc.addEventListener('change', () => {
+      iso = cc.value;
+      c = { ...read(), dial: dialOf(iso) };
+      form.querySelector('[data-cc-l]')!.textContent = `+${c.dial}`;
+      get('phone').setAttribute('placeholder', phoneHint());
+      form.querySelector('[data-phone-err]')!.textContent = phoneErr();
+      if (get('phone').value) check('phone');
+    });
     const check = (n: 'name' | 'phone' | 'email') => {
       const v = get(n).value;
-      const ok = n === 'name' ? validName(v) : n === 'phone' ? !!normalizePhone(v) : validEmail(v);
+      const ok = n === 'name' ? validName(v) : n === 'phone' ? !!normalizePhone(v, c.dial) : validEmail(v);
       form.querySelector(`[data-f="${n}"]`)!.classList.toggle('bad', !ok);
       return ok;
     };
     (['name', 'phone', 'email'] as const).forEach((n) => {
       get(n).addEventListener('blur', () => {
         if (get(n).value) check(n);
-        c = { name: get('name').value, phone: get('phone').value, email: get('email').value };
+        c = read();
       });
       get(n).addEventListener('input', () => form.querySelector(`[data-f="${n}"]`)!.classList.remove('bad'));
     });
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      c = { name: get('name').value, phone: get('phone').value, email: get('email').value };
+      c = read();
       a.details = get('details').value;
       const bad = (['name', 'phone', 'email'] as const).filter((n) => !check(n));
       if (bad.length) {
@@ -451,7 +480,7 @@ const leadsUrl = import.meta.env.PUBLIC_LEADS_URL || '';
     render();
   };
   const savePartial = () => {
-    if (sent || partialSaved || !validName(c.name) || !normalizePhone(c.phone)) return;
+    if (sent || partialSaved || !validName(c.name) || !normalizePhone(c.phone, c.dial)) return;
     partialSaved = true;
     ref = ref.replace(/-\d$/, `-${quality(a)}`);
     save('parcial');

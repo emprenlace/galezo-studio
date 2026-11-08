@@ -47,6 +47,18 @@ test('celular: formatos colombianos e internacionales', () => {
   assert.equal(normalizePhone('+1 305 555 0101'), '+13055550101');
   assert.equal(normalizePhone('6051234567'), null);
   assert.equal(normalizePhone('12345'), null);
+  // otros países con el selector de indicativo
+  assert.equal(normalizePhone('612 345 678', '34'), '+34612345678');
+  assert.equal(normalizePhone('34612345678', '34'), '+34612345678');
+  assert.equal(normalizePhone('61234567', '34'), null);
+  assert.equal(normalizePhone('(305) 555-0101', '1'), '+13055550101');
+  assert.equal(normalizePhone('07911 123456', '44'), '+447911123456');
+  assert.equal(normalizePhone('11 2345 6789', '54'), '+5491123456789');
+  assert.equal(normalizePhone('55 1234 5678', '52'), '+525512345678');
+  assert.equal(normalizePhone('6123 4567', '507'), '+50761234567');
+  assert.equal(normalizePhone('0412 123 4567', '58'), '+584121234567');
+  assert.equal(normalizePhone('+34 612 345 678', '57'), '+34612345678');
+  assert.equal(normalizePhone('300 123 4567', '34'), null);
 });
 test('correo', () => {
   assert.equal(validEmail('ana@correo.co'), true);

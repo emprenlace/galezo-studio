@@ -1,0 +1,273 @@
+---
+/**
+ * Remodelación · 02 "Así estaba, así quedó": la única remodelación con fotos reales de antes y después
+ * (Pórtico Los Corales). Recurso propio: una pila de tres fotos impresas sobre la mesa (antes, el diseño, después).
+ * La de arriba sale volando hacia un lado y vuelve al fondo de la pila; pasan solas, se tocan o se deslizan.
+ * Debajo, una línea de tiempo de tres puntos dice en qué momento va la historia.
+ * En Proyectos este mismo pórtico se compara render → obra con la línea; aquí se cuenta desde el antes.
+ */
+import LazyImg from '../LazyImg.astro';
+import Plomada from '../Plomada.astro';
+import Trazos from '../Trazos.astro';
+import antes from '../../assets/remodelacion/corales-antes.jpg';
+import diseno from '../../assets/remodelacion/corales-diseno.jpg';
+import despues from '../../assets/remodelacion/corales-despues.jpg';
+
+const { n = '02' } = Astro.props as { n?: string };
+const fotos = [
+  { k: 'Antes', m: 'antes', d: 'La entrada del conjunto tenía dos arcos y una reja sencilla.', src: antes, alt: 'Entrada del conjunto Los Corales antes de la remodelación: dos arcos blancos y una reja', pos: '50% 60%' },
+  { k: 'El diseño', m: 'el diseño', d: 'Propusimos un muro de ladrillo con el nombre, una pérgola blanca, rejas nuevas y luz.', src: diseno, alt: 'Render del nuevo pórtico: muro de ladrillo con el nombre del conjunto, pérgola blanca y rejas de listones' },
+  { k: 'Después', m: 'después', d: 'Así quedó construido. De noche, la luz marca la entrada.', src: despues, alt: 'Pórtico de Los Corales terminado, de noche: muro de ladrillo, pérgola blanca iluminada y rejas nuevas' },
+];
+const pad = (i: number) => String(i + 1).padStart(2, '0');
+---
+
+<section class="ad" id="antes-y-despues" data-nav-label="Antes y después" aria-labelledby="ad-title" data-ad>
+  <Trazos left="muro" right="detalle" />
+  <div class="ad-in">
+    <Plomada n={n} label="Antes y después" variant="obra" />
+    <div class="ad-body">
+      <header class="ad-head ad-rv">
+        <h2 id="ad-title" class="ad-h2">Así estaba, así <span class="accent">quedó</span></h2>
+        <p class="ad-sub">Pórtico del conjunto Los Corales: lo rediseñamos y ya está construido.</p>
+      </header>
+
+      <!-- La pila de fotos -->
+      <div class="stack ad-rv" data-stack aria-roledescription="fotos" aria-label="Antes, diseño y después del pórtico">
+        {
+          fotos.map((f, i) => (
+            <figure class="card" data-card={i} data-pos={i} aria-hidden={i === 0 ? 'false' : 'true'}>
+              <div class="card-ph">
+                <LazyImg src={f.src} alt={f.alt} widths={[480, 760, 1100]} sizes="(min-width: 1024px) 620px, 92vw" class="card-img" style={f.pos && `object-position:${f.pos}`} later={i > 0} />
+              </div>
+              <figcaption class="card-l"><span class="card-n">{pad(i)}</span> {f.m}</figcaption>
+            </figure>
+          ))
+        }
+        <span class="stack-hint" aria-hidden="true">
+          <svg viewBox="0 0 24 12"><path d="M7 2 2 6l5 4M17 2l5 4-5 4M2 6h20"></path></svg>
+          <span class="t-touch">desliza</span><span class="t-mouse">toca la foto</span>
+        </span>
+      </div>
+
+      <!-- Línea de tiempo -->
+      <ol class="tl ad-rv" role="list" data-tl>
+        {
+          fotos.map((f, i) => (
+            <li>
+              <button type="button" class:list={['tl-b', { 'is-on': i === 0 }]} aria-pressed={i === 0 ? 'true' : 'false'} data-go={i}>
+                <span class="tl-dot" aria-hidden="true" />
+                <span class="tl-t">{f.k}</span>
+              </button>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="tl-now ad-rv" aria-live="polite">
+        {fotos.map((f, i) => <p class:list={['tn', { 'is-on': i === 0 }]} data-tn={i} aria-hidden={i === 0 ? 'false' : 'true'}>{f.d}</p>)}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ad {
+    --hdr: 76px;
+    --pad: 20px;
+    position: relative;
+    background: var(--color-bone);
+    padding: calc(var(--hdr) + 8px) var(--pad) 18px;
+    min-height: 100svh;
+    display: flex;
+    overflow: hidden;
+  }
+  .ad-in { position: relative; z-index: 1; width: 100%; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+  .ad-body { margin: auto 0; display: grid; grid-template-areas: 'head' 'stack' 'tl' 'now'; gap: 14px; }
+  .ad-head { grid-area: head; display: grid; justify-items: center; text-align: center; gap: 6px; }
+  .ad-h2 { font-size: clamp(1.9rem, min(1.3rem + 2.6vw, 6svh), 3.4rem); line-height: 1.02; font-weight: 560; letter-spacing: -0.038em; text-wrap: balance; }
+  .ad-h2 .accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.012em; color: var(--color-brand); font-size: 1.08em; }
+  .ad-sub { max-width: 30rem; font-size: 0.95rem; line-height: 1.45; color: var(--color-ink-soft); text-wrap: balance; }
+
+  /* ---------- La pila: fotos impresas con borde blanco, una encima de otra ---------- */
+  .stack { grid-area: stack; position: relative; width: min(100%, 560px); justify-self: center; aspect-ratio: 1.3; margin: 10px 0 6px; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: pointer; }
+  .card { position: absolute; inset: 0; margin: 0; display: grid; grid-template-rows: minmax(0, 1fr) auto; padding: 9px 9px 0; background: #fff; box-shadow: 0 1px 2px rgb(0 0 0 / 0.08), 0 18px 30px -18px rgb(20 45 50 / 0.5); transform-origin: 50% 85%; transition: transform 0.7s var(--ease-out-expo), box-shadow 0.4s; will-change: transform; }
+  .card-ph { position: relative; overflow: hidden; background: #e9e6df; }
+  .card-ph :global(.card-img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; -webkit-user-drag: none; }
+  .card-l { padding: 7px 4px 9px; font-family: 'Architects Daughter', var(--font-sans); font-size: 15px; line-height: 1; color: #23262b; }
+  .card-n { font-family: var(--font-serif); font-style: italic; font-size: 1.05em; color: var(--color-brand); margin-right: 2px; }
+  /* posiciones en la pila: arriba casi derecha; las de abajo asoman giradas */
+  .card[data-pos='0'] { z-index: 3; transform: rotate(-1.2deg); }
+  .card[data-pos='1'] { z-index: 2; transform: translate(4%, -3%) rotate(3.2deg) scale(0.96); }
+  .card[data-pos='2'] { z-index: 1; transform: translate(-4.5%, -5%) rotate(-4.5deg) scale(0.93); }
+  /* la de arriba sale volando hacia un lado y luego vuelve al fondo */
+  .card.is-out { z-index: 4; transform: translate(var(--fly, 112%), 4%) rotate(var(--rot, 14deg)); transition: transform 0.42s cubic-bezier(0.5, 0, 0.75, 0.3); }
+  .card.is-drag { transition: none; }
+  .stack-hint { position: absolute; z-index: 5; right: 12px; bottom: 44px; display: flex; align-items: center; gap: 5px; padding: 4px 9px 5px; background: rgb(255 255 255 / 0.9); font-family: 'Architects Daughter', var(--font-sans); font-size: 13px; color: var(--color-brand-ink); pointer-events: none; transition: opacity 0.4s; }
+  .stack-hint svg { width: 18px; height: 9px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+  .stack.is-used .stack-hint { opacity: 0; }
+  .t-mouse { display: none; }
+  @media (pointer: fine) { .t-mouse { display: inline; } .t-touch { display: none; } }
+
+  /* ---------- Línea de tiempo ---------- */
+  .tl { grid-area: tl; position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: min(100%, 460px); justify-self: center; margin: 0; padding: 0; list-style: none; }
+  .tl::before { content: ''; position: absolute; left: 16.66%; right: 16.66%; top: 9px; height: 1.5px; background: rgb(35 38 43 / 0.18); }
+  .tl::after { content: ''; position: absolute; left: 16.66%; top: 9px; height: 1.5px; width: calc(66.66% * var(--p, 0)); background: var(--color-brand); transition: width 0.6s var(--ease-out-expo); }
+  .tl-b { position: relative; z-index: 1; display: grid; justify-items: center; gap: 6px; width: 100%; padding: 0; border: 0; background: none; font: inherit; color: inherit; cursor: pointer; }
+  .tl-dot { width: 19px; height: 19px; border-radius: 50%; background: var(--color-bone); border: 1.5px solid rgb(35 38 43 / 0.3); transition: background-color 0.35s, border-color 0.35s, transform 0.4s var(--ease-out-expo); }
+  .tl-b.is-done .tl-dot { border-color: var(--color-brand); background: var(--color-brand-soft); }
+  .tl-b.is-on .tl-dot { border-color: var(--color-brand); background: var(--color-brand); transform: scale(1.12); box-shadow: inset 0 0 0 3.5px var(--color-bone); }
+  .tl-t { font-size: 14px; font-weight: 600; color: var(--color-ink-mute); transition: color 0.3s; }
+  .tl-b.is-on .tl-t { color: var(--color-ink); }
+  .tl-b:focus-visible { outline: none; }
+  .tl-b:focus-visible .tl-dot { outline: 2px solid var(--color-brand); outline-offset: 3px; }
+  .tl-now { grid-area: now; display: grid; text-align: center; }
+  .tn { grid-area: 1 / 1; max-width: 26rem; margin: 0 auto; font-size: 0.95rem; line-height: 1.45; color: var(--color-ink-soft); text-wrap: balance; opacity: 0; transform: translateY(6px); transition: opacity 0.35s, transform 0.5s var(--ease-out-expo); }
+  .tn.is-on { opacity: 1; transform: none; transition-delay: 0.08s; }
+
+  /* Entradas: la pila cae sobre la mesa */
+  :global(html.js) .ad-rv { opacity: 0; transform: translateY(18px); transition: opacity 0.9s var(--ease-out-expo), transform 1s var(--ease-out-expo); }
+  :global(html.js) .ad.is-in .ad-rv { opacity: 1; transform: none; }
+  :global(html.js) .ad.is-in .stack { transition-delay: 0.1s; }
+  :global(html.js) .ad.is-in .tl { transition-delay: 0.25s; }
+  :global(html.js) .ad .card { opacity: 0; }
+  :global(html.js) .ad.is-in .card { opacity: 1; transition: transform 0.7s var(--ease-out-expo), opacity 0.5s; }
+  :global(html.js) .ad.is-in .card[data-pos='2'] { transition-delay: 0.15s; }
+  :global(html.js) .ad.is-in .card[data-pos='1'] { transition-delay: 0.3s; }
+  :global(html.js) .ad.is-in .card[data-pos='0'] { transition-delay: 0.45s; }
+  :global(html.js) .ad.is-ready .card { transition-delay: 0s !important; }
+  :global(html.rm) .ad :is(.ad-rv, .card) { opacity: 1 !important; }
+  :global(html.rm) .ad .ad-rv { transform: none !important; }
+  :global(html.rm) .ad * { transition: none !important; }
+
+  /* celular: la pila con proporción más baja y la ficha libre del botón de WhatsApp */
+  @media (max-width: 639px) {
+    .stack { aspect-ratio: 1.42; width: calc(100% - 22px); }
+    .card { padding: 7px 7px 0; }
+    .card-l { font-size: 13.5px; padding: 6px 3px 7px; }
+    .stack-hint { bottom: 36px; right: 10px; }
+    .tl-now { padding: 0 50px; }
+    .tn { font-size: 0.9rem; }
+  }
+  @media (max-width: 639px) and (max-height: 760px) {
+    .ad-sub { display: none; }
+  }
+  @media (max-width: 639px) and (max-height: 600px) {
+    .stack { aspect-ratio: 1.6; }
+    .ad-body { gap: 10px; }
+    .tn { font-size: 0.85rem; line-height: 1.38; }
+  }
+  @media (min-width: 640px) {
+    .ad { --pad: 28px; }
+  }
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .stack { width: min(100%, 520px); }
+  }
+
+  /* ---------- Escritorio: texto y línea de tiempo a la izquierda; la pila a la derecha ---------- */
+  @media (min-width: 1024px) {
+    .ad { --pad: max(40px, calc((100% - 1200px) / 2)); --hdr: 84px; padding: calc(var(--hdr) + clamp(14px, 3svh, 36px)) var(--pad) clamp(24px, 4svh, 48px); }
+    .ad-body { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); grid-template-areas: 'head stack' 'tl stack' 'now stack'; grid-template-rows: 1fr auto 1fr; gap: 26px 64px; align-items: center; }
+    .ad-head { justify-items: start; text-align: left; align-self: end; }
+    .tl { justify-self: start; width: 100%; max-width: 420px; }
+    .tl-now { text-align: left; align-self: start; }
+    .tn { margin: 0; max-width: 24rem; font-size: 1.02rem; }
+    .stack { width: min(100%, calc((100svh - var(--hdr) - 200px) * 1.3)); margin: 0; }
+    .card { padding: 12px 12px 0; }
+    .card-l { font-size: 17px; padding: 9px 4px 11px; }
+  }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-ad]');
+  if (sec) {
+    const stack = sec.querySelector<HTMLElement>('[data-stack]')!;
+    const cards = [...sec.querySelectorAll<HTMLElement>('[data-card]')];
+    const gos = [...sec.querySelectorAll<HTMLButtonElement>('[data-go]')];
+    const tns = [...sec.querySelectorAll<HTMLElement>('[data-tn]')];
+    const tl = sec.querySelector<HTMLElement>('[data-tl]')!;
+    const reduced = document.documentElement.classList.contains('rm');
+    let order = cards.map((_, i) => i); // order[0] = la de arriba
+    let busy = false;
+    let auto = !reduced;
+    let inView = false;
+    let timer = 0;
+
+    const apply = () => {
+      cards.forEach((c, k) => { const p = order.indexOf(k); c.dataset.pos = String(p); c.setAttribute('aria-hidden', String(p !== 0)); });
+      const top = order[0];
+      gos.forEach((g, j) => { g.classList.toggle('is-on', j === top); g.classList.toggle('is-done', j < top); g.setAttribute('aria-pressed', String(j === top)); });
+      tns.forEach((t, j) => { t.classList.toggle('is-on', j === top); t.setAttribute('aria-hidden', String(j !== top)); });
+      tl.style.setProperty('--p', String(top / (cards.length - 1)));
+    };
+    // la de arriba sale volando (hacia donde se deslizó) y vuelve al fondo de la pila
+    const next = (dir = 1, done?: () => void) => {
+      if (busy) return;
+      busy = true;
+      const c = cards[order[0]];
+      c.classList.remove('is-drag');
+      c.style.setProperty('--fly', `${dir * 112}%`);
+      c.style.setProperty('--rot', `${dir * 14}deg`);
+      c.style.transform = '';
+      c.classList.add('is-out');
+      window.setTimeout(() => {
+        c.classList.remove('is-out');
+        order.push(order.shift()!);
+        apply();
+        busy = false;
+        done?.();
+      }, reduced ? 0 : 400);
+    };
+    const goTo = (j: number) => {
+      const steps = (order.indexOf(j) + order.length) % order.length;
+      const run = (k: number) => { if (k > 0) next(1, () => window.setTimeout(() => run(k - 1), 60)); };
+      run(steps);
+    };
+    const loop = () => {
+      clearTimeout(timer);
+      if (!auto || !inView) return;
+      timer = window.setTimeout(() => next(1, loop), 4200);
+    };
+    const take = () => { auto = false; clearTimeout(timer); stack.classList.add('is-used'); };
+
+    gos.forEach((g, j) => g.addEventListener('click', () => { take(); goTo(j); }));
+
+    // tocar la foto la pasa; arrastrarla la lleva con el dedo y, si va lejos, sale volando
+    let x0 = 0, y0 = 0, dx = 0, down = false, moved = false;
+    stack.addEventListener('pointerdown', (e) => { if (busy) return; down = true; moved = false; x0 = e.clientX; y0 = e.clientY; dx = 0; });
+    stack.addEventListener('pointermove', (e) => {
+      if (!down) return;
+      dx = e.clientX - x0;
+      const dy = e.clientY - y0;
+      if (!moved && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy) * 1.3) { moved = true; take(); stack.setPointerCapture(e.pointerId); }
+      if (moved) {
+        const c = cards[order[0]];
+        c.classList.add('is-drag');
+        c.style.transform = `translateX(${dx}px) rotate(${dx / 18}deg)`;
+      }
+    });
+    const up = () => {
+      if (!down) return;
+      down = false;
+      const c = cards[order[0]];
+      if (moved) {
+        if (Math.abs(dx) > 60) next(dx < 0 ? -1 : 1);
+        else { c.classList.remove('is-drag'); c.style.transform = ''; }
+      } else { take(); next(1); }
+    };
+    stack.addEventListener('pointerup', up);
+    stack.addEventListener('pointercancel', () => { down = false; const c = cards[order[0]]; c.classList.remove('is-drag'); c.style.transform = ''; });
+
+    apply();
+    new IntersectionObserver(
+      ([e]) => {
+        inView = e.isIntersecting;
+        if (inView && !sec.classList.contains('is-in')) {
+          sec.classList.add('is-in');
+          window.setTimeout(() => sec.classList.add('is-ready'), 1400);
+        }
+        inView ? loop() : clearTimeout(timer);
+      },
+      { threshold: 0.35 },
+    ).observe(sec);
+  }
+</script>

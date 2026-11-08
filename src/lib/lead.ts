@@ -127,16 +127,40 @@ export interface Contact {
   name: string;
   phone: string;
   email: string;
+  /** indicativo del país elegido en el selector (sin +). Colombia si no viene. */
+  dial?: string;
 }
 
-/** Celular colombiano (10 dígitos que empiezan por 3) o número internacional con +. Devuelve E.164 o null. */
-export function normalizePhone(raw: string): string | null {
+// Largo del número nacional (sin indicativo ni 0 inicial) en los mercados que más cotizan; el resto, entre 4 y 14 dígitos
+const NATIONAL_LEN: Record<string, number[]> = {
+  '1': [10], '34': [9], '52': [10], '507': [8], '593': [9], '51': [9], '56': [9], '58': [10], '54': [11], '44': [10], '33': [9],
+  '506': [8], '502': [8], '503': [8], '504': [8], '505': [8], '591': [8], '595': [9], '598': [8], '351': [9], '55': [10, 11],
+};
+
+/**
+ * Número de WhatsApp en E.164 (+34612345678) o null si no es válido.
+ * - Con + adelante se toma tal cual (cualquier país).
+ * - Colombia: 10 dígitos que empiezan por 3.
+ * - Otro país: el número sin indicativo; se quita el 0 que se marca dentro del país (salvo Italia) y en Argentina
+ *   se agrega el 9 de los celulares (WhatsApp lo necesita).
+ */
+export function normalizePhone(raw: string, dial = '57'): string | null {
   const t = raw.trim();
-  const digits = t.replace(/\D/g, '');
+  let digits = t.replace(/\D/g, '');
   if (t.startsWith('+')) return digits.length >= 8 && digits.length <= 15 ? `+${digits}` : null;
-  if (/^3\d{9}$/.test(digits)) return `+57${digits}`;
-  if (/^573\d{9}$/.test(digits)) return `+${digits}`;
-  return null;
+  if (dial === '57') {
+    if (/^3\d{9}$/.test(digits)) return `+57${digits}`;
+    if (/^573\d{9}$/.test(digits)) return `+${digits}`;
+    return null;
+  }
+  // escribió el indicativo sin el + (34612345678): se le quita
+  const lens = NATIONAL_LEN[dial];
+  if (lens && digits.startsWith(dial) && lens.includes(digits.length - dial.length)) digits = digits.slice(dial.length);
+  if (dial === '1' && digits.length === 11 && digits.startsWith('1')) digits = digits.slice(1);
+  if (dial !== '39' && digits.startsWith('0')) digits = digits.slice(1);
+  if (dial === '54' && digits.length === 10 && !digits.startsWith('9')) digits = `9${digits}`;
+  const ok = lens ? lens.includes(digits.length) : digits.length >= 4 && digits.length <= 14;
+  return ok && dial.length + digits.length <= 15 ? `+${dial}${digits}` : null;
 }
 export const validEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e.trim());
 export const validName = (n: string) => n.trim().length >= 2;
@@ -152,7 +176,7 @@ export function leadRecord(a: Answers, c: Contact, meta: { ref: string; status: 
     encaja: f.ok ? 'sí' : 'no',
     motivo: f.reason || '',
     nombre: c.name.trim(),
-    whatsapp: normalizePhone(c.phone) || c.phone.trim(),
+    whatsapp: normalizePhone(c.phone, c.dial) || c.phone.trim(),
     correo: c.email.trim().toLowerCase(),
     servicio: pick(SERVICES, a.service)?.label || '',
     etapa: pick(STAGES, a.stage)?.label || '',

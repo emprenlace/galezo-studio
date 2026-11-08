@@ -1,0 +1,295 @@
+---
+/**
+ * Remodelación · 01 "Lo que diseñamos por dentro" como muestrario: el tablero de muestras que el arquitecto arma con
+ * el cliente. Cada decisión (distribución, acabados, mobiliario, carpintería, cielo raso) es una muestra recortada de
+ * una imagen real de la misma casa en Valledupar: un pedazo de la planta del nivel -2, el mármol del baño, la cama de
+ * la habitación, la madera de la escalera y la luz del cielo raso. Al elegir una muestra aparece la imagen completa
+ * con el hueco de donde salió (el resto se apaga con papel) y su ficha.
+ * Recurso propio de esta página: sin acercamientos, sin barras de avance y sin línea de comparación.
+ * r: rectángulo del recorte en % de la imagen [izq, arriba, ancho, alto] (el mismo con que se generó la muestra).
+ */
+import LazyImg from '../LazyImg.astro';
+import Plomada from '../Plomada.astro';
+import Trazos from '../Trazos.astro';
+import planta from '../../assets/remodelacion/planta-nivel-2.jpg';
+import bano from '../../assets/remodelacion/bano.jpg';
+import habitacion from '../../assets/remodelacion/habitacion.jpg';
+import escalera from '../../assets/remodelacion/escalera.jpg';
+import salaTv from '../../assets/remodelacion/sala-tv.jpg';
+import mPlanta from '../../assets/remodelacion/muestra-planta-nivel-2.jpg';
+import mBano from '../../assets/remodelacion/muestra-bano.jpg';
+import mHabitacion from '../../assets/remodelacion/muestra-habitacion.jpg';
+import mEscalera from '../../assets/remodelacion/muestra-escalera.jpg';
+import mSalaTv from '../../assets/remodelacion/muestra-sala-tv.jpg';
+
+const { n = '01' } = Astro.props as { n?: string };
+const muestras = [
+  { t: 'Distribución', m: 'planta', d: 'Decidimos qué se abre, qué se une y por dónde entra la luz, antes de tocar un muro.', src: planta, chip: mPlanta, esp: 'Planta del nivel -2', det: 'escalera, estar, salón social y balcón', alt: 'Planta del nivel -2: escalera, estar, salón social, oficina, cuarto de invitados y balcón', r: [1.54, 36.49, 19.23, 33.78], plano: true },
+  { t: 'Acabados', m: 'mármol', d: 'Pisos, enchapes, piedra y pintura elegidos juntos, para que el espacio se vea como un todo.', src: bano, chip: mBano, esp: 'Baño principal', det: 'mármol en muros y piso', alt: 'Baño principal con muros y piso en mármol, ducha en vidrio y mueble de lavamanos doble', r: [32.29, 3.26, 15.62, 24.47] },
+  { t: 'Mobiliario', m: 'cama', d: 'Cada mueble con su lugar y su medida: la cama, los muebles flotantes y lo que necesitas a la mano.', src: habitacion, chip: mHabitacion, esp: 'Habitación principal', det: 'cama, mueble flotante y mesas de noche', alt: 'Habitación principal con cama, mueble flotante de televisión y panel de madera', r: [55.21, 45.68, 20.83, 32.63] },
+  { t: 'Carpintería', m: 'madera', d: 'Escaleras, cocinas, closets y paneles de madera dibujados a la medida del espacio.', src: escalera, chip: mEscalera, esp: 'Escalera del nivel -2', det: 'huellas en madera y baranda de vidrio', alt: 'Escalera flotante con huellas en madera y baranda de vidrio, hacia el estar del nivel -2', r: [65.62, 45.68, 15.62, 24.47] },
+  { t: 'Cielo raso', m: 'luz', d: 'Niveles y luz indirecta que ordenan el espacio y cambian cómo se siente de noche.', src: salaTv, chip: mSalaTv, esp: 'Sala de TV', det: 'cielo raso en dos niveles con luz indirecta', alt: 'Sala de televisión con cielo raso en dos niveles y luz indirecta perimetral', r: [59.9, 3.26, 18.23, 28.55] },
+];
+const pad = (i: number) => String(i + 1).padStart(2, '0');
+// inclinación de cada muestra sobre el tablero (como puestas a mano)
+const giro = [-3, 2.2, -1.4, 2.8, -2.2];
+---
+
+<section class="dn" id="por-dentro" data-nav-label="Por dentro" aria-labelledby="dn-title" data-dn data-caps={JSON.stringify(muestras.map((x) => [x.esp, x.det]))}>
+  <Trazos left="puerta" right="ventana" />
+  <div class="dn-in">
+    <Plomada n={n} label="Por dentro" variant="grua" />
+    <div class="dn-body">
+      <header class="dn-head dn-rv">
+        <h2 id="dn-title" class="dn-h2">Lo que diseñamos <span class="accent">por dentro</span></h2>
+        <p class="dn-sub">Cinco decisiones de una casa que diseñamos en Valledupar. Toca una muestra y mira de dónde sale.</p>
+      </header>
+
+      <!-- El tablero de muestras -->
+      <ol class="board dn-rv" role="list" aria-label="Muestras" data-board>
+        {
+          muestras.map((x, i) => (
+            <li style={`--g:${giro[i]}deg;--i:${i}`}>
+              <button type="button" class:list={['chip', { 'is-on': i === 0 }]} aria-pressed={i === 0 ? 'true' : 'false'} data-pick={i}>
+                <span class="chip-s">
+                  <LazyImg src={x.chip} alt="" widths={[160, 320]} sizes="96px" class="chip-img" />
+                  <span class="chip-hole" aria-hidden="true" />
+                </span>
+                <span class="chip-l"><span class="chip-n">{pad(i)}</span> <span class="chip-m">{x.m}</span></span>
+                <span class="sr-only">{x.t}</span>
+              </button>
+            </li>
+          ))
+        }
+      </ol>
+
+      <!-- La decisión elegida -->
+      <div class="now dn-rv" aria-live="polite">
+        {
+          muestras.map((x, i) => (
+            <div class:list={['nw', { 'is-on': i === 0 }]} data-nw={i} aria-hidden={i === 0 ? 'false' : 'true'}>
+              <h3 class="nw-t">{x.t}</h3>
+              <p class="nw-d">{x.d}</p>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- De dónde sale: la imagen completa con el hueco de la muestra -->
+      <figure class="dn-fig dn-rv">
+        <div class="stage chamfer">
+          {
+            muestras.map((x, i) => (
+              <div class:list={['og', { 'is-on': i === 0, 'og-plano': x.plano }]} data-og={i} style={`--ar:${(x.src.width / x.src.height).toFixed(4)}`}>
+                <div class="og-box">
+                  <LazyImg src={x.src} alt={x.alt} widths={[640, 960, 1300, 1700]} sizes="(min-width: 1024px) 680px, 100vw" class="og-img" later={i > 0} />
+                  <span class="cut" style={`left:${x.r[0]}%;top:${x.r[1]}%;width:${x.r[2]}%;height:${x.r[3]}%`} aria-hidden="true">
+                    <span class="cut-tag">{pad(i)}</span>
+                  </span>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+        <figcaption class="cajetin">
+          <span class="caj-c caj-main"><span class="caj-l">Espacio</span><b data-esp>{muestras[0].esp}</b><span class="caj-d" data-det>{muestras[0].det}</span></span>
+          <span class="caj-c caj-n"><span class="caj-l">Muestra</span><b><span data-num>01</span><span class="of"> / {pad(muestras.length - 1)}</span></b></span>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<style>
+  .dn {
+    --hdr: 76px;
+    --pad: 20px;
+    position: relative;
+    background: #fff;
+    padding: calc(var(--hdr) + 8px) var(--pad) 18px;
+    min-height: 100svh;
+    display: flex;
+    overflow: hidden;
+  }
+  .dn-in { position: relative; z-index: 1; width: 100%; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+  /* celular: título, imagen, tablero y la decisión elegida */
+  .dn-body { margin: auto 0; display: grid; grid-template-areas: 'head' 'fig' 'board' 'now'; gap: 12px; }
+  .dn-head { grid-area: head; display: grid; justify-items: center; text-align: center; gap: 6px; }
+  .dn-h2 { font-size: clamp(1.9rem, min(1.3rem + 2.6vw, 6svh), 3.4rem); line-height: 1.02; font-weight: 560; letter-spacing: -0.038em; text-wrap: balance; }
+  .dn-h2 .accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.012em; color: var(--color-brand); font-size: 1.08em; }
+  .dn-sub { max-width: 30rem; font-size: 0.95rem; line-height: 1.45; color: var(--color-ink-soft); text-wrap: balance; }
+
+  /* ---------- Tablero de muestras ---------- */
+  .board { grid-area: board; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 4px 2px 0; list-style: none; }
+  .chip { display: grid; justify-items: center; gap: 6px; width: 100%; padding: 0; border: 0; background: none; font: inherit; color: inherit; cursor: pointer; }
+  /* la muestra: un recorte cuadrado con el corte a 45° de la marca, la perforación del muestrario y sombra de papel */
+  .chip-s { --cut: 9px; position: relative; display: block; width: 100%; aspect-ratio: 1; rotate: var(--g); clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%); transition: rotate 0.5s var(--ease-out-expo), translate 0.5s var(--ease-out-expo); }
+  .chip-s :global(.chip-img) { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .chip-s::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08); pointer-events: none; transition: box-shadow 0.3s; }
+  .chip-hole { position: absolute; left: 9%; top: 9%; width: 13%; aspect-ratio: 1; border-radius: 50%; background: #fff; box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.35); }
+  /* sombra de papel: va en el li (el clip-path de la muestra la cortaría) */
+  .board li { filter: drop-shadow(0 6px 7px rgb(20 45 50 / 0.2)); }
+  .chip-l { font-family: 'Architects Daughter', var(--font-sans); font-size: 12px; line-height: 1.1; color: var(--color-ink-mute); white-space: nowrap; transition: color 0.3s; }
+  .chip-n { font-family: var(--font-serif); font-style: italic; font-size: 1.05em; color: var(--color-ink-mute); }
+  /* elegida: se endereza, se levanta y se marca con la línea de la marca */
+  .chip.is-on .chip-s { rotate: 0deg; translate: 0 -5px; }
+  .chip.is-on .chip-s::after { box-shadow: inset 0 0 0 2.5px var(--color-brand); }
+  .chip.is-on .chip-l, .chip.is-on .chip-n { color: var(--color-brand-ink); }
+  .chip:hover .chip-s { translate: 0 -3px; }
+  .chip:focus-visible { outline: none; }
+  .chip:focus-visible .chip-s::after { box-shadow: inset 0 0 0 2.5px var(--color-brand); }
+  /* el nombre de cada decisión, para lectores de pantalla */
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  /* ---------- La decisión elegida ---------- */
+  .now { grid-area: now; display: grid; text-align: center; }
+  .nw { grid-area: 1 / 1; opacity: 0; transform: translateY(6px); transition: opacity 0.35s, transform 0.5s var(--ease-out-expo); pointer-events: none; }
+  .nw.is-on { opacity: 1; transform: none; transition-delay: 0.06s; pointer-events: auto; }
+  .nw-t { font-size: 1.2rem; font-weight: 600; letter-spacing: -0.02em; }
+  .nw-d { margin: 3px auto 0; max-width: 28rem; font-size: 0.92rem; line-height: 1.45; color: var(--color-ink-soft); text-wrap: pretty; }
+
+  /* ---------- De dónde sale ---------- */
+  .dn-fig { grid-area: fig; margin: 0; display: grid; gap: 10px; min-width: 0; }
+  .stage { --cut: 18px; position: relative; aspect-ratio: 1.566; overflow: hidden; background: #fff; margin: 0 calc(var(--pad) * -1); }
+  /* cada imagen se ajusta sin recorte dentro de la pantalla: el hueco cae siempre en su sitio */
+  .og { position: absolute; inset: 0; display: grid; place-items: center; container-type: size; opacity: 0; visibility: hidden; transition: opacity 0.5s, visibility 0s 0.5s; }
+  .og.is-on { opacity: 1; visibility: inherit; transition: opacity 0.5s; z-index: 1; }
+  .og-box { position: relative; width: min(100cqw, 100cqh * var(--ar)); aspect-ratio: var(--ar); overflow: hidden; }
+  .og-plano .og-box { width: min(94cqw, 90cqh * var(--ar)); }
+  .og-plano::before { content: ''; position: absolute; inset: 10px; border: 1px solid rgb(35 38 43 / 0.14); pointer-events: none; }
+  .og :global(.og-img) { display: block; width: 100%; height: 100%; object-fit: cover; }
+  /* el hueco: el resto se apaga con papel; la muestra queda a la vista con su línea de corte punteada */
+  .cut { position: absolute; outline: 1.5px dashed #fff; box-shadow: 0 0 0 1.5px var(--color-brand), 0 0 0 200vmax rgb(244 242 238 / 0.46); opacity: 0; transform: scale(1.08); transition: opacity 0.45s 0.25s, transform 0.6s 0.25s var(--ease-out-expo); }
+  .og.is-on .cut { opacity: 1; transform: none; }
+  .cut-tag { position: absolute; left: -1.5px; bottom: 100%; padding: 2px 7px 3px; background: var(--color-brand); color: #fff; font-family: var(--font-serif); font-style: italic; font-size: 13px; line-height: 1.1; }
+  .og-plano .cut { outline-color: var(--color-brand); }
+
+  /* el cajetín de la lámina, como en el héroe */
+  .cajetin { display: flex; align-items: stretch; width: 100%; border: 1px solid rgb(35 38 43 / 0.4); background: rgb(255 253 249 / 0.94); font-size: 11px; line-height: 1.2; color: #23262b; }
+  .caj-c { display: grid; align-content: center; gap: 2px; padding: 6px 11px 7px; }
+  .caj-c + .caj-c { border-left: 1px solid rgb(35 38 43 / 0.25); }
+  .caj-l { font-size: 9.5px; color: #7a7f87; }
+  .caj-c b { font-size: 12.5px; font-weight: 650; white-space: nowrap; }
+  .caj-d { font-size: 11px; color: #5c616a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .caj-main { flex: 1; min-width: 0; }
+  .caj-n .of { font-weight: 400; color: #7a7f87; }
+
+  /* Entradas: el tablero se arma muestra por muestra */
+  :global(html.js) .dn-rv { opacity: 0; transform: translateY(18px); transition: opacity 0.9s var(--ease-out-expo), transform 1s var(--ease-out-expo); }
+  :global(html.js) .dn.is-in .dn-rv { opacity: 1; transform: none; }
+  :global(html.js) .dn.is-in .dn-fig { transition-delay: 0.1s; }
+  :global(html.js) .board li { opacity: 0; transform: translateY(-14px) rotate(-6deg); }
+  :global(html.js) .dn.is-in .board li { opacity: 1; transform: none; transition: opacity 0.5s calc(0.3s + var(--i) * 0.09s), transform 0.7s cubic-bezier(0.3, 1.4, 0.5, 1) calc(0.3s + var(--i) * 0.09s); }
+  :global(html.rm) .dn :is(.dn-rv, .board li) { opacity: 1 !important; transform: none !important; }
+  :global(html.rm) .dn * { transition: none !important; }
+
+  /* celular: las muestras quedan puestas sobre el borde de la imagen; sin cajetín (la ficha de abajo ya dice qué es) */
+  @media (max-width: 639px) {
+    .cajetin { display: none; }
+    .stage { aspect-ratio: 1.6; }
+    .board { position: relative; z-index: 2; margin-top: -46px; padding: 0 8px; gap: 10px; }
+    .chip-l { font-size: 11px; }
+    .nw-t { font-size: 1.1rem; }
+    /* la ficha no pasa por debajo del botón flotante de WhatsApp (abajo a la derecha) */
+    .now { padding: 0 54px; }
+  }
+  /* celulares angostos: bajo cada muestra solo el número (el nombre está en la ficha) */
+  @media (max-width: 379px) {
+    .chip-m { display: none; }
+    .chip-l { font-size: 12px; }
+  }
+  @media (max-width: 639px) and (max-height: 760px) {
+    .dn-sub { display: none; }
+  }
+  /* celulares chicos (SE): imagen más baja y ficha más corta */
+  @media (max-width: 639px) and (max-height: 600px) {
+    .dn-body { gap: 9px; }
+    .stage { aspect-ratio: 1.9; }
+    .board { margin-top: -36px; padding: 0 16px; }
+    .nw-d { font-size: 0.84rem; line-height: 1.38; }
+    .now { padding: 0 44px; }
+  }
+  @media (min-width: 640px) {
+    .dn { --pad: 28px; }
+    .stage { margin: 0; --cut: 22px; }
+    .board { width: 100%; max-width: 480px; justify-self: center; gap: 14px; }
+    .chip-l { font-size: 13.5px; }
+  }
+  /* tableta vertical: la imagen un poco más baja para que el tablero y la ficha quepan */
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .stage { aspect-ratio: 1.72; }
+  }
+
+  /* ---------- Escritorio: título, tablero y ficha a la izquierda; de dónde sale, a la derecha ---------- */
+  @media (min-width: 1024px) {
+    .dn { --pad: max(40px, calc((100% - 1200px) / 2)); --hdr: 84px; padding: calc(var(--hdr) + clamp(14px, 3svh, 36px)) var(--pad) clamp(24px, 4svh, 48px); }
+    .dn-body { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); grid-template-areas: 'head fig' 'board fig' 'now fig'; grid-template-rows: auto auto 1fr; gap: 26px 52px; align-items: start; }
+    .dn-head { justify-items: start; text-align: left; align-self: end; }
+    .board { justify-self: stretch; max-width: none; gap: 14px; padding-top: 8px; }
+    .now { text-align: left; }
+    .nw-t { font-size: 1.45rem; }
+    .nw-d { margin: 4px 0 0; font-size: 1rem; }
+    .dn-fig { align-self: center; }
+    .stage { width: min(100%, calc((100svh - var(--hdr) - 230px) * 1.566)); justify-self: center; }
+    .cajetin { width: auto; justify-self: center; }
+    .caj-d { max-width: 280px; }
+  }
+  @media (min-width: 1024px) and (max-height: 760px) {
+    .dn-body { gap: 18px 52px; }
+    .nw-d { font-size: 0.94rem; }
+  }
+</style>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-dn]');
+  if (sec) {
+    const picks = [...sec.querySelectorAll<HTMLButtonElement>('[data-pick]')];
+    const ogs = [...sec.querySelectorAll<HTMLElement>('[data-og]')];
+    const nws = [...sec.querySelectorAll<HTMLElement>('[data-nw]')];
+    const esp = sec.querySelector<HTMLElement>('[data-esp]')!;
+    const det = sec.querySelector<HTMLElement>('[data-det]')!;
+    const num = sec.querySelector<HTMLElement>('[data-num]')!;
+    const caps = JSON.parse(sec.dataset.caps || '[]') as [string, string][];
+    const reduced = document.documentElement.classList.contains('rm');
+    const N = ogs.length;
+    let cur = 0;
+    let auto = !reduced;
+    let inView = false;
+    let timer = 0;
+
+    const show = (i: number) => {
+      cur = (i + N) % N;
+      ogs.forEach((o, j) => o.classList.toggle('is-on', j === cur));
+      nws.forEach((o, j) => { o.classList.toggle('is-on', j === cur); o.setAttribute('aria-hidden', String(j !== cur)); });
+      picks.forEach((p, j) => { p.classList.toggle('is-on', j === cur); p.setAttribute('aria-pressed', String(j === cur)); });
+      if (caps[cur]) { esp.textContent = caps[cur][0]; det.textContent = caps[cur][1]; }
+      num.textContent = String(cur + 1).padStart(2, '0');
+    };
+    // mientras nadie toca, el tablero se recorre solo; al elegir una muestra, se queda en ella
+    const loop = () => {
+      clearTimeout(timer);
+      if (!auto || !inView) return;
+      timer = window.setTimeout(() => { show(cur + 1); loop(); }, 5200);
+    };
+    const take = (i: number) => { auto = false; clearTimeout(timer); show(i); };
+    picks.forEach((p, i) => p.addEventListener('click', () => take(i)));
+
+    // deslizar la imagen en celular
+    const stage = sec.querySelector<HTMLElement>('.stage')!;
+    let x0 = 0, y0 = 0;
+    stage.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+    stage.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.4) take(cur + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+
+    new IntersectionObserver(
+      ([e]) => {
+        inView = e.isIntersecting;
+        if (inView) sec.classList.add('is-in');
+        inView ? loop() : clearTimeout(timer);
+      },
+      { threshold: 0.35 },
+    ).observe(sec);
+  }
+</script>

@@ -6,7 +6,7 @@
  *   en celular (sin puntero fino) un lápiz dibuja solo una fachada tenue, sin interferir con el scroll.
  * - El monograma gigante se traza al fondo con el scroll; "Galezo Studio" se llena de tinta y queda cortado
  *   por el borde inferior, como un sello.
- * - El cajetín es el pie de página: contacto, ubicación, índice y "Lámina 08 / 08".
+ * - El cajetín es el pie de página: contacto, ubicación, índice y "Lámina 08 / 08" (el cierre es la última lámina de cada página: toma su número).
  */
 import Plomada from './Plomada.astro';
 import mono from '../assets/brand/monogram-d.txt?raw';
@@ -60,7 +60,7 @@ const { n = '08' } = Astro.props as { n?: string };
           <p class="cj-soft">Diseñamos internacionalmente</p>
         </div>
         <div class="cj cj-sheet" style="--i:3" aria-hidden="true">
-          <div><p class="cj-l">Lámina</p><p class="cj-big">08<span> / 08</span></p></div>
+          <div><p class="cj-l">Lámina</p><p class="cj-big">{n}<span> / {n}</span></p></div>
           <div><p class="cj-l">Escala</p><p>1 : 1</p></div>
           <div><p class="cj-l">Fecha</p><p>{year}</p></div>
         </div>

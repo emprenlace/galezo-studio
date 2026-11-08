@@ -1,0 +1,48 @@
+---
+/**
+ * Imagen que se pide cuando su sección se acerca a la pantalla (no al abrir la página).
+ * La carga diferida del navegador no basta: en redes lentas Chrome adelanta todo lo que esté a ~2.500 px,
+ * y en páginas de secciones a pantalla completa eso arrastra dos o tres secciones de imágenes de entrada.
+ * Mientras tanto muestra un píxel transparente; sin JS, <noscript> deja la imagen normal.
+ */
+import { getImage } from 'astro:assets';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  widths: number[];
+  sizes: string;
+  class?: string;
+  style?: string;
+  quality?: number;
+  /** se pide un momento después que las demás de su sección (las que no se ven de entrada, p. ej. otras diapositivas) */
+  later?: boolean;
+}
+const { src, alt, widths, sizes, class: cls, style, quality = 76, later = false } = Astro.props;
+const img = await getImage({ src, widths, format: 'webp', quality });
+const PIXEL = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+---
+
+<img src={PIXEL} data-lz={later ? 'later' : ''} data-src={img.src} data-srcset={img.srcSet.attribute} sizes={sizes} alt={alt} width={src.width} height={src.height} decoding="async" class={cls} style={style} /><noscript><img src={img.src} srcset={img.srcSet.attribute} sizes={sizes} alt={alt} width={src.width} height={src.height} class={cls} style={style} /></noscript>
+
+<script>
+  // Una sola vez por página: cada sección con imágenes diferidas las pide cuando está a menos de media pantalla
+  const load = (im: HTMLImageElement) => {
+    im.srcset = im.dataset.srcset!;
+    im.src = im.dataset.src!;
+    im.removeAttribute('data-lz');
+  };
+  const fill = (root: Element) => {
+    root.querySelectorAll<HTMLImageElement>('img[data-lz=""]').forEach(load);
+    // las que no se ven de entrada, después y de a una
+    const rest = [...root.querySelectorAll<HTMLImageElement>('img[data-lz="later"]')];
+    rest.forEach((im, i) => setTimeout(() => load(im), 1200 + i * 300));
+  };
+  const roots = new Set<Element>();
+  document.querySelectorAll('img[data-lz]').forEach((im) => roots.add(im.closest('section') || document.body));
+  const io = new IntersectionObserver(
+    (es) => es.forEach((e) => { if (e.isIntersecting) { fill(e.target); io.unobserve(e.target); } }),
+    { rootMargin: '60% 0px' },
+  );
+  roots.forEach((r) => io.observe(r));
+</script>

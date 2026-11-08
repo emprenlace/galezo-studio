@@ -1,0 +1,42 @@
+---
+/**
+ * Servicio · Remodelación (incluye diseño de interiores). Landing de pauta para quien ya tiene el espacio y quiere
+ * que crezca, cambie o se renueve por dentro. Todo con renders reales de Ulises; se arma sección por sección:
+ * Hero (¿es lo que busco?) · 01 Por dentro: muestrario (¿qué diseñan?) · 02 Antes y después (¿lo han hecho?)
+ * · 03 Locales y espacios públicos (¿también para mi negocio?) · 04 Quién diseña (¿con quién hablo?) · Cierre (cotizar).
+ * Mientras no esté lista (ready en lib/servicios.ts) sigue en noindex.
+ */
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import HeroRemodelacion from '../../components/remodelacion/HeroRemodelacion.astro';
+import Dentro from '../../components/remodelacion/Dentro.astro';
+import AntesDespues from '../../components/remodelacion/AntesDespues.astro';
+import Publicos from '../../components/remodelacion/Publicos.astro';
+import Estudio from '../../components/Estudio.astro';
+import Cierre from '../../components/Cierre.astro';
+import { servicios } from '../../lib/servicios';
+import { breadcrumb, servicio } from '../../lib/seo';
+
+const s = servicios.find((x) => x.id === 'remodelacion')!;
+const path = `/servicios/${s.slug}`;
+const description = 'Remodelación y diseño de interiores en Colombia y el exterior: distribución, acabados, mobiliario, carpintería y cielo raso, con renders antes de construir.';
+---
+
+<Base
+  title="Remodelación y diseño de interiores · Galezo Studio"
+  description={description}
+  noindex={!s.ready}
+  pageType="service"
+  serviceId={s.id}
+  schema={[servicio('Remodelación y diseño de interiores', description, path, 'Remodelación y diseño de interiores'), breadcrumb([['Inicio', '/'], ['Servicios', '/#servicios'], [s.title, path]])]}
+>
+  <Header />
+  <main>
+    <HeroRemodelacion />
+    <Dentro n="01" />
+    <AntesDespues n="02" />
+    <Publicos n="03" />
+    <Estudio n="04" cta={false} />
+    <Cierre n="05" />
+  </main>
+</Base>

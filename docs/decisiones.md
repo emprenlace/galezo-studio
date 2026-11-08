@@ -379,3 +379,57 @@ Por hacer cuando respondan: proceso en 9 etapas (inicio), fachada frontal en viv
 ## Fachadas de frente en "Lo que recibes" y el proceso (2026-11-04, pedido de Ulises)
 - La fachada norte (lateral, sobre la ladera) se reemplaza por las dos fachadas de frente de la lámina P4 de la casa de Javier Baquero: Este (cinco niveles) y Oeste (la de la calle, con garajes), lado a lado a la misma escala 1:50, apoyadas en su terreno, sobre el cielo de plano de las demás láminas, sin cajetín ni nombre del cliente. El tercer dibujo de la P4 es un corte (Sección BB'), no se usa.
 - Archivo: src/assets/planos/fachada.jpg (3014 × 1570). Lo usan la pestaña Planos de "Lo que recibes" (nota "fachadas este y oeste") y la etapa de fachada del proceso.
+
+## Proyectos: render → obra (2026-11-08, material de PROYECTOS 2)
+- La línea de "Lo que diseñamos se construye" ahora compara la obra real (izquierda) con el render de Ulises (derecha) donde el render y la foto se tomaron desde el mismo frente: Pórtico Los Corales (render de noche → foto de noche), Multicampus Universitario Codazzi y Coliseo de Tenis de Mesa (render → estructura metálica en obra). Cada render se alineó en perspectiva sobre su foto (homografía con 6–10 puntos de la fachada) y los dos se recortan igual: src/assets/obras/ln/{corales,multicampus,coliseo-obra}.jpg + *-render.jpg.
+- Instpecam, Ecce Homo, CASD, Alfonso López y José Eugenio siguen con el dibujo a lápiz sacado de su foto: sus renders están tomados desde otro ángulo y no calzan con la línea. La etiqueta de la derecha dice "render" o "dibujo" según el proyecto.
+- Ocho proyectos (antes seis): seis construidos y dos en obra. Subtítulo: "Ocho proyectos que diseñamos: seis ya construidos y dos en obra." (ya no dice "obra pública en el Cesar": Los Corales es un conjunto privado).
+- Los Corales y Multicampus no están en el portafolio: se muestran sin año ni m², y la ciudad solo donde se sabe (Multicampus → Agustín Codazzi). PENDIENTE (Ulises): ciudad, año, m² y cliente de los dos.
+- El Coliseo deja de mostrarse como render a la izquierda: ahora la izquierda es la foto real de la estructura.
+
+## Remodelación: página propia, héroe (2026-11-08)
+- /servicios/remodelacion deja la plantilla "en construcción" y pasa a página propia (own: true; sigue noindex hasta ready). Por ahora: héroe + cierre; las demás secciones se arman una por una.
+- H1 "Remodelación y diseño de interiores" (lleva las dos búsquedas). Bajada con las palabras de Ulises: distribución, acabados, mobiliario, carpintería y cielo raso. Botón data-cta="remodelacion-hero" data-service="remodelacion".
+- Pieza visual: render real de la sala con cocina abierta de la casa unifamiliar en Valledupar (SALA_3). Entra como dibujo a lápiz sacado del mismo render (XDoG, src/assets/remodelacion/sala-lapiz.jpg), una línea de obra lo vuelve color y aparecen cinco notas que señalan en la imagen lo que dice el servicio: cielo raso (luz perimetral), distribución (sala abierta a la cocina), carpintería (listones de madera), acabados (muro en piedra) y mobiliario (sala en L). En celular la nota dice solo qué es.
+- La tarjeta toma la proporción del render (sin recorte) para que las notas caigan siempre en su sitio.
+- Copy: estos interiores son de una casa nueva; no se presentan como remodelación. Antes/después real: solo Pórtico Los Corales (para una sección siguiente).
+
+## Remodelación · 01 "Lo que diseñamos por dentro" (2026-11-08)
+- El héroe señala las cinco cosas en una sala; esta sección le da a cada una su propia imagen de la misma casa (unifamiliar en Valledupar): Distribución → planta del primer nivel (la que ya usa la web; sala, comedor y cocina en un solo espacio, como en los renders), Acabados → baño principal, Mobiliario → habitación principal, Carpintería → cocina con isla, Cielo raso → sala de TV con luz indirecta.
+- Pasan solas cada 6 s con barra de avance; la cámara se acerca despacio al punto de lo que se nombra (transform-origin por imagen). Al tocar una pestaña (o deslizar la imagen en celular) se detiene en esa.
+- Escritorio: título y lista a la izquierda (la descripción se abre en la activa), imagen a la derecha con su cajetín (espacio, detalle, 0X / 05); la imagen toma su tamaño del alto disponible.
+- Celular: pestañas numeradas arriba de la imagen (abajo quedaban bajo el botón de WhatsApp), el nombre y la descripción sobre la imagen con degradado; en la planta el degradado es de papel y el texto de tinta.
+- Sin botón de cotizar (el héroe y el cierre lo tienen, como en las otras páginas de servicio). Las pestañas son controles, no CTA: no llevan evento.
+
+## Cotizador: indicativo de todos los países (2026-11-08)
+- Motivo: una persona en España quiso cotizar y el formulario le rechazó el número (traía "+57" fijo y solo validaba celulares colombianos; la salida de escribir el número con + no se veía).
+- El "+57" pasa a ser un selector con los 247 indicativos de la UIT (src/lib/paises.ts), nombres en español del navegador, y arriba los que más cotizan: Colombia, España, Estados Unidos, México, Panamá. Se ve como "+34 ⌄"; encima va el select nativo (rueda del sistema en celular, búsqueda escribiendo en computador).
+- País preseleccionado sin pedir ubicación: 1) zona horaria del visitante (Europe/Madrid → España; America/Bogota → Colombia aunque el teléfono esté en inglés), 2) si la zona no está en la tabla y no es de América, la región del idioma del teléfono (ja-JP → Japón), 3) Colombia.
+- Validación por país (lib/lead.ts → normalizePhone(numero, indicativo)): Colombia igual que antes; largo exacto en los mercados principales (España 9, EE. UU. 10, México 10, Panamá 8…); se quita el 0 que se marca dentro del país (salvo Italia), el indicativo si lo escribieron sin +, y en Argentina se agrega el 9 de WhatsApp. Con + adelante se acepta cualquier país. A la base llega en E.164 (+34612345678). Pruebas nuevas en tests/lead.test.ts.
+- Ejemplo y error cambian con el país: "Tu número sin el +34" / "Revisa el número. Escríbelo sin el +34."; en Colombia el error sugiere cambiar el +57 si el número es de otro país.
+- Ojo para pruebas: en local PUBLIC_LEADS_URL apunta a la hoja real. Las pruebas automáticas deben bloquear script.google.com.
+
+## Remodelación · 01 rehecha como muestrario (2026-11-08, pedido del usuario)
+- Se descartan el acercamiento de cámara (trillado), las pestañas con barra de avance (eran las de Proyectos) y la planta del primer nivel (está en toda la web).
+- Nuevo recurso, propio de esta página: un muestrario de acabados. Cinco muestras cuadradas con el corte a 45° de la marca, la perforación del muestrario y sombra de papel, puestas a mano (cada una con su inclinación). Cada muestra está recortada de una imagen real: planta del nivel -2 (lámina 2 del PDF, sin uso en la web; recorte de la escalera), mármol del baño principal, cama de la habitación principal, madera de la escalera del nivel -2 (render nuevo) y luz indirecta de la sala de TV.
+- Al elegir una muestra: se endereza y se levanta; a la derecha (arriba en celular) aparece la imagen completa con el hueco de donde salió, en línea punteada con su número, y el resto se apaga con papel. Ficha con la decisión (Distribución, Acabados, Mobiliario, Carpintería, Cielo raso) y cajetín (espacio, detalle, muestra 0X/05). Pasa sola cada 5,2 s hasta que la persona elige.
+- Celular: las muestras quedan puestas sobre el borde inferior de la imagen; sin cajetín; la bajada solo en pantallas altas; en celulares angostos solo el número bajo cada muestra; la ficha deja libre el lado del botón de WhatsApp. Los recortes van en la mitad alta de cada imagen para que las muestras no tapen el hueco.
+- Archivos: src/assets/remodelacion/{planta-nivel-2,escalera}.jpg y muestra-*.jpg. Se borró cocina.jpg (ya no se usa).
+
+## Remodelación · 02 "Así estaba, así quedó" (2026-11-08)
+- La única remodelación con fotos reales de antes y después: Pórtico Los Corales (antes = foto con los dos arcos; el diseño = render de día; después = foto de noche de la obra terminada). Archivos: src/assets/remodelacion/corales-{antes,diseno,despues}.jpg.
+- Recurso propio (Los Corales ya sale en Proyectos con la línea render → obra): una pila de tres fotos impresas con borde blanco y su rótulo a mano. La de arriba sale volando hacia un lado y vuelve al fondo; pasan solas cada 4,2 s, se tocan o se arrastran con el dedo (si se sueltan lejos, salen volando hacia ese lado). Línea de tiempo de tres puntos (Antes · El diseño · Después) que también lleva a cada foto, y la frase de cada momento.
+- Fondo hueso (la 01 es blanca). Textos solo con lo que se ve en las fotos; la ciudad del conjunto sigue sin confirmar (no se dice).
+
+## Remodelación · página completa (2026-11-08)
+- Estructura final: Héroe (lápiz → render con notas) · 01 Por dentro (muestrario) · 02 Antes y después (pila de fotos de Los Corales) · 03 Locales y espacios públicos (mosaico) · 04 Quién diseña (Estudio, sin botón) · 05 Cierre. Sigue noindex hasta que se marque ready en lib/servicios.ts.
+- 03: interiores del CCMV (dos baños y dos vistas del Hall de la Fama) y la sala del Museo de Juglares, todos con el rótulo "Diseñado" (no está confirmado que se hayan construido). Escritorio: mosaico de una grande y cuatro chicas; celular: fila que se desliza con la siguiente asomando y contador 1 / 5. No se usa el bar del complejo de pádel (sale la marca de una cerveza).
+- Sin preguntas frecuentes propias: PENDIENTE de Ulises (cuánto tarda, si hace la obra, si se puede con la casa habitada).
+- Cierre: la lámina del cajetín ya no dice "08 / 08" fijo en todas las páginas; toma el número del cierre de cada una.
+
+## Revisión antes de subir: rendimiento y carga (2026-11-08)
+- Héroe del inicio: se descargaban las dos láminas (ancha y alta) y CSS escondía una (~450 KB de más en celular). Ahora cada capa va en <picture> con una fuente de un píxel para la pantalla donde no se ve (mismas condiciones del CSS); al girar la tableta el navegador trae la otra. Las dos láminas llevan fetchpriority alto (solo se pide la visible).
+- LazyImg.astro: imagen que se pide cuando su sección está a menos de media pantalla (la carga diferida nativa adelanta ~2.500 px en redes lentas y arrastraba dos o tres secciones). `later` deja para después (1,2 s y de a una) las que no se ven de entrada (otras diapositivas). Sin JS, <noscript>. Se usa en las secciones 01–03 de remodelación.
+- Héroe de remodelación: la prioridad de descarga pasa al dibujo a lápiz (es lo primero que se ve); tamaños pedidos en celular según el ancho real de la tarjeta.
+- Medido en celular (4G lento, CPU ×4): inicio 1.315 → 869 KB; remodelación 1.141 → 598 KB; CLS 0 en las páginas de servicio. JS por página 12–19 KB.
+- Revisado además: un H1 por página, lang es-CO, datos estructurados válidos, todas las CTA y enlaces de contacto con data-cta, dataLayer sin datos personales (prueba de punta a punta con número de España), sin errores de consola en Safari y Chrome, contenido visible con "reducir movimiento" y sin JS. Descripción de remodelación acortada a 156 caracteres.

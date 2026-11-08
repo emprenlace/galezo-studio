@@ -2,7 +2,7 @@
 
 ## Recorrido del cliente (formulario, no chat)
 1. Cualquier botón "Cotiza tu diseño" (o el WhatsApp del pie) abre el **cotizador** (`Cotizador.astro`): una pregunta por pantalla, tarjetas de un toque y la maqueta del servicio que se arma con cada respuesta. El botón dice de dónde viene (`data-cta`) y, si lo sabe, el servicio (`data-service`).
-2. Pasos: servicio (si no lo trae el botón) → etapa → tamaño → ubicación → cuándo empezar → **contacto**: nombre, WhatsApp (+57, validado) y correo (obligatorios), detalle opcional y autorización de datos.
+2. Pasos: servicio (si no lo trae el botón) → etapa → tamaño → ubicación → cuándo empezar → **contacto**: nombre, WhatsApp (indicativo de cualquier país, preseleccionado por la zona horaria; validado por país y guardado en E.164) y correo (obligatorios), detalle opcional y autorización de datos.
 3. Al enviar: **se guarda en la base de datos (Google Sheets) siempre**, encaje o no; si encaja se marca `generate_lead` (conversión); si no, `lead_unqualified` (sin conversión). En ambos casos **se abre WhatsApp** con el mensaje escrito y la referencia. WhatsApp no permite que la web lo envíe sola: el cliente toca Enviar.
 4. Si deja nombre y WhatsApp válidos y cierra sin enviar → se guarda como **lead parcial** (`lead_partial`).
 5. Fase 2 (opcional): API de WhatsApp Business para que el estudio le escriba automáticamente al cliente.
@@ -37,7 +37,7 @@ Google Sheets mediante Apps Script: `docs/leads-apps-script.gs` + guía `docs/le
 | `contact_email` | Toca un correo (/contacto, política) | link_type, cta_id (contacto, privacidad) | No |
 | `contact_instagram` | Toca un Instagram (/contacto, pie) | link_type, cta_id (contacto, cierre) | No |
 
-Valores de `cta_id` (chat): hero, header, menu, entregable, servicios, obras, proceso, bim, estudio, preguntas, cierre, clientes, vivienda-hero, comercial-hero, ejecutivo-hero, servicio, contacto, arquitecto, blog, 404, 404_inicio, url.
+Valores de `cta_id` (chat): hero, header, menu, entregable, servicios, obras, proceso, bim, estudio, preguntas, cierre, clientes, vivienda-hero, comercial-hero, ejecutivo-hero, remodelacion-hero, servicio, contacto, arquitecto, blog, 404, 404_inicio, url.
 Valores de `cta_id` (contacto directo, en `contact_*`): flotante, contacto, cierre, privacidad. Un evento por canal; el botón se lee en `cta_id` (no se crea un evento por botón).
 
 Regla: todo botón o enlace nuevo lleva `data-cta` (y `data-service` si aplica). Si abre el chat, `data-open-chat`; si es contacto directo, `data-contact="whatsapp|email|instagram"`. Base.astro registra `contact_<canal>` para todo el sitio; no se agregan registros sueltos por página.

@@ -1,0 +1,258 @@
+---
+/**
+ * Remodelación · Hero. Misma forma que los héroes de vivienda y comercial: la lámina de papel que cubre también la
+ * cabecera, el H1 con la búsqueda, un solo botón, una línea de respaldo y el cajetín.
+ * La pieza visual es un render real de Ulises (sala de la casa unifamiliar en Valledupar). Entra como dibujo a lápiz
+ * sacado del mismo render; una línea de obra lo recorre y deja el render a color. Después aparecen notas a mano que
+ * señalan, en la imagen, lo que dice el servicio: cielo raso, acabados, distribución, mobiliario y carpintería.
+ * Las coordenadas de las notas están en % de la imagen (la tarjeta toma la proporción del render, sin recorte).
+ */
+import { Image } from 'astro:assets';
+import Cifra from '../Cifra.astro';
+import render from '../../assets/remodelacion/sala-render.jpg';
+import lapiz from '../../assets/remodelacion/sala-lapiz.jpg';
+
+// t: lo que se señala en la imagen · l: dónde va la nota · a: punto de la nota donde llega la línea · al: alineación de la nota
+const notas = [
+  { k: 'Cielo raso', d: 'con luz perimetral', t: [25, 13], l: [31, 4.5], a: [30.4, 8.5], al: 'l' },
+  { k: 'Distribución', d: 'sala abierta a la cocina', t: [41, 47], l: [46, 27], a: [44, 32.5], al: 'c' },
+  { k: 'Carpintería', d: 'listones de madera', t: [77.5, 44], l: [80, 23], a: [80, 28.5], al: 'c' },
+  { k: 'Acabados', d: 'muro en piedra', t: [11.5, 50], l: [3.5, 80], a: [8, 79], al: 'l' },
+  { k: 'Mobiliario', d: 'sala en L', t: [27, 69], l: [37, 85], a: [34, 85], al: 'c' },
+];
+const ar = render.width / render.height;
+---
+
+<section class="vh" data-nav-label="Remodelación" aria-labelledby="vh-title" data-vh>
+  <div class="vh-paper" aria-hidden="true"></div>
+  <div class="vh-in">
+    <div class="vh-copy">
+      <nav class="vh-crumbs" aria-label="Ruta">
+        <a href="/">Inicio</a><span aria-hidden="true">/</span><a href="/#servicios">Servicios</a><span aria-hidden="true">/</span><span aria-current="page">Remodelación</span>
+      </nav>
+      <h1 id="vh-title" class="vh-h1">
+        <span class="ln"><span class="ln-in">Remodelación y</span></span>{' '}
+        <span class="ln"><span class="ln-in accent">diseño de interiores<svg class="underline" viewBox="0 0 400 24" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M4 15 C 70 9, 150 8, 230 10 S 360 14, 396 9"></path><path pathLength="1" class="u2" d="M40 19 C 120 15, 230 15, 330 17"></path></svg></span></span>
+      </h1>
+      <p class="vh-sub">Rediseñamos, ampliamos y mejoramos los espacios de tu casa, local o edificio: distribución, acabados, mobiliario, carpintería y cielo raso.</p>
+      <div class="vh-act">
+        <a href="#cotizar" class="btn chamfer" data-open-chat data-cta="remodelacion-hero" data-service="remodelacion">
+          Cotiza tu diseño
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"></path></svg>
+        </a>
+      </div>
+      <p class="vh-proof"><Cifra v={60} /> proyectos diseñados<span class="pr-more"><span aria-hidden="true">·</span>casas, locales y obra pública</span></p>
+    </div>
+
+    <!-- El render: entra a lápiz, la línea lo vuelve color y las notas señalan lo que diseñamos -->
+    <figure class="vh-model" aria-label="Render de una sala diseñada por Galezo Studio, con notas de lo que se diseñó">
+      <div class="vh-stage">
+        <div class="card chamfer" style={`--ar:${ar.toFixed(4)}`}>
+          <div class="dw">
+            <Image src={lapiz} alt="" widths={[640, 960, 1400]} sizes="(min-width: 1024px) 680px, 86vw" loading="eager" fetchpriority="high" class="dw-img" />
+            <div class="dw-cut" aria-hidden="true">
+              <div class="dw-cut-in">
+                <Image src={render} alt="Sala con cocina abierta: cielo raso con luz perimetral, muro en piedra, sala en L y listones de madera" widths={[640, 960, 1400, 1900]} sizes="(min-width: 1024px) 680px, 86vw" loading="eager" class="dw-img" />
+              </div>
+            </div>
+            <span class="dw-line" aria-hidden="true"></span>
+
+            <svg class="nt-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              {notas.map((n, i) => <path pathLength="1" style={`--i:${i}`} d={`M${n.t[0]} ${n.t[1]} L${n.a[0]} ${n.a[1]}`} />)}
+            </svg>
+            <ul class="notas" aria-label="Lo que diseñamos en esta sala">
+              {
+                notas.map((n, i) => (
+                  <li class={`nt nt-${n.al}`} style={`--i:${i};--tx:${n.t[0]}%;--ty:${n.t[1]}%;--lx:${n.l[0]}%;--ly:${n.l[1]}%`}>
+                    <span class="nt-dot" aria-hidden="true" />
+                    <span class="nt-tx"><b>{n.k}</b><span>{n.d}</span></span>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+    </figure>
+
+    <!-- Pie: el cajetín de la lámina -->
+    <div class="vh-foot">
+      <figcaption class="cajetin">
+        <span class="caj-c caj-main"><span class="caj-l">Contenido</span><b>Sala y cocina abierta</b><span class="caj-d">Casa unifamiliar · Valledupar</span></span>
+        <span class="caj-c caj-n"><span class="caj-l">Detalles</span><b>05</b></span>
+        <span class="caj-c caj-n"><span class="caj-l">Lámina</span><b>Render</b></span>
+      </figcaption>
+    </div>
+  </div>
+</section>
+
+<style>
+  .vh {
+    --hd: 76px;
+    --pad: 20px;
+    --g: 8px;
+    position: relative;
+    isolation: isolate;
+    height: 100svh;
+    min-height: 560px;
+    display: flex;
+    padding: calc(var(--hd) + 18px) calc(var(--pad) + var(--g)) calc(var(--g) + 10px);
+    background: #fff;
+    overflow: hidden;
+  }
+  /* La lámina: papel hueso con margen blanco, cortes a 45° y el azul de la marca muy tenue arriba a la izquierda */
+  .vh-paper {
+    position: absolute;
+    inset: var(--g);
+    z-index: -1;
+    background:
+      radial-gradient(60% 55% at 0% 0%, rgb(54 114 124 / 0.11), rgb(54 114 124 / 0.04) 50%, rgb(54 114 124 / 0) 78%),
+      radial-gradient(45% 38% at 50% 32%, rgb(255 255 255 / 0.75), rgb(255 255 255 / 0) 100%),
+      var(--color-bone);
+    clip-path: polygon(26px 0, 100% 0, 100% calc(100% - 26px), calc(100% - 26px) 100%, 0 100%, 0 26px);
+  }
+  .vh-in { flex: 1; min-height: 0; width: 100%; max-width: 1200px; margin: 0 auto; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 8px; }
+  .vh-copy { display: grid; justify-items: center; text-align: center; gap: clamp(8px, 1.5svh, 14px); }
+  .vh-crumbs { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; font-size: 12.5px; color: var(--color-ink-mute); }
+  .vh-crumbs a { color: var(--color-ink-mute); transition: color 0.3s; }
+  .vh-crumbs a:hover { color: var(--color-brand-ink); }
+  .vh-crumbs [aria-current] { color: var(--color-ink-soft); font-weight: 600; }
+  .vh-h1 { font-size: clamp(1.9rem, min(1.4rem + 3.4vw, 6.2svh), 4.1rem); line-height: 1.02; font-weight: 560; letter-spacing: -0.04em; text-wrap: balance; }
+  .vh-h1 .ln { display: block; overflow: hidden; padding: 0.04em 0.06em 0.3em; margin-bottom: -0.26em; }
+  .vh-h1 .ln-in { display: inline-block; }
+  .vh-h1 .accent { position: relative; font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.015em; color: var(--color-brand); font-size: 1.08em; }
+  /* subrayado a mano, como en el inicio */
+  .underline { position: absolute; left: -2%; width: 104%; bottom: -0.2em; height: 0.28em; overflow: visible; pointer-events: none; }
+  .underline path { fill: none; stroke: var(--color-brand); stroke-width: 3.2; stroke-linecap: round; vector-effect: non-scaling-stroke; opacity: 0.85; stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .underline .u2 { stroke-width: 2; opacity: 0.5; }
+  .vh.is-in .underline path { stroke-dashoffset: 0; transition: stroke-dashoffset 0.9s 0.7s cubic-bezier(0.5, 0, 0.2, 1); }
+  .vh.is-in .underline .u2 { transition-delay: 0.95s; }
+  .vh-sub { max-width: 34rem; font-size: clamp(0.92rem, 0.85rem + 0.3vw, 1.05rem); line-height: 1.5; color: var(--color-ink-soft); text-wrap: balance; }
+  .vh-act { position: relative; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px 22px; margin-top: 2px; }
+  .btn { --cut: 9px; display: inline-flex; align-items: center; gap: 8px; height: 50px; padding: 0 24px; font-size: 15px; font-weight: 560; background: var(--color-brand-ink); color: #fff; transition: background-color 0.3s; }
+  .btn:hover { background: var(--color-ink); }
+  .btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.45s var(--ease-out-expo); }
+  .btn:hover svg { transform: translateX(3px); }
+  /* respaldo: una sola línea discreta bajo el botón */
+  .vh-proof { font-size: 13px; color: var(--color-ink-mute); }
+  .vh-proof :global(.cf) { font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: 1.35em; color: var(--color-brand); margin: 0 0.5em 0 0.3em; }
+  .vh-proof .pr-more span { margin: 0 6px; }
+  @media (max-width: 639px) { .vh-proof .pr-more { display: none; } }
+
+  /* ---------- El render en su tarjeta (toma la proporción de la imagen: las notas caen siempre en su sitio) ---------- */
+  .vh-model { position: relative; min-height: 0; margin: 0; display: grid; }
+  .vh-stage { position: relative; min-height: 0; container-type: size; display: grid; place-items: center; }
+  .card { --cut: 18px; position: relative; width: min(100cqw, 100cqh * var(--ar)); aspect-ratio: var(--ar); overflow: hidden; background: var(--color-bone); box-shadow: 0 30px 50px -36px rgb(20 45 50 / 0.6); }
+  .dw { position: absolute; inset: 0; container-type: inline-size; }
+  .dw :global(.dw-img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; -webkit-user-drag: none; }
+  /* el render vive a la izquierda de la línea: el marco se corre y su contenido al revés (solo transform) */
+  .dw-cut, .dw-cut-in { position: absolute; inset: 0; overflow: hidden; }
+  :global(html.js) .dw-cut { transform: translateX(-100%); }
+  :global(html.js) .dw-cut-in { transform: translateX(100%); }
+  :global(html.js) .vh.is-in :is(.dw-cut, .dw-cut-in) { transform: none; transition: transform 1.7s 0.9s cubic-bezier(0.55, 0, 0.25, 1); }
+  /* la línea de obra: blanca con luz azul, recorre la tarjeta y se apaga al final */
+  .dw-line { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 0 1px rgb(54 114 124 / 0.85), 0 0 18px 3px rgb(54 114 124 / 0.5); opacity: 0; pointer-events: none; }
+  :global(html.js) .vh.is-in .dw-line { animation: dw-sweep 1.7s 0.9s cubic-bezier(0.55, 0, 0.25, 1) both; }
+  @keyframes dw-sweep {
+    0% { opacity: 0; transform: translateX(0); }
+    6% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; transform: translateX(100cqw); }
+  }
+
+  /* ---------- Notas a mano ---------- */
+  .nt-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  /* sin vector-effect: con pathLength, Chrome y Safari lo dibujan punteado. El trazo escala con la tarjeta (es fino igual) */
+  .nt-lines path { fill: none; stroke: var(--color-brand-ink); stroke-width: 0.24; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+  .notas { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; pointer-events: none; }
+  .nt { position: absolute; inset: 0; }
+  /* el punto: sobre lo que se señala */
+  .nt-dot { position: absolute; left: var(--tx); top: var(--ty); width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: var(--color-brand); box-shadow: 0 0 0 2px #fff, 0 0 0 5px rgb(54 114 124 / 0.25); }
+  /* la nota: qué es (sans) + cómo es (a mano), con un halo de papel para leerse sobre el render */
+  .nt-tx { position: absolute; left: var(--lx); top: var(--ly); display: grid; gap: 0; line-height: 1.1; white-space: nowrap; text-shadow: 0 0 6px rgb(255 253 249 / 0.95), 0 0 2px rgb(255 253 249 / 0.95); }
+  .nt-c .nt-tx { translate: -50% 0; justify-items: center; text-align: center; }
+  .nt-tx b { font-size: clamp(10px, 1.7cqw, 12.5px); font-weight: 650; letter-spacing: -0.01em; color: var(--color-brand-ink); }
+  .nt-tx span { font-family: 'Architects Daughter', var(--font-sans); font-size: clamp(11px, 2.25cqw, 16.5px); color: #23262b; }
+
+  :global(html.js) .nt-dot { opacity: 0; transform: scale(0.3); }
+  :global(html.js) .nt-tx { opacity: 0; transform: translateY(5px); }
+  :global(html.js) .nt-lines path { stroke-dashoffset: 1; }
+  :global(html.js) .vh.is-in .nt-dot { opacity: 1; transform: none; transition: opacity 0.3s calc(2.7s + var(--i) * 0.22s), transform 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) calc(2.7s + var(--i) * 0.22s); }
+  :global(html.js) .vh.is-in .nt-lines path { stroke-dashoffset: 0; transition: stroke-dashoffset 0.45s cubic-bezier(0.5, 0, 0.2, 1) calc(2.85s + var(--i) * 0.22s); }
+  :global(html.js) .vh.is-in .nt-tx { opacity: 1; transform: none; transition: opacity 0.5s calc(3.1s + var(--i) * 0.22s), transform 0.7s var(--ease-out-expo) calc(3.1s + var(--i) * 0.22s); }
+
+  /* ---------- Pie: el cajetín ---------- */
+  .vh-foot { display: flex; align-items: flex-end; justify-content: center; gap: 16px; }
+  .cajetin { display: flex; align-items: stretch; width: 100%; max-width: 440px; border: 1px solid rgb(35 38 43 / 0.4); background: rgb(255 253 249 / 0.94); font-size: 11px; line-height: 1.2; color: #23262b; }
+  .caj-c { display: grid; align-content: center; gap: 2px; padding: 6px 11px 7px; }
+  .caj-c + .caj-c { border-left: 1px solid rgb(35 38 43 / 0.25); }
+  .caj-l { font-size: 9.5px; color: #7a7f87; }
+  .caj-c b { font-size: 12.5px; font-weight: 650; white-space: nowrap; }
+  .caj-d { font-size: 11px; color: #5c616a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .caj-main { flex: 1; min-width: 0; }
+
+  /* celulares bajitos: la ruta sobra (va en los datos estructurados) */
+  @media (max-height: 700px) and (max-width: 639px) {
+    .vh-crumbs { display: none; }
+    .vh-act { gap: 8px 18px; }
+    .btn { height: 46px; }
+  }
+  @media (max-width: 639px) {
+    .caj-n + .caj-n { display: none; }
+    .card { --cut: 14px; }
+    /* en la tarjeta chica la nota dice solo qué es; el detalle a mano no cabe sin taparse */
+    .nt-tx span { display: none; }
+    .nt-tx b { font-size: 11px; }
+    .nt-dot { width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; }
+  }
+  /* celulares chicos (SE): título y texto más compactos para que el render tenga aire */
+  @media (max-width: 639px) and (max-height: 600px) {
+    .vh-h1 { font-size: 1.62rem; }
+    .vh-sub { font-size: 0.84rem; line-height: 1.4; }
+    .vh-proof { display: none; }
+    .vh-copy { gap: 7px; }
+  }
+
+  /* ---------- Entrada ---------- */
+  :global(html.js) .vh .ln-in { transform: translateY(105%); }
+  :global(html.js) .vh.is-in .ln-in { transform: none; transition: transform 1s var(--ease-out-expo); }
+  :global(html.js) .vh.is-in .ln + .ln .ln-in { transition-delay: 0.08s; }
+  :global(html.js) .vh :is(.vh-crumbs, .vh-sub, .vh-act, .vh-proof, .vh-foot) { opacity: 0; transform: translateY(12px); }
+  :global(html.js) .vh.is-in :is(.vh-crumbs, .vh-sub, .vh-act, .vh-proof, .vh-foot) { opacity: 1; transform: none; transition: opacity 0.7s, transform 0.9s var(--ease-out-expo); }
+  :global(html.js) .vh.is-in .vh-sub { transition-delay: 0.15s; }
+  :global(html.js) .vh.is-in .vh-act { transition-delay: 0.25s; }
+  :global(html.js) .vh.is-in .vh-proof { transition-delay: 0.35s; }
+  :global(html.js) .vh.is-in .vh-foot { transition-delay: 0.5s; }
+  :global(html.js) .vh .vh-stage { opacity: 0; transform: translateY(24px) scale(0.97); }
+  :global(html.js) .vh.is-in .vh-stage { opacity: 1; transform: none; transition: opacity 0.9s 0.2s, transform 1.2s 0.2s var(--ease-out-expo); }
+  :global(html.rm) .vh * { transition: none !important; animation: none !important; }
+  :global(html.rm) .vh :is(.ln-in, .vh-crumbs, .vh-sub, .vh-act, .vh-proof, .vh-foot, .vh-stage, .dw-cut, .dw-cut-in, .nt-dot, .nt-tx) { opacity: 1 !important; transform: none !important; }
+  :global(html.rm) .vh :is(.underline path, .nt-lines path) { stroke-dashoffset: 0 !important; }
+  :global(html.rm) .vh .dw-line { display: none; }
+
+  /* ---------- Tableta ---------- */
+  @media (min-width: 640px) {
+    .vh { --pad: 28px; }
+  }
+  /* ---------- Escritorio: texto a la izquierda, render a la derecha, cajetín abajo ---------- */
+  @media (min-width: 1024px) {
+    .vh { --pad: max(40px, calc((100% - 1200px) / 2)); --hd: 84px; padding-top: calc(var(--hd) + 24px); padding-bottom: calc(var(--g) + 14px); }
+    .vh-in { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); grid-template-rows: minmax(0, 1fr) auto auto minmax(0, 1fr); align-items: center; gap: 0 32px; }
+    .vh-copy { grid-column: 1; grid-row: 1 / -1; justify-items: start; text-align: left; gap: 16px; align-self: center; }
+    .vh-model { grid-column: 2; grid-row: 2; }
+    .vh-stage { width: 100%; aspect-ratio: 1.567; max-height: calc(100svh - var(--hd) - 150px); }
+    .vh-foot { grid-column: 2; grid-row: 3; margin-top: 14px; justify-content: center; }
+    .vh-crumbs { justify-content: flex-start; }
+    .vh-act { justify-content: flex-start; margin-top: 6px; }
+    .card { --cut: 22px; }
+    .cajetin { width: auto; max-width: none; }
+    .caj-d { max-width: 200px; }
+  }
+</style>
+
+<script>
+  // avisa a la red de seguridad de Base que el JS cargó (si no, a los 2,5 s se apagan las animaciones de toda la página)
+  document.documentElement.classList.add('ready');
+  const sec = document.querySelector<HTMLElement>('[data-vh]');
+  if (sec) requestAnimationFrame(() => requestAnimationFrame(() => sec.classList.add('is-in')));
+</script>

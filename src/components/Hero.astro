@@ -56,6 +56,11 @@ function tiempos(grupos: Grupo[], ancho: number) {
   return { trazos, ruta };
 }
 // cada lámina: techo (palmas incluidas) y lo más bajo que no se debe cortar, en px de la lámina
+// Solo se descarga la lámina que se ve: en la pantalla de la otra, su <picture> apunta a un píxel transparente.
+// Las condiciones son las mismas del CSS que muestra una u otra (lámina ancha en horizontal desde 640 px).
+const SI_ANCHA = '(orientation: landscape) and (min-width: 640px)';
+const NO_ANCHA = 'not all and (orientation: landscape) and (min-width: 640px)';
+const PIXEL = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 const laminas = [
   { id: 'ancha', src: laminaAncha, aguada: aguadaAncha, ...ancha, ...tiempos(ancha.grupos, 1680), techo: 1150, base: 1580, widths: [1440, 2160, 2880] },
   { id: 'alta', src: laminaAlta, aguada: aguadaAlta, ...alta, ...tiempos(alta.grupos, 1200), techo: 850, base: 1352, widths: [600, 900, 1200] },
@@ -77,11 +82,11 @@ const lapiz = '<g transform="rotate(-38)"><ellipse cx="190" cy="34" rx="150" ry=
               <!-- la aguada (color) va debajo del trazo y se pinta de izquierda a derecha -->
               <div class="ca-ag" data-wipe>
                 <div class="ca-ag-in">
-                  <Image src={L.aguada} alt="" widths={L.widths} sizes="100vw" loading="eager" class="ca-agimg" />
+                  <picture><source media={L.id === 'ancha' ? NO_ANCHA : SI_ANCHA} srcset={PIXEL} /><Image src={L.aguada} alt="" widths={L.widths} sizes="100vw" loading="eager" class="ca-agimg" /></picture>
                 </div>
               </div>
               <div class="ca-edge" aria-hidden="true"><svg class="ca-pencil" viewBox="0 0 1 1" overflow="visible" focusable="false" set:html={lapiz} /></div>
-              <Image src={L.src} alt={L.id === 'ancha' ? 'Fachada de una casa diseñada por Ulises Galezo, dibujada a línea' : ''} widths={L.widths} sizes="100vw" loading="eager" fetchpriority={L.id === 'ancha' ? 'high' : undefined} class="ca-dib" />
+              <picture><source media={L.id === 'ancha' ? NO_ANCHA : SI_ANCHA} srcset={PIXEL} /><Image src={L.src} alt={L.id === 'ancha' ? 'Fachada de una casa diseñada por Ulises Galezo, dibujada a línea' : ''} widths={L.widths} sizes="100vw" loading="eager" fetchpriority="high" class="ca-dib" /></picture>
               <span class="ca-spot" data-spot aria-hidden="true"></span>
               <svg class="ca-calco" viewBox={`0 0 ${L.w} ${L.h}`} aria-hidden="true" focusable="false">
                 {L.trazos.map((x) => <path class:list={{ fino: x.fino }} d={x.d} pathLength="1" style={`--a:${x.a}s;--t:${x.t}s`} />)}
@@ -304,6 +309,7 @@ const lapiz = '<g transform="rotate(-38)"><ellipse cx="190" cy="34" rx="150" ry=
   :global(html.rm) .casa :is(.ca-ag, .ca-ag-in) { animation: none !important; transform: none !important; }
   :global(html.rm) .casa :is(.ca-dib, .ld, .nt) { animation: none !important; opacity: 1 !important; }
 
+  .casa picture { display: contents; }
   /* Lámina ancha en pantallas horizontales; la alta en celular y tableta vertical */
   @media (orientation: landscape) and (min-width: 640px) {
     .casa-alta { display: none; }
