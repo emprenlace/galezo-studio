@@ -1,18 +1,19 @@
 ---
 /**
  * Comercial e institucional · 02 "Retos resueltos": tres casos reales, cada uno contado como reto → lo que hicimos.
- * La sección queda fija; con el scroll cada caso pasa del dibujo a lápiz a la foto de la obra (una línea azul la
- * recorre) y luego da paso al siguiente. Datos del portafolio de Ulises. El coliseo es render (está en construcción).
+ * La sección queda fija; con el scroll cada caso pasa del render de Ulises a la foto de la obra (una línea azul la
+ * recorre y la obra lo cubre por completo) y luego da paso al siguiente. Datos del portafolio de Ulises.
+ * Mismos recursos que Proyectos (src/assets/obras/ln): si cambian allá, cambian aquí.
  */
 import { getImage } from 'astro:assets';
 import Plomada from '../Plomada.astro';
 import Trazos from '../Trazos.astro';
 import mirador from '../../assets/obras/ln/mirador.jpg';
-import miradorL from '../../assets/obras/ln/mirador-dibujo.jpg';
-import coliseo from '../../assets/obras/ln/coliseo.jpg';
-import coliseoL from '../../assets/obras/ln/coliseo-dibujo.jpg';
+import miradorR from '../../assets/obras/ln/mirador-render.jpg';
+import coliseo from '../../assets/obras/ln/coliseo-obra.jpg';
+import coliseoR from '../../assets/obras/ln/coliseo-render.jpg';
 import instpecam from '../../assets/obras/ln/instpecam.jpg';
-import instpecamL from '../../assets/obras/ln/instpecam-dibujo.jpg';
+import instpecamR from '../../assets/obras/ln/instpecam-render.jpg';
 
 const { n = '02' } = Astro.props as { n?: string };
 const casos = [
@@ -22,15 +23,15 @@ const casos = [
     hicimos: 'El diseño arquitectónico y ornamental para terminarla. Hoy está construida.',
     datos: ['Valledupar · 2023', '1.988 m²', 'Gobernación del Cesar'],
     estado: 'Construido',
-    photo: mirador, line: miradorL, pos: '62% 35%',
+    photo: mirador, line: miradorR, pos: '62% 35%', lpos: '50% 40%',
   },
   {
     t: 'Coliseo de tenis de mesa',
     reto: 'Cumplir los requisitos técnicos nacionales e internacionales para entrenar y competir.',
     hicimos: 'El diseño y la formulación de una caja de cristal, sostenible y accesible.',
     datos: ['Valledupar · 2025', '8.959 m²', 'Gobernación del Cesar'],
-    estado: 'En construcción · render',
-    photo: coliseo, line: coliseoL,
+    estado: 'En construcción',
+    photo: coliseo, line: coliseoR, pos: '40% 50%',
   },
   {
     t: 'Cuatro colegios en Valledupar',
@@ -39,13 +40,13 @@ const casos = [
     datos: ['Valledupar · 2022 – 2024', 'Gobernación del Cesar'],
     extra: 'Instpecam, CASD, José Eugenio Martínez y Alfonso López',
     estado: 'Tres construidos, uno en obra',
-    photo: instpecam, line: instpecamL,
+    photo: instpecam, line: instpecamR,
   },
 ];
 const opts = { widths: [640, 960, 1400], format: 'webp' as const };
 const pics = await Promise.all(
   casos.map(async (c) => {
-    const [p, l] = await Promise.all([getImage({ src: c.photo, ...opts, quality: 72 }), getImage({ src: c.line, ...opts, quality: 64 })]);
+    const [p, l] = await Promise.all([getImage({ src: c.photo, ...opts, quality: 72 }), getImage({ src: c.line, ...opts, quality: 72 })]);
     return { p: { src: p.src, set: p.srcSet.attribute }, l: { src: l.src, set: l.srcSet.attribute } };
   }),
 );
@@ -60,12 +61,12 @@ const sizes = '(min-width: 1024px) 640px, 100vw';
       <h2 id="rt-title" class="rt-h2">Cada obra tenía <span class="accent">un reto</span></h2>
 
       <div class="rt-body">
-        <!-- Imagen: dibujo a lápiz debajo, foto de la obra encima recortada hasta la línea -->
+        <!-- Imagen: render debajo, foto de la obra encima recortada hasta la línea -->
         <div class="rt-stage chamfer" aria-hidden="true">
           {
             casos.map((c, i) => (
               <figure class:list={['rt-fig', { 'is-on': i === 0 }]} data-fig={i}>
-                <img class="rt-img" src={pics[i].l.src} srcset={pics[i].l.set} sizes={sizes} alt="" loading="lazy" decoding="async" style={c.pos && `object-position:${c.pos}`} />
+                <img class="rt-img" src={pics[i].l.src} srcset={pics[i].l.set} sizes={sizes} alt="" loading="lazy" decoding="async" style={(c.lpos || c.pos) && `object-position:${c.lpos || c.pos}`} />
                 <div class="rt-top">
                   <div class="rt-top-in">
                     <img class="rt-img" src={pics[i].p.src} srcset={pics[i].p.set} sizes={sizes} alt="" loading="lazy" decoding="async" style={c.pos && `object-position:${c.pos}`} />

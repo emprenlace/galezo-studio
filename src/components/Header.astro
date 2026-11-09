@@ -9,6 +9,8 @@ const modelos = [campestre(), ampliacion(), institucional(), ejecutivo()];
 const links = [
   { href: '/contacto', label: 'Contacto' },
   { href: '/arquitecto', label: 'El arquitecto' },
+  // Proyectos junto a Blog (pedido de Ulises): la gente busca los proyectos arriba
+  { href: '/proyectos', label: 'Proyectos' },
   { href: '/blog', label: 'Blog' },
 ];
 // servicio de la página actual: se marca en azul en el menú (para saber dónde estás)
@@ -337,13 +339,17 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
     .hd-shell { width: min(1200px, calc(100% - 80px)); padding: 0; gap: 0; }
     .hd-logo { font-size: 19px; }
     .hd-menu, .hd-label { display: none !important; }
+    /* centrada con posición absoluta: sin width: max-content el navegador le da solo la mitad del encabezado y,
+       con cinco enlaces, "El arquitecto" se partía en dos líneas y Blog chocaba con el botón */
     .hd-nav {
       display: block;
       position: absolute;
       left: 50%;
+      width: max-content;
       transform: translateX(-50%);
     }
     .hd-nav ul { display: flex; gap: 4px; }
+    .hd-nav a, .hd-dd-btn { white-space: nowrap; }
     .hd-nav a {
       position: relative;
       display: block;
@@ -450,8 +456,9 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
     .hd-cta { height: 44px; padding: 0 18px 0 20px; font-size: 14px; }
     .hd-cta svg { display: block; }
 
+    /* recogida: 880 px para que los cinco enlaces centrados no lleguen al botón (con 760 Blog quedaba debajo) */
     .hd.is-docked .hd-shell {
-      width: min(760px, calc(100% - 40px));
+      width: min(880px, calc(100% - 40px));
       top: 14px;
       padding: 0 8px 0 16px;
     }

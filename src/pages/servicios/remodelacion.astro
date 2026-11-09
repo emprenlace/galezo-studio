@@ -3,7 +3,8 @@
  * Servicio · Remodelación (incluye diseño de interiores). Landing de pauta para quien ya tiene el espacio y quiere
  * que crezca, cambie o se renueve por dentro. Todo con renders reales de Ulises; se arma sección por sección:
  * Hero (¿es lo que busco?) · 01 Por dentro: muestrario (¿qué diseñan?) · 02 Antes y después (¿lo han hecho?)
- * · 03 Locales y espacios públicos (¿también para mi negocio?) · 04 Quién diseña (¿con quién hablo?) · Cierre (cotizar).
+ * · 03 Locales y espacios públicos (¿también para mi negocio?) · 04 Cómo trabajamos, 9 etapas (¿cómo funciona?)
+ * · 05 Quién diseña (¿con quién hablo?) · Cierre (cotizar).
  * Mientras no esté lista (ready en lib/servicios.ts) sigue en noindex.
  */
 import Base from '../../layouts/Base.astro';
@@ -12,6 +13,7 @@ import HeroRemodelacion from '../../components/remodelacion/HeroRemodelacion.ast
 import Dentro from '../../components/remodelacion/Dentro.astro';
 import AntesDespues from '../../components/remodelacion/AntesDespues.astro';
 import Publicos from '../../components/remodelacion/Publicos.astro';
+import Proceso from '../../components/Proceso.astro';
 import Estudio from '../../components/Estudio.astro';
 import Cierre from '../../components/Cierre.astro';
 import { servicios } from '../../lib/servicios';
@@ -36,7 +38,8 @@ const description = 'Remodelación y diseño de interiores en Colombia y el exte
     <Dentro n="01" />
     <AntesDespues n="02" />
     <Publicos n="03" />
-    <Estudio n="04" cta={false} />
-    <Cierre n="05" />
+    <Proceso n="04" cta={false} />
+    <Estudio n="05" cta={false} />
+    <Cierre n="06" />
   </main>
 </Base>

@@ -1,9 +1,11 @@
 ---
 /**
- * Sección 5 · "Cómo trabajamos": la casa que evoluciona.
- * Una sola lámina donde la misma casa del héroe avanza etapa por etapa: lote → zonas → plano → fachada → planos
- * para construir. Al lado, el cronograma de obra (barras tipo Gantt): cada barra es una etapa que se llena,
- * se aprueba y da paso a la siguiente. Todo avanza con el scroll (la sección queda fija mientras tanto). Un solo botón.
+ * Sección 5 · "Cómo trabajamos": la casa que evoluciona, en las 9 etapas de Ulises (aplican a todos los servicios):
+ * tu espacio · anticipo → la idea y el concepto → plantas y modelo 3D → fachadas → imágenes y video render →
+ * detalles arquitectónicos → planimetría detallada → cantidades de obra → entrega final.
+ * Una sola lámina donde la misma casa avanza con material real (plano, modelo, fachada, render, corte de la casa en
+ * ladera). Al lado, el cronograma (barras tipo Gantt): cada barra es una etapa que se llena, se aprueba y da paso a la
+ * siguiente. Todo avanza con el scroll (la sección queda fija mientras tanto). Un solo botón.
  */
 import { Image } from 'astro:assets';
 import Plomada from './Plomada.astro';
@@ -13,14 +15,22 @@ import render from '../assets/render-interior.jpg';
 import plantaColor from '../assets/planos/planta1-color.jpg';
 import plantaLinea from '../assets/planos/planta1-linea.jpg';
 import fachada from '../assets/planos/fachada.jpg';
+import modelo from '../assets/planos/modelo-3d.jpg';
+import corte from '../assets/planos/corte.jpg';
+import detalle from '../assets/planos/corte-detalle.jpg';
 
 const P = buildProceso();
+// t: nombre corto (cronograma y rótulo) · full: nombre completo de la etapa (lista de Ulises) · a: qué pasa en ella
 const pasos = [
-  { t: 'Tu espacio', a: 'Nos cuentas de tu espacio y de cómo vives. Con el anticipo, arrancamos.', tag: 'Anticipo' },
-  { t: 'La idea', a: 'Organizamos el proyecto sobre el terreno: dónde va lo social, lo privado, la luz y la brisa.' },
-  { t: 'El plano', a: 'Distribuimos cada espacio y lo ajustamos contigo hasta que te convenza.' },
-  { t: 'La fachada', a: 'Volumen, materiales y renders: así se verá tu proyecto, por dentro y por fuera.' },
-  { t: 'Para construir', a: 'Planos técnicos, modelo BIM en Revit, recorrido virtual y cantidades de obra, listos para tu constructor.', tag: 'Entrega' },
+  { t: 'Tu espacio', full: 'Tu espacio y el anticipo', a: 'Nos cuentas de tu espacio y de cómo vives. Con el anticipo, arrancamos.', tag: 'Anticipo' },
+  { t: 'La idea', full: 'La idea y el concepto', a: 'Organizamos el proyecto sobre el terreno: dónde va lo social, lo privado, la luz y la brisa.' },
+  { t: 'Plantas y 3D', full: 'Diseño en plantas y modelo 3D', a: 'Distribuimos cada espacio en planta y lo levantamos en 3D para ajustarlo contigo.' },
+  { t: 'Fachadas', full: 'Diseño de fachadas', a: 'Definimos el volumen, los materiales y la cara que tu proyecto le muestra a la calle.' },
+  { t: 'Renders', full: 'Imágenes y video render', a: 'Imágenes y video realistas: así se verá por dentro y por fuera antes de poner un ladrillo.' },
+  { t: 'Detalles', full: 'Detalles arquitectónicos', a: 'Dibujamos escaleras, barandas, cielos rasos y encuentros para que en obra no se improvise.' },
+  { t: 'Planimetría', full: 'Planimetría detallada', a: 'Plantas, cortes y fachadas con cotas, niveles y especificaciones, listos para tu constructor.' },
+  { t: 'Cantidades', full: 'Cantidades de obra', a: 'Medimos en el modelo el concreto, los muros, los pisos y la cubierta para presupuestar sin sorpresas.' },
+  { t: 'Entrega final', full: 'Entrega final', a: 'Te entregamos el proyecto completo: planos, modelo, renders y cantidades de obra.', tag: 'Entrega' },
 ];
 const cantidades = [
   ['Concreto', 0.82],
@@ -95,12 +105,12 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
           </g>
         </svg>
 
-        <!-- 3 y 5. Plano real de Ulises (planta del primer nivel), en línea -->
+        <!-- 3, 7 y 8. Plano real de Ulises (planta del primer nivel), en línea -->
         <div class="ly g g-plano real" aria-hidden="true">
           <Image src={plano} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" loading="lazy" />
         </div>
 
-        <!-- 5. Para construir: el mismo plano, ya completo a color con cotas y áreas -->
+        <!-- 7 y 8. Planimetría: el mismo plano, ya completo a color con cotas y áreas -->
         <div class="ly g g-tecnico real" aria-hidden="true">
           <Image src={planoColor} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" loading="lazy" />
         </div>
@@ -110,13 +120,36 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
           <Image src={fachada} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" loading="lazy" />
         </div>
 
-        <!-- 4. Render real, sujeto a la lámina -->
+        <!-- 3. Modelo 3D real, sujeto a la lámina junto a la planta -->
         <div class="lam-render" aria-hidden="true">
-          <Image src={render} alt="" widths={[260, 420]} sizes="(min-width: 1024px) 210px, 120px" loading="lazy" />
-          <span>render</span>
+          <Image src={modelo} alt="" widths={[260, 420]} sizes="(min-width: 1024px) 210px, 120px" loading="lazy" />
+          <span>modelo 3D</span>
         </div>
 
-        <!-- 5. Cuadro de cantidades -->
+        <!-- 5. Render real a toda la lámina -->
+        <div class="ly g g-render" aria-hidden="true">
+          <Image src={render} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 760px, 96vw" loading="lazy" />
+          <span class="rd-tag">render</span>
+        </div>
+
+        <!-- 6. Detalle: la escalera del corte, dibujada en grande, con su llamada -->
+        <div class="ly g g-detalle real" aria-hidden="true">
+          <Image src={detalle} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" loading="lazy" />
+          <span class="det-call"><b>1</b><span>detalle escalera</span></span>
+        </div>
+
+        <!-- 9. Entrega: el juego de láminas del proyecto -->
+        <div class="ly g g-entrega" aria-hidden="true">
+          {
+            [planoColor, fachada, corte, modelo].map((im, k) => (
+              <div class={`sh sh-${k}`}>
+                <Image src={im} alt="" widths={[300, 520]} sizes="(min-width: 1024px) 300px, 40vw" loading="lazy" />
+              </div>
+            ))
+          }
+        </div>
+
+        <!-- 8. Cuadro de cantidades -->
         <div class="lam-qty" aria-hidden="true">
           <p class="qty-h">Cantidades de obra</p>
           <ul>
@@ -171,7 +204,7 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
             pasos.map((p, i) => (
               <div class:list={['d', { 'is-on': i === 0 }]} data-desc={i} aria-hidden={i === 0 ? 'false' : 'true'}>
                 <p class="d-t">
-                  <span class="d-n">{pad(i)}</span> {p.t}
+                  <span class="d-n">{pad(i)}</span> {p.full}
                 </p>
                 <p class="d-a">{p.a}</p>
               </div>
@@ -200,8 +233,8 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
     --pad: 20px;
     position: relative;
     background: var(--color-bone);
-    /* recorrido de scroll: la lámina queda fija y cada tramo avanza una etapa */
-    height: 300svh;
+    /* recorrido de scroll: la lámina queda fija y cada tramo avanza una etapa (9 etapas) */
+    height: 560svh;
   }
   .pr-pin {
     position: sticky;
@@ -240,8 +273,10 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   .lam::after { right: 0; bottom: 0; background: linear-gradient(-45deg, var(--color-bone) 50%, transparent 50.5%); }
   .ly { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; will-change: opacity, transform; transform: translateZ(0); }
   /* Láminas reales: el dibujo completo dentro de la lámina, sin recortar */
-  .ly.real { display: grid; place-items: center; padding: 7% 5% 9%; }
-  .ly.real :global(img) { width: 100%; height: 100%; object-fit: contain; display: block; }
+  /* la celda tiene alto fijo (minmax(0, 1fr)): sin eso la imagen tomaba su alto natural y en pantallas anchas y bajitas
+     se salía de la lámina (se veía cortada y "más horizontal") */
+  .ly.real { display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); place-items: center; padding: 7% 5% 9%; }
+  .ly.real :global(img) { width: 100%; height: 100%; min-height: 0; object-fit: contain; display: block; }
   .g-fachada.real { padding: 4% 4% 6%; }
 
   .g { opacity: 0; transition: opacity 0.6s cubic-bezier(0.37, 0, 0.63, 1), transform 0.8s var(--ease-out-expo); }
@@ -298,34 +333,54 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   .e-note path { fill: none; stroke: var(--color-brand); stroke-width: 1.8; }
   .e-note text { font-size: 30px; }
 
-  /* ---------- Estados por etapa ---------- */
-  /* lote: se traza una vez y luego queda de fondo */
+  /* ---------- Estados por etapa (data-step = 1 … 9) ---------- */
+  /* 1 · lote: se traza una vez; en la idea queda de fondo */
   .lam[data-step='1'] .g-lote { opacity: 1; }
   .lam[data-step='2'] .g-lote { opacity: 0.55; }
-  .lam:is([data-step='3'], [data-step='5']) .g-lote { opacity: 0; }
   .lam:not([data-step='0']) .g-lote .dr { stroke-dashoffset: 0; }
   .g-lote .hand.big { transition: opacity 0.4s; }
   .lam:not([data-step='1']) .g-lote .hand.big { opacity: 0; }
 
-  /* zonas: las burbujas crecen; en el plano quedan de fondo */
+  /* 2 · zonas: las burbujas crecen */
   .lam[data-step='2'] .g-zonas { opacity: 1; }
-  .lam[data-step='3'] .g-zonas { opacity: 0; }
-  .lam:is([data-step='2'], [data-step='3']) .g-zonas .dr { stroke-dashoffset: 0; transition-delay: 0.4s; }
-  .lam:is([data-step='2'], [data-step='3']) .bub { transform: none; opacity: 1; }
+  .lam[data-step='2'] .g-zonas .dr { stroke-dashoffset: 0; transition-delay: 0.4s; }
+  .lam[data-step='2'] .bub { transform: none; opacity: 1; }
   .z-x { transition: opacity 0.4s; }
-  .lam[data-step='3'] .z-x { opacity: 0; }
 
-  /* plano: entra completo con un leve asentamiento (capa compuesta) */
+  /* 3 · planta en línea (con el modelo 3D sujeto al lado); en 7 y 8 queda debajo de la planimetría */
   .g-plano { transform: scale(0.97); }
-  .lam:is([data-step='3'], [data-step='5']) .g-plano { opacity: 1; transform: none; }
-  .lam[data-step='5'] .g-tecnico { opacity: 1; }
+  .lam:is([data-step='3'], [data-step='7'], [data-step='8']) .g-plano { opacity: 1; transform: none; }
+  /* 7 · planimetría a color; 8 · la misma, más tenue, con el cuadro de cantidades encima */
+  .lam[data-step='7'] .g-tecnico { opacity: 1; }
+  .lam[data-step='8'] .g-tecnico { opacity: 0.45; }
 
-  /* fachada: sube desde el piso (capa compuesta) */
+  /* 4 · fachada: sube desde el piso */
   .g-fachada { transform: translateY(16px); }
   .lam[data-step='4'] .g-fachada { opacity: 1; transform: none; }
-  .lam[data-step='4'] .g-fachada .dr { stroke-dashoffset: 0; transition-delay: 0.5s; }
 
-  /* render real sujeto con cinta (etapa 4) */
+  /* 5 · render a toda la lámina, con un acercamiento corto al entrar */
+  .g-render :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.04); transition: transform 1.4s var(--ease-out-expo); }
+  .lam[data-step='5'] .g-render { opacity: 1; }
+  .lam[data-step='5'] .g-render :global(img) { transform: none; }
+  .rd-tag { position: absolute; right: 14px; bottom: 12px; padding: 3px 9px 4px; background: rgb(255 255 255 / 0.9); font-family: 'Architects Daughter', var(--font-sans); font-size: 13px; color: var(--color-brand-ink); }
+
+  /* 6 · detalle: la escalera del corte en grande, con la llamada de detalle */
+  .g-detalle { transform: scale(0.97); }
+  .lam[data-step='6'] .g-detalle { opacity: 1; transform: none; }
+  .det-call { position: absolute; right: 6%; top: 9%; display: flex; align-items: center; gap: 8px; font-family: 'Architects Daughter', var(--font-sans); font-size: 14px; color: var(--color-brand-ink); background: rgb(255 255 255 / 0.92); padding: 4px 10px 4px 4px; }
+  .det-call b { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--color-brand-ink); font-family: var(--font-sans); font-size: 13px; font-weight: 700; }
+
+  /* 9 · entrega: el juego de láminas se abre en abanico */
+  .g-entrega { display: grid; place-items: center; }
+  .sh { position: absolute; left: 50%; top: 50%; width: 46%; aspect-ratio: 3 / 2; translate: -50% -50%; padding: 6px; background: #fff; box-shadow: 0 0 0 1px rgb(20 26 34 / 0.08), 0 14px 26px -16px rgb(20 26 34 / 0.5); transition: transform 0.9s var(--ease-out-expo); transform: none; }
+  .sh :global(img) { width: 100%; height: 100%; object-fit: contain; display: block; background: #fff; }
+  .lam[data-step='9'] .g-entrega { opacity: 1; }
+  .lam[data-step='9'] .sh-0 { transform: translate(-46%, -14%) rotate(-7deg); }
+  .lam[data-step='9'] .sh-1 { transform: translate(-15%, -20%) rotate(-2deg); transition-delay: 0.06s; }
+  .lam[data-step='9'] .sh-2 { transform: translate(16%, -12%) rotate(3deg); transition-delay: 0.12s; }
+  .lam[data-step='9'] .sh-3 { transform: translate(40%, 10%) rotate(7deg); transition-delay: 0.18s; }
+
+  /* modelo 3D sujeto con cinta (etapa 3) */
   .lam-render {
     position: absolute;
     z-index: 3;
@@ -343,9 +398,9 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   .lam-render :global(img) { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; }
   .lam-render span { position: absolute; left: 8px; bottom: 2px; font-family: 'Architects Daughter', var(--font-sans); font-size: 12px; color: var(--color-brand-ink); }
   .lam-render::before { content: ''; position: absolute; left: 50%; top: -8px; width: 46px; height: 16px; translate: -50% 0; rotate: -4deg; background: rgb(54 114 124 / 0.2); }
-  .lam[data-step='4'] .lam-render { opacity: 1; transform: none; transition-delay: 0.7s; }
+  .lam[data-step='3'] .lam-render { opacity: 1; transform: none; transition-delay: 0.7s; }
 
-  /* cuadro de cantidades (etapa 5) */
+  /* cuadro de cantidades (etapa 8) */
   .lam-qty {
     position: absolute;
     z-index: 3;
@@ -365,8 +420,8 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   .lam-qty li { display: grid; grid-template-columns: 1fr 44%; align-items: center; gap: 8px; font-size: 11px; color: var(--color-ink-soft); }
   .lam-qty i { display: block; height: 5px; background: var(--color-brand-soft); position: relative; overflow: hidden; }
   .lam-qty i::after { content: ''; position: absolute; inset: 0; background: var(--color-brand); transform-origin: 0 50%; transform: scaleX(0); transition: transform 0.9s var(--ease-out-expo); transition-delay: calc(0.8s + var(--i) * 0.1s); }
-  .lam[data-step='5'] .lam-qty { opacity: 1; transform: none; transition-delay: 0.5s; }
-  .lam[data-step='5'] .lam-qty i::after { transform: scaleX(var(--v)); }
+  .lam[data-step='8'] .lam-qty { opacity: 1; transform: none; transition-delay: 0.5s; }
+  .lam[data-step='8'] .lam-qty i::after { transform: scaleX(var(--v)); }
 
   /* rótulo */
   .lam-cap { position: absolute; z-index: 4; left: 14px; top: 12px; display: grid; }
@@ -398,14 +453,14 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   .r-t { font-size: 13.5px; font-weight: 560; letter-spacing: -0.01em; color: var(--color-ink-soft); white-space: nowrap; transition: color 0.3s; }
   .row.is-on .r-n { color: var(--color-brand); }
   .row.is-on .r-t { color: var(--color-ink); }
-  /* pista del tiempo: 5 columnas; cada etapa ocupa la suya y se monta un poco sobre la siguiente */
-  .r-track { position: relative; height: 100%; background: repeating-linear-gradient(90deg, rgb(40 34 26 / 0.07) 0 1px, transparent 1px 20%); }
+  /* pista del tiempo: 9 tramos; cada etapa ocupa el suyo y se monta un poco sobre la siguiente */
+  .r-track { --step: calc((100% - 16%) / 8); position: relative; height: 100%; background: repeating-linear-gradient(90deg, rgb(40 34 26 / 0.07) 0 1px, transparent 1px 11.111%); }
   .r-bar {
     --cut: 4px;
     position: absolute;
     top: 50%;
-    left: calc(var(--i) * 19%);
-    width: 24%;
+    left: calc(var(--i) * var(--step));
+    width: 16%;
     height: 12px;
     translate: 0 -50%;
     background: rgb(44 95 104 / 0.12);
@@ -418,8 +473,8 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   .row.is-on .r-fill { transform: scaleX(var(--f, 0)); }
   .r-ok { position: absolute; right: 3px; top: 50%; width: 10px; height: 10px; translate: 0 -50%; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity 0.3s; }
   .row.is-done .r-ok { opacity: 1; }
-  .r-tag { position: absolute; top: 50%; translate: 0 -50%; left: calc(var(--i) * 19% + 25%); font-family: 'Architects Daughter', var(--font-sans); font-size: 12px; color: var(--color-brand-ink); white-space: nowrap; }
-  .row[data-pr-step='4'] .r-tag { left: auto; right: calc(24% + 4px); }
+  .r-tag { position: absolute; top: 50%; translate: 0 -50%; left: calc(var(--i) * var(--step) + 17%); font-family: 'Architects Daughter', var(--font-sans); font-size: 12px; color: var(--color-brand-ink); white-space: nowrap; }
+  .row[data-pr-step='8'] .r-tag { left: auto; right: calc(16% + 4px); }
   .row:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
   .row:hover .r-t { color: var(--color-ink); }
 
@@ -474,8 +529,8 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
     .hand.big { font-size: 110px; }
     .e-note text { font-size: 50px; }
     .dim-t, .pl-labels text, .pl-dims text { display: none; }
-    /* cronograma en una sola línea: cinco tramos */
-    .gantt { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+    /* cronograma en una sola línea: nueve tramos */
+    .gantt { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 4px; }
     .row { grid-template-columns: 1fr; grid-template-rows: auto 7px; height: auto; gap: 4px; border: 0; }
     .r-t, .r-tag { display: none; }
     .r-n { font-size: 13px; line-height: 1; }
@@ -493,6 +548,17 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
     .lam-qty i { height: 3px; }
     .lam-cap { left: 10px; top: 9px; }
     .cap { font-size: 11px; padding: 4px 8px 5px; }
+  }
+  /* celular: la nota quedaba bajo el botón de WhatsApp; el botón ya dice lo que hay que hacer */
+  @media (max-width: 639px) { .pr-note { display: none; } }
+  /* tableta vertical: con nueve etapas el cronograma va en una sola línea, como en celular */
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .gantt { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 6px; }
+    .row { grid-template-columns: 1fr; grid-template-rows: auto 8px; height: auto; gap: 5px; border: 0; }
+    .r-t, .r-tag, .r-ok { display: none; }
+    .r-n { font-size: 14px; line-height: 1; }
+    .r-track { height: 8px; background: none; }
+    .r-bar { left: 0; width: 100%; height: 8px; --cut: 3px; }
   }
   @media (min-width: 640px) {
     .pr { --pad: 28px; }
@@ -516,7 +582,7 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
     .g-head { display: grid; grid-template-columns: 26px 120px 1fr 1fr; gap: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--color-ink); font-size: 11.5px; font-weight: 600; color: var(--color-ink-mute); }
     .g-head span:first-child { grid-column: 1 / 3; }
     .g-head span:last-child { text-align: right; }
-    .row { height: clamp(32px, 4.6svh, 42px); }
+    .row { height: clamp(26px, 3.5svh, 36px); }
     .d-t { font-size: 1.35rem; }
     .d-a { font-size: 1rem; }
     .pr-actions { margin-top: auto; flex-wrap: wrap; }
@@ -558,7 +624,7 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
     caps.forEach((c, j) => c.classList.toggle('is-on', j === cur));
   };
 
-  // El scroll manda: el recorrido de la sección se reparte en cinco tramos
+  // El scroll manda: el recorrido de la sección se reparte en un tramo por etapa
   // Recorrido = alto de la sección menos el de la lámina fija (no innerHeight: en iOS cambia con la barra de Safari)
   const pin = sec.querySelector<HTMLElement>('.pr-pin')!;
   const range = () => {

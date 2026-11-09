@@ -1,6 +1,6 @@
 /**
- * Sección 5 · "Cómo trabajamos": la misma casa del héroe en cada etapa del diseño, generada al compilar.
- * Lote → zonas (diagrama de burbujas) → plano de distribución → fachada → planos para construir.
+ * Sección "Cómo trabajamos": dibujos generados al compilar para las etapas 1 y 2 (lote y zonas); las demás usan láminas reales.
+ * Lote → zonas (diagrama de burbujas). Ver Proceso.astro para las 9 etapas.
  * Comparte medidas con el plano (lib/plan.ts) y el modelo del boceto (lib/sketch.ts).
  */
 import { buildPlan } from './plan';

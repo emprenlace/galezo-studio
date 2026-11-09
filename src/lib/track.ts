@@ -40,6 +40,8 @@ export const ALLOWED = [
   'fbp',
   'fbc',
   'landing_page',
+  'project_id',
+  'filter',
 ] as const;
 const allowed = new Set<string>(ALLOWED);
 let lastKeys: string[] = [];

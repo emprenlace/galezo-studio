@@ -36,8 +36,10 @@ Google Sheets mediante Apps Script: `docs/leads-apps-script.gs` + guía `docs/le
 | `contact_whatsapp` | Toca un WhatsApp directo (botón flotante, /contacto) | link_type, cta_id (flotante, contacto) | No (contacto sin calificar: se mide en GA4, nunca como conversión de pauta) |
 | `contact_email` | Toca un correo (/contacto, política) | link_type, cta_id (contacto, privacidad) | No |
 | `contact_instagram` | Toca un Instagram (/contacto, pie) | link_type, cta_id (contacto, cierre) | No |
+| `project_filter` | En /proyectos, toca un filtro de categoría | filter (todos, construido, en-obra, disenado, modelado) | No |
+| `project_open` | En /proyectos, abre la ficha de un proyecto | project_id (slug del proyecto) | No |
 
-Valores de `cta_id` (chat): hero, header, menu, entregable, servicios, obras, proceso, bim, estudio, preguntas, cierre, clientes, vivienda-hero, comercial-hero, ejecutivo-hero, remodelacion-hero, servicio, contacto, arquitecto, blog, 404, 404_inicio, url.
+Valores de `cta_id` (chat): hero, header, menu, proyectos (ficha de /proyectos), entregable, servicios, obras, proceso, bim, estudio, preguntas, cierre, clientes, vivienda-hero, comercial-hero, ejecutivo-hero, remodelacion-hero, servicio, contacto, arquitecto, blog, 404, 404_inicio, url.
 Valores de `cta_id` (contacto directo, en `contact_*`): flotante, contacto, cierre, privacidad. Un evento por canal; el botón se lee en `cta_id` (no se crea un evento por botón).
 
 Regla: todo botón o enlace nuevo lleva `data-cta` (y `data-service` si aplica). Si abre el chat, `data-open-chat`; si es contacto directo, `data-contact="whatsapp|email|instagram"`. Base.astro registra `contact_<canal>` para todo el sitio; no se agregan registros sueltos por página.
@@ -50,5 +52,5 @@ Sin aviso de cookies (decisión del usuario: público en Colombia, la Ley 1581 n
 - Variables: `DLV - <parámetro>` para cada parámetro de la tabla + la integrada **Event**.
 - Activadores: `CE - generate_lead` (exacto), `CE - chat` (regex: `cta_click|service_dialog_open|service_select|lead_step|lead_unqualified|lead_partial|service_dialog_close`) y `CE - contacto` (regex: `contact_(whatsapp|email|instagram)`).
 - Etiquetas: `GA4 - Chat` ({{Event}} + parámetros) en `CE - chat`; `GA4 - Contacto directo` ({{Event}} + link_type y cta_id) en `CE - contacto`; `GA4 - generate_lead`; Meta evento personalizado `LeadCalificado` con `eventID = {{DLV - event_id}}`; Google Ads conversión con ID de transacción `{{DLV - lead_ref}}`. Ninguna etiqueta de pauta en "Clic en enlace".
-- GA4: marcar `generate_lead` como evento clave; registrar dimensiones de ámbito evento el mismo día (cta_id, service_id, step, answer, stage, size, location, timing, lead_quality, lead_ref, shared_details, reason, link_type).
+- GA4: marcar `generate_lead` como evento clave; registrar dimensiones de ámbito evento el mismo día (cta_id, service_id, step, answer, stage, size, location, timing, lead_quality, lead_ref, shared_details, reason, link_type, project_id, filter).
 - Probar en vista previa con un lead que encaja y otro que no; el que no encaja no dispara Meta ni Ads.
