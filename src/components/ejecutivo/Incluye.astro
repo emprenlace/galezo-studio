@@ -62,7 +62,7 @@ const N = hojas.length;
         <div class="sheet chamfer">
           {
             hojas.map((h, i) => (
-              <article class:list={['pg', `pg-${h.id}`, { 'is-on': i === 0 }]} id={`ic-pg-${h.id}`} role="tabpanel" aria-labelledby={`ic-tab-${h.id}`} data-pg={i}>
+              <div class:list={['pg', `pg-${h.id}`, { 'is-on': i === 0 }]} id={`ic-pg-${h.id}`} role="tabpanel" aria-labelledby={`ic-tab-${h.id}`} data-pg={i}>
                 <figure class="det" aria-hidden="true">
                   <svg viewBox="0 0 240 170">
                     {h.id === 'arq' && (
@@ -125,7 +125,7 @@ const N = hojas.length;
                   </ul>
                 </div>
                 <p class="code" aria-hidden="true">Lámina <b>{h.code}-01</b> · {h.t}</p>
-              </article>
+              </div>
             ))
           }
         </div>

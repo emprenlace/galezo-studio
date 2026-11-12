@@ -4,7 +4,7 @@
  * 01 Héroe: la foto grande se descubre como una lámina que se levanta; su nombre y su rol.
  * 02 Presentación: su texto de presentación, tal cual lo envió (2026-11-12).
  * 03 Ficha: trayectoria (sin fechas mientras se confirma el dato de años) y programas. La formación ya va en 02.
- * noindex hasta que se apruebe.
+ * Aprobada por Ulises (2026-11-12): sin noindex propio; se indexa cuando se quite PUBLIC_PREVIEW.
  */
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
@@ -23,7 +23,7 @@ const trayectoria = [
 const programas = ['Revit', 'AutoCAD', 'SketchUp', 'D5 Render', 'Lumion', 'Photoshop'];
 ---
 
-<Base title="Ulises Galezo Cifuentes, arquitecto · Galezo Studio" description="Conoce a Ulises Galezo Cifuentes, arquitecto de la Universidad del Atlántico y fundador de Galezo Studio, estudio de diseño arquitectónico en Valledupar." noindex pageType="about">
+<Base title="Ulises Galezo Cifuentes, arquitecto · Galezo Studio" description="Conoce a Ulises Galezo Cifuentes, arquitecto de la Universidad del Atlántico y fundador de Galezo Studio, estudio de diseño arquitectónico en Valledupar." pageType="about">
   <Header />
   <main>
     <!-- 01 · Héroe -->

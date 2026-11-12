@@ -6,9 +6,9 @@
  * - Arriba: la lámina con el título y los filtros (solo aparecen las categorías que ya tienen proyectos).
  * - Tarjetas: portada; con el mouse asoma la otra cara (render u obra). Al tocar, se abre la ficha.
  * - Ficha: todas las imágenes (obra, render, antes), datos confirmados y botón de cotizar. Se puede enlazar (#slug).
- * Datos en lib/proyectos.ts. noindex hasta que se apruebe.
+ * Datos en lib/proyectos.ts. noindex hasta que se apruebe. Carga: solo la primera portada de entrada; las demás, diferidas.
  */
-import { Image, getImage } from 'astro:assets';
+import { getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import Cierre from '../components/Cierre.astro';
@@ -27,12 +27,18 @@ const lista = await Promise.all(
     );
     // la otra cara para el paso del mouse: la primera imagen de distinto tipo que la portada
     const alt = imgs.find((im) => im.tag !== imgs[0].tag);
-    return { ...p, imgs, big, alt };
+    // solo se pide en pantallas con mouse, después de la carga (en celular no hay paso del mouse)
+    const cover = await getImage({ src: imgs[0].src, widths: [480, 760, 1000], format: 'webp', quality: 72 });
+    const altSet = alt ? (await getImage({ src: alt.src, widths: [480, 760], format: 'webp', quality: 72 })).srcSet.attribute : '';
+    return { ...p, imgs, big, alt, altSet, cover: { src: cover.src, set: cover.srcSet.attribute } };
   }),
 );
 const cats = CATEGORIAS.map((c) => ({ ...c, n: proyectos.filter((p) => p.cat === c.id).length })).filter((c) => c.n > 0);
 const catLabel = Object.fromEntries(CATEGORIAS.map((c) => [c.id, c.short]));
 const meta = (p: { city?: string; year?: string }) => [p.city, p.year].filter(Boolean).join(' · ');
+// portadas: la primera de entrada; las demás cuando su tarjeta se acerca (la diferida del navegador adelanta ~2.500 px)
+const CARD_SIZES = '(min-width: 1024px) 380px, (min-width: 640px) 46vw, 92vw';
+const PIXEL = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 const nDest = proyectos.filter((p) => esDestacado(p.slug)).length;
 // estrella de los destacados: la misma figura en tarjeta, filtro y ficha
 const star = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.47 5.3 5.8.68-4.3 3.96 1.17 5.73L10 14.6l-5.14 2.87 1.17-5.73-4.3-3.96 5.8-.68z"/></svg>';
@@ -67,13 +73,20 @@ const description = 'Proyectos de Galezo Studio: colegios, espacios públicos, e
               <>
               {firstOf.has(p.slug) && <li class="sec" data-cat={p.cat}><h2 class="sec-t">{catFull[p.cat]}</h2></li>}
               <li class:list={['card', { 'is-dest': esDestacado(p.slug) }]} data-cat={p.cat} data-dest={esDestacado(p.slug) ? '' : undefined}>
-                <a href={`#${p.slug}`} class="card-a" data-open={p.slug} aria-label={`${p.name}${p.city ? ', ' + p.city : ''}${esDestacado(p.slug) ? ' (destacado)' : ''}. Ver ficha`}>
+                <a href={`#${p.slug}`} class="card-a" data-open={p.slug}>
                   <span class="card-ph chamfer">
-                    <Image src={p.imgs[0].src} alt="" widths={[480, 760, 1000]} sizes="(min-width: 1024px) 380px, (min-width: 640px) 46vw, 92vw" loading={i < 3 ? 'eager' : 'lazy'} class="card-img" />
-                    {p.alt && <Image src={p.alt.src} alt="" widths={[480, 760]} sizes="(min-width: 1024px) 380px, 46vw" loading="lazy" class="card-img card-alt" />}
-                    <span class="card-tag"><span class="t1">{TAG_LABEL[p.imgs[0].tag]}</span>{p.alt && <span class="t2">{TAG_LABEL[p.alt.tag]}</span>}</span>
+                    {i === 0 ? (
+                      <img src={p.cover.src} srcset={p.cover.set} sizes={CARD_SIZES} alt="" width={p.imgs[0].src.width} height={p.imgs[0].src.height} fetchpriority="high" decoding="async" class="card-img" />
+                    ) : (
+                      <>
+                        <img src={PIXEL} data-cover={p.cover.src} data-cover-set={p.cover.set} sizes={CARD_SIZES} alt="" width={p.imgs[0].src.width} height={p.imgs[0].src.height} decoding="async" class="card-img" />
+                        <noscript><img src={p.cover.src} srcset={p.cover.set} sizes={CARD_SIZES} alt="" class="card-img" /></noscript>
+                      </>
+                    )}
+                    {p.alt && <img src={PIXEL} data-hover={p.altSet} sizes="(min-width: 1024px) 380px, 46vw" alt="" width={p.alt.src.width} height={p.alt.src.height} loading="lazy" decoding="async" class="card-img card-alt" />}
+                    <span class="card-tag" aria-hidden="true"><span class="t1">{TAG_LABEL[p.imgs[0].tag]}</span>{p.alt && <span class="t2">{TAG_LABEL[p.alt.tag]}</span>}</span>
                     <span class={`card-st st-${p.cat}`}>{catLabel[p.cat]}</span>
-                    {esDestacado(p.slug) && <span class="card-star" title="Proyecto destacado" set:html={star} />}
+                    {esDestacado(p.slug) && <span class="card-star" title="Proyecto destacado"><Fragment set:html={star} /><span class="sr-only">Destacado.</span></span>}
                   </span>
                   <span class="card-tx">
                     <span class="card-n">{String(p.n).padStart(2, '0')}</span>
@@ -140,7 +153,7 @@ const description = 'Proyectos de Galezo Studio: colegios, espacios públicos, e
   .fl span { font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: 15px; color: var(--color-brand); }
   .fl:hover { color: var(--color-ink); }
   .fl.is-on { background: var(--color-brand-ink); color: #fff; box-shadow: none; }
-  .fl.is-on span { color: #a6cfd4; }
+  .fl.is-on span { color: #c4e0e3; }
   .fl:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
   /* filtro de destacados: la estrella en dorado suave, como un sello sobre la lámina */
   .fl-dest :global(i) { display: grid; width: 15px; height: 15px; }
@@ -260,6 +273,24 @@ const description = 'Proyectos de Galezo Studio: colegios, espacios públicos, e
   const sec = document.querySelector<HTMLElement>('[data-pj]')!;
   const cards = [...sec.querySelectorAll<HTMLElement>('.card')];
   const fls = [...sec.querySelectorAll<HTMLButtonElement>('[data-f]')];
+  const pio = new IntersectionObserver(
+    (es) => es.forEach((e) => {
+      if (!e.isIntersecting) return;
+      const im = e.target as HTMLImageElement;
+      im.srcset = im.dataset.coverSet!;
+      im.src = im.dataset.cover!;
+      im.removeAttribute('data-cover');
+      pio.unobserve(im);
+    }),
+    { rootMargin: '100% 0px' },
+  );
+  sec.querySelectorAll<HTMLImageElement>('img[data-cover]').forEach((im) => pio.observe(im));
+  // la otra cara de las tarjetas: solo con mouse y cuando la página terminó de cargar (carga diferida del navegador)
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const caras = () => sec.querySelectorAll<HTMLImageElement>('img[data-hover]').forEach((im) => { im.srcset = im.dataset.hover!; im.removeAttribute('data-hover'); });
+    if (document.readyState === 'complete') caras();
+    else addEventListener('load', caras, { once: true });
+  }
 
   // Filtros
   fls.forEach((b) =>

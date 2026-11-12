@@ -491,3 +491,24 @@ Por hacer cuando respondan: proceso en 9 etapas (inicio), fachada frontal en viv
 ## Proyectos destacados (2026-11-12)
 - Estrella dorada en la tarjeta (placa blanca con corte a 45°), filtro "★ Destacados" y "★ Destacado" en la ficha. Lista en src/lib/proyectos.ts (DESTACADOS): Parque de la Vida, Mirador Ecce Homo, los cuatro colegios (Instpecam, Alfonso López, CASD, José Eugenio), Coliseo de Tenis de Mesa, Complejo Tamalameque y UMNG Becerril. Criterio: los más grandes o emblemáticos diseñados por Ulises; sin modelados. El portafolio final habla de "destacados y reconocidos": si Ulises tiene su lista, se cambia en esa línea. Evento project_filter con filter = destacados.
 - Carpeta del proyecto: ~/Desktop/sitio webs/galezo-studio. En el Escritorio quedó una carpeta-ancla "galezo-studio" con un LEEME.txt (solo para la sesión vieja de Claude); se puede borrar.
+
+## Correcciones de Ulises al portafolio y páginas aprobadas (2026-11-12)
+- Destacados: salen el Complejo Recreo-Deportivo y el campus de la UMNG ("estos no son destacados"). Quedan 7: Parque de la Vida, Mirador, los cuatro colegios y el Coliseo.
+- Corpocesar pasa a "Modelados y renderizados" ("me equivoqué en portafolio") y su área es 6.616 m² (no 15.097). Estado de la ficha: "Levantado".
+- CAC El Banco y Estación de Bomberos pasan a "Diseñados" (los diseñó Ulises).
+- Multicampus sigue en obra: estado "Diseñado / En construcción". En Proyectos del inicio y ejecutivos pasa a "en obra": "Cinco proyectos que diseñamos: tres ya construidos y dos en obra".
+- Numeración corrida 1 a 37 por sección y año (como el portafolio); cambia el número de los proyectos movidos y de los que quedaban después.
+- Portadas (capturas de Ulises): Estación de Bomberos, baños del CCMV y Hall de la Fama toman su 2.ª imagen; José Eugenio toma la foto de obra (antes la 5.ª).
+- Título de El arquitecto: se queda "La arquitectura es para las personas".
+- Aprobadas: Vivienda, Remodelación, Comercial e institucional (ready) y El arquitecto (sin noindex propio). Entran al sitemap; se indexan cuando se quite PUBLIC_PREVIEW (falta GA4).
+- Proyectos ejecutivos sigue sin planos de ingenierías (no hay recursos). Testimonios, después.
+- PENDIENTE (Ulises): estado de los dos del CCMV (en "en construcción" con ficha "Diseñado / Construido"). Contacto: correo corporativo y WhatsApp Business. ID de GA4.
+
+## Rendimiento: lo que no se ve no se pide (2026-11-12)
+- Lighthouse móvil (local, build de producción): inicio 82 → 98, Comercial 88 → 95, Proyectos 87 → 95; el resto 97–100. Escritorio 100 en todas. Accesibilidad y buenas prácticas 100 en todas. SEO 100 en las indexables (63–66 solo en las que siguen con noindex propio: Proyectos, Ejecutivos, Contacto).
+- Causa: la carga diferida del navegador adelanta lo que está a ~2.500 px, y el simulador de Lighthouse cuenta todo lo pedido antes del LCP.
+- Héroe del inicio: el dibujo y la aguada (no se ven hasta los 2,8 s y 4 s) se piden 0,6 s después de la carga (o a los 2,5 s si la red es lenta); la caja de la lámina se muestra cuando ya está en su lugar (CLS 0,064 → 0,015). Sin JS, <noscript>.
+- lib/lazy.ts: lógica compartida de LazyImg (protocolo <img data-lz data-src data-srcset>); las "later" esperan la carga de la página. LazyImg fija la proporción mientras está el píxel. Aplicado en Entregable, CasaNiveles, diapositivas 2 y 3 del héroe de Comercial, Retos y logos de Para quién.
+- Proyectos: solo la primera portada de entrada (fetchpriority alta); las demás cuando su tarjeta está a una pantalla; la otra cara solo con mouse y después de la carga. Portadas a calidad 72.
+- Accesibilidad: contraste del número en el filtro activo y en la tarjeta de Contacto; nombre de las tarjetas desde su texto visible; logos de clientes con alt vacío (el nombre va al lado); panel de Ejecutivos de article a div (role tabpanel).
+- vercel.json: caché de 30 días para /fonts, 7 días para /brand y /og; nosniff y Referrer-Policy.

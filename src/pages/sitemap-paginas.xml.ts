@@ -3,8 +3,8 @@ import { SITE } from '../lib/seo';
 import { servicios } from '../lib/servicios';
 
 // lastmod real: fecha de la última compilación de cada página indexable
-// Solo páginas indexables: el inicio y cada servicio marcado como listo (ready) en lib/servicios.ts
-const paginas = [{ path: '', priority: '1.0' }, ...servicios.filter((s) => s.ready).map((s) => ({ path: `/servicios/${s.slug}`, priority: '0.8' }))];
+// Solo páginas indexables: el inicio, cada servicio marcado como listo (ready) en lib/servicios.ts y El arquitecto (aprobada 2026-11-12)
+const paginas = [{ path: '', priority: '1.0' }, ...servicios.filter((s) => s.ready).map((s) => ({ path: `/servicios/${s.slug}`, priority: '0.8' })), { path: '/arquitecto', priority: '0.6' }];
 
 export const GET: APIRoute = () => {
   const now = new Date().toISOString();

@@ -5,7 +5,7 @@
  * en el corte una franja azul marca el nivel; al lado entra la planta de ese nivel con sus espacios y áreas reales.
  * Los niveles del corte se pueden tocar para saltar a ellos.
  */
-import { Image } from 'astro:assets';
+import LazyImg from '../LazyImg.astro';
 import Trazos from '../Trazos.astro';
 import Plomada from '../Plomada.astro';
 
@@ -42,7 +42,7 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
         <!-- El corte: la franja azul marca el nivel -->
         <figure class="cn-cut" aria-label="Corte arquitectónico de la casa">
           <div class="cut-img">
-            <Image src={corte} alt="Corte de una casa de cinco niveles escalonada sobre una ladera" widths={[700, 1100, 1600]} sizes="(min-width: 1024px) 560px, 92vw" loading="lazy" />
+            <LazyImg src={corte} alt="Corte de una casa de cinco niveles escalonada sobre una ladera" widths={[700, 1100, 1600]} sizes="(min-width: 1024px) 560px, 92vw" />
             <span class="band" data-band aria-hidden="true"></span>
             {
               niveles.map((l, i) => (
@@ -65,7 +65,7 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
             {
               niveles.map((l, i) => (
                 <div class:list={['lv-plan', { 'is-on': i === 0 }]} data-plan={i}>
-                  <Image src={l.img} alt={`Planta del nivel ${l.t}`} widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 600px, 92vw" loading="lazy" />
+                  <LazyImg src={l.img} alt={`Planta del nivel ${l.t}`} widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 600px, 92vw" />
                 </div>
               ))
             }

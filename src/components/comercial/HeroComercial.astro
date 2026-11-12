@@ -6,6 +6,7 @@
  */
 import { Image } from 'astro:assets';
 import Cifra from '../Cifra.astro';
+import LazyImg from '../LazyImg.astro';
 import instpecam from '../../assets/obras/ln/instpecam.jpg';
 import mirador from '../../assets/obras/ln/mirador.jpg';
 import alfonso from '../../assets/obras/ln/alfonso-lopez.jpg';
@@ -45,7 +46,11 @@ const vistas = [
           vistas.map((v, i) => (
             <div class:list={['vh-v', { 'is-on': i === 0 }]} data-v={i}>
               <div class="ph chamfer">
-                <Image src={v.src} alt={v.alt} widths={[640, 960, 1300, 1600]} sizes="(min-width: 1024px) 680px, 100vw" loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} class="ph-img" style={v.pos && `object-position:${v.pos}`} />
+                {i === 0 ? (
+                  <Image src={v.src} alt={v.alt} widths={[640, 960, 1300, 1600]} sizes="(min-width: 1024px) 680px, 100vw" loading="eager" fetchpriority="high" class="ph-img" style={v.pos && `object-position:${v.pos}`} />
+                ) : (
+                  <LazyImg src={v.src} alt={v.alt} widths={[640, 960, 1300, 1600]} sizes="(min-width: 1024px) 680px, 100vw" class="ph-img" style={v.pos && `object-position:${v.pos}`} later />
+                )}
               </div>
             </div>
           ))

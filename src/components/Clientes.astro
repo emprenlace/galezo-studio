@@ -69,7 +69,7 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
             <li class="cell" style={`--i:${i};--k:${c.k}`}>
               <span class="c-l" aria-hidden="true">Cliente {pad(i)}</span>
               <span class="c-logo">
-                <Image src={c.src} alt={c.name} height={200} densities={[1]} loading="lazy" />
+                <Image src={c.src} alt="" height={200} densities={[1]} loading="lazy" />
               </span>
               <span class="c-n">{c.name}</span>
             </li>

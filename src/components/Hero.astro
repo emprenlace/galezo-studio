@@ -11,7 +11,7 @@
  * El script ubica la lámina para que cubra el panel y el techo quede siempre bajo los botones.
  * Al salir con el scroll, el texto se desvanece y el dibujo hace parallax.
  */
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import ulises from '../assets/ulises-rostro.jpg';
 import laminaAncha from '../assets/hero/lamina-ancha.png';
 import laminaAlta from '../assets/hero/lamina-alta.png';
@@ -65,6 +65,14 @@ const laminas = [
   { id: 'ancha', src: laminaAncha, aguada: aguadaAncha, ...ancha, ...tiempos(ancha.grupos, 1680), techo: 1150, base: 1580, widths: [1440, 2160, 2880] },
   { id: 'alta', src: laminaAlta, aguada: aguadaAlta, ...alta, ...tiempos(alta.grupos, 1200), techo: 850, base: 1352, widths: [600, 900, 1200] },
 ];
+// El dibujo y la aguada no se ven al abrir (el dibujo entra a los 2,8 s y el color a los 4 s): se piden cuando la página
+// terminó de cargar, para no competir con el texto y las fuentes. Sin JS, <noscript> deja las imágenes normales.
+const tarde = await Promise.all(
+  laminas.map(async (L) => ({
+    dib: (await getImage({ src: L.src, widths: L.widths, format: 'webp' })).srcSet.attribute,
+    ag: (await getImage({ src: L.aguada, widths: L.widths, format: 'webp' })).srcSet.attribute,
+  })),
+);
 const lapiz = '<g transform="rotate(-38)"><ellipse cx="190" cy="34" rx="150" ry="8" fill="#1e2228" opacity="0.07"/><path d="M60 -10 H330 Q342 -10 342 0 Q342 10 330 10 H60 Z" fill="#36727c"/><path d="M60 -3.5 H342 M60 3.5 H342" stroke="#2c5f68" stroke-width="1.4"/><path d="M60 -10 L4 0 L60 10 Z" fill="#e8d2ad"/><path d="M18 -2.6 L0 0 L18 2.6 Z" fill="#2b2f36"/><path d="M318 -10 H332 V10 H318 Z" fill="#c8ccd2"/></g>';
 
 ---
@@ -76,17 +84,19 @@ const lapiz = '<g transform="rotate(-38)"><ellipse cx="190" cy="34" rx="150" ry=
 
       <!-- La lámina: computador (ancha) y celular o tableta vertical (alta) -->
       {
-        laminas.map((L) => (
+        laminas.map((L, i) => (
           <div class:list={['casa', `casa-${L.id}`]} data-art={L.id} data-w={L.w} data-h={L.h} data-techo={L.techo} data-base={L.base}>
             <div class="ca-box" data-box>
               <!-- la aguada (color) va debajo del trazo y se pinta de izquierda a derecha -->
               <div class="ca-ag" data-wipe>
                 <div class="ca-ag-in">
-                  <picture><source media={L.id === 'ancha' ? NO_ANCHA : SI_ANCHA} srcset={PIXEL} /><Image src={L.aguada} alt="" widths={L.widths} sizes="100vw" loading="eager" class="ca-agimg" /></picture>
+                  <picture><source media={L.id === 'ancha' ? NO_ANCHA : SI_ANCHA} srcset={PIXEL} /><img src={PIXEL} data-tarde={tarde[i].ag} sizes="100vw" alt="" width={L.aguada.width} height={L.aguada.height} decoding="async" class="ca-agimg" /></picture>
+                  <noscript><picture><source media={L.id === 'ancha' ? NO_ANCHA : SI_ANCHA} srcset={PIXEL} /><Image src={L.aguada} alt="" widths={L.widths} sizes="100vw" class="ca-agimg" /></picture></noscript>
                 </div>
               </div>
               <div class="ca-edge" aria-hidden="true"><svg class="ca-pencil" viewBox="0 0 1 1" overflow="visible" focusable="false" set:html={lapiz} /></div>
-              <picture><source media={L.id === 'ancha' ? NO_ANCHA : SI_ANCHA} srcset={PIXEL} /><Image src={L.src} alt={L.id === 'ancha' ? 'Fachada de una casa diseñada por Ulises Galezo, dibujada a línea' : ''} widths={L.widths} sizes="100vw" loading="eager" fetchpriority="high" class="ca-dib" /></picture>
+              <picture><source media={L.id === 'ancha' ? NO_ANCHA : SI_ANCHA} srcset={PIXEL} /><img src={PIXEL} data-tarde={tarde[i].dib} sizes="100vw" alt={L.id === 'ancha' ? 'Fachada de una casa diseñada por Ulises Galezo, dibujada a línea' : ''} width={L.src.width} height={L.src.height} decoding="async" class="ca-dib" /></picture>
+              <noscript><picture><source media={L.id === 'ancha' ? NO_ANCHA : SI_ANCHA} srcset={PIXEL} /><Image src={L.src} alt="" widths={L.widths} sizes="100vw" class="ca-dib" /></picture></noscript>
               <span class="ca-spot" data-spot aria-hidden="true"></span>
               <svg class="ca-calco" viewBox={`0 0 ${L.w} ${L.h}`} aria-hidden="true" focusable="false">
                 {L.trazos.map((x) => <path class:list={{ fino: x.fino }} d={x.d} pathLength="1" style={`--a:${x.a}s;--t:${x.t}s`} />)}
@@ -519,6 +529,7 @@ const lapiz = '<g transform="rotate(-38)"><ellipse cx="190" cy="34" rx="150" ry=
   :global(html:not(.js)) .panel { position: relative; inset: auto; margin: var(--g); padding-bottom: 60px; }
   :global(html:not(.js)) .hero-s1 { position: relative; inset: auto; translate: none; left: auto; width: 100%; }
   :global(html:not(.js)) .casa { position: relative; height: 70vw; }
+  :global(html.js) .casa:not(.is-placed) .ca-box { visibility: hidden; }
   :global(html:not(.js)) .hero-s1 { padding-top: calc(var(--hd) + 40px); }
 
   @media (min-width: 640px) {
@@ -611,7 +622,7 @@ const lapiz = '<g transform="rotate(-38)"><ellipse cx="190" cy="34" rx="150" ry=
       if (ld) ld.style.visibility = hit ? 'hidden' : '';
     }
   };
-  const placeAll = () => { placeArt(); fitNotes(); };
+  const placeAll = () => { placeArt(); fitNotes(); art.classList.add('is-placed'); };
   placeAll();
   document.fonts?.ready.then(placeAll);
   addEventListener('resize', placeAll, { passive: true });
@@ -631,9 +642,22 @@ const lapiz = '<g transform="rotate(-38)"><ellipse cx="190" cy="34" rx="150" ry=
     );
   };
   const dib = art.querySelector<HTMLImageElement>('.ca-dib');
-  if (!dib || dib.complete) go();
-  else dib.addEventListener('load', go, { once: true });
-  setTimeout(go, 1500);
+  let pedido = false;
+  const pedir = () => {
+    if (pedido) return;
+    pedido = true;
+    dib?.addEventListener('load', go, { once: true });
+    for (const im of hero.querySelectorAll<HTMLImageElement>('img[data-tarde]')) {
+      im.srcset = im.dataset.tarde!;
+      im.removeAttribute('data-tarde');
+    }
+    setTimeout(go, 1500);
+  };
+  // un momento después de la carga: primero el texto y las fuentes (el dibujo no se ve hasta los 2,8 s)
+  const luego = () => setTimeout(pedir, 600);
+  if (document.readyState === 'complete') luego();
+  else addEventListener('load', luego, { once: true });
+  setTimeout(pedir, 2500); // en redes lentas, no esperar a que termine todo lo demás
 
   // El lápiz sigue cada línea del calco mientras se dibuja (solo transform: no repinta)
   function drawPen(pen: HTMLElement, t0: number) {

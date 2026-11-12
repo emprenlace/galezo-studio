@@ -16,6 +16,7 @@ import jose from '../../assets/obras/ln/jose-eugenio.jpg';
 import joseR from '../../assets/obras/ln/jose-eugenio-render.jpg';
 
 const { n = '02' } = Astro.props as { n?: string };
+const PIXEL = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 const casos = [
   {
     t: 'Mirador al Santo Ecce Homo',
@@ -67,10 +68,12 @@ const sizes = '(min-width: 1024px) 640px, 100vw';
           {
             casos.map((c, i) => (
               <figure class:list={['rt-fig', { 'is-on': i === 0 }]} data-fig={i}>
-                <img class="rt-img" src={pics[i].l.src} srcset={pics[i].l.set} sizes={sizes} alt="" loading="lazy" decoding="async" style={(c.lpos || c.pos) && `object-position:${c.lpos || c.pos}`} />
+                <img class="rt-img" src={PIXEL} data-lz={i === 0 ? '' : 'later'} data-src={pics[i].l.src} data-srcset={pics[i].l.set} sizes={sizes} alt="" decoding="async" style={(c.lpos || c.pos) && `object-position:${c.lpos || c.pos}`} />
+                <noscript><img class="rt-img" src={pics[i].l.src} srcset={pics[i].l.set} sizes={sizes} alt="" style={(c.lpos || c.pos) && `object-position:${c.lpos || c.pos}`} /></noscript>
                 <div class="rt-top">
                   <div class="rt-top-in">
-                    <img class="rt-img" src={pics[i].p.src} srcset={pics[i].p.set} sizes={sizes} alt="" loading="lazy" decoding="async" style={c.pos && `object-position:${c.pos}`} />
+                    <img class="rt-img" src={PIXEL} data-lz={i === 0 ? '' : 'later'} data-src={pics[i].p.src} data-srcset={pics[i].p.set} sizes={sizes} alt="" decoding="async" style={c.pos && `object-position:${c.pos}`} />
+                    <noscript><img class="rt-img" src={pics[i].p.src} srcset={pics[i].p.set} sizes={sizes} alt="" style={c.pos && `object-position:${c.pos}`} /></noscript>
                   </div>
                 </div>
                 <span class="rt-line" />
@@ -186,6 +189,7 @@ const sizes = '(min-width: 1024px) 640px, 100vw';
 </style>
 
 <script>
+  import '../../lib/lazy';
   const sec = document.querySelector<HTMLElement>('[data-rt]');
   if (sec) {
     const pin = sec.querySelector<HTMLElement>('.rt-pin')!;

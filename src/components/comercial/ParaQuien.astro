@@ -5,7 +5,7 @@
  * quienes ya nos contrataron. Comercio va en una línea aparte: presente, pero no es el enfoque.
  * Celular: la sección queda fija y el scroll trae un tipo a la vez. Escritorio: los tres a la vista.
  */
-import { Image } from 'astro:assets';
+import { getImage } from 'astro:assets';
 import Plomada from '../Plomada.astro';
 import Trazos from '../Trazos.astro';
 import gobernacion from '../../assets/clientes/gobernacion-cesar.png';
@@ -40,6 +40,9 @@ const grupos = [
     ],
   },
 ];
+// logos a 120 px de alto en webp (igual que antes con <Image>), diferidos por cercanía (lib/lazy.ts)
+const PIXEL = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+for (const g of grupos) for (const l of g.logos as { src: ImageMetadata; img?: string }[]) l.img = (await getImage({ src: l.src, height: 120, format: 'webp' })).src;
 ---
 
 <section class="pq2" data-nav-label="Para quién" aria-labelledby="pq2-title" data-pq2>
@@ -63,7 +66,7 @@ const grupos = [
                 <ul class="c-logos" role="list" aria-label={`Algunos clientes: ${g.logos.map((l) => l.name).join(', ')}`}>
                   {g.logos.map((l, j) => (
                     <li style={`--k:${l.k};--j:${j}`}>
-                      <Image src={l.src} alt="" height={120} densities={[1]} loading="lazy" />
+                      <img src={PIXEL} data-lz="" data-src={l.img} alt="" width={Math.round((120 * l.src.width) / l.src.height)} height={120} decoding="async" style={`aspect-ratio:${l.src.width}/${l.src.height}`} /><noscript><img src={l.img} alt="" width={Math.round((120 * l.src.width) / l.src.height)} height={120} /></noscript>
                     </li>
                   ))}
                 </ul>
@@ -177,6 +180,7 @@ const grupos = [
 </style>
 
 <script>
+  import '../../lib/lazy';
   const sec = document.querySelector<HTMLElement>('[data-pq2]');
   if (sec) {
     new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { sec.classList.add('is-in'); io.disconnect(); } }, { threshold: 0.2 }).observe(sec);

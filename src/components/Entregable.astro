@@ -6,7 +6,7 @@
  * El escalímetro de abajo marca el avance (línea de carga ligada al scroll) y sirve de selector.
  * La ficha de la derecha y el contador cambian con cada lámina. Todo cabe en una pantalla.
  */
-import { Image } from 'astro:assets';
+import LazyImg from './LazyImg.astro';
 import render from '../assets/render-interior.jpg';
 import plantaColor from '../assets/planos/planta1-color.jpg';
 import plantaLinea from '../assets/planos/planta1-linea.jpg';
@@ -101,13 +101,13 @@ const { n = '02', variant = 'plomada', ejemplo = 'proyecto de ejemplo', cta = tr
                   <div class="rp rp-set" data-rp-set>
                     <div class="rp-sl is-on" data-sl="0">
                       <div class="rp-in">
-                        <Image src={plantaLinea} alt="Planta arquitectónica real de una casa diseñada por Galezo Studio" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-img rp-line" loading="lazy" />
-                        <Image src={plantaColor} alt="" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-img rp-color" loading="lazy" />
+                        <LazyImg src={plantaLinea} alt="Planta arquitectónica real de una casa diseñada por Galezo Studio" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-img rp-line" />
+                        <LazyImg src={plantaColor} alt="" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-img rp-color" />
                         <span class="rp-pen" aria-hidden="true"></span>
                       </div>
                     </div>
-                    <div class="rp-sl" data-sl="1"><Image src={corte} alt="Corte arquitectónico" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-full" loading="lazy" /></div>
-                    <div class="rp-sl" data-sl="2"><Image src={fachada} alt="Fachadas de frente, este y oeste, de una casa diseñada por Galezo Studio" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-full" loading="lazy" /></div>
+                    <div class="rp-sl" data-sl="1"><LazyImg src={corte} alt="Corte arquitectónico" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-full" later /></div>
+                    <div class="rp-sl" data-sl="2"><LazyImg src={fachada} alt="Fachadas de frente, este y oeste, de una casa diseñada por Galezo Studio" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-full" later /></div>
                   </div>
                   <div class="rp-chips" role="group" aria-label="Láminas del juego de planos">
                     {laminas.map((l, i) => (
@@ -127,7 +127,7 @@ const { n = '02', variant = 'plomada', ejemplo = 'proyecto de ejemplo', cta = tr
               <div class="page-face">
                 <span class="paper-frame" aria-hidden="true"></span>
                 <div class="page-art">
-                  <Image src={render} alt="Render de un interior diseñado por Galezo Studio" widths={[560, 900, 1300]} sizes="(min-width: 1024px) 760px, 92vw" class="r-img" loading="lazy" />
+                  <LazyImg src={render} alt="Render de un interior diseñado por Galezo Studio" widths={[560, 900, 1300]} sizes="(min-width: 1024px) 760px, 92vw" class="r-img" />
                 </div>
                 <span class="page-shade" aria-hidden="true"></span>
                 <span class="page-crease" aria-hidden="true"></span>
@@ -139,7 +139,7 @@ const { n = '02', variant = 'plomada', ejemplo = 'proyecto de ejemplo', cta = tr
                 <div class="page-art">
                   <div class="rp">
                     <div class="rp-in">
-                      <Image src={plantaColor} alt="" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-img rp-soft" loading="lazy" />
+                      <LazyImg src={plantaColor} alt="" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-img rp-soft" />
                       <svg class="rp-ov" viewBox={`0 0 ${RW} ${RH}`} aria-hidden="true">
                         <path id="en-path" class="t-path" pathLength="1" d={tour} />
                         <g class="t-cam">
@@ -167,7 +167,7 @@ const { n = '02', variant = 'plomada', ejemplo = 'proyecto de ejemplo', cta = tr
                 <div class="page-art">
                   <div class="rp">
                     <div class="rp-in">
-                      <Image src={plantaLinea} alt="" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-img" loading="lazy" />
+                      <LazyImg src={plantaLinea} alt="" widths={[700, 1100, 1600]} sizes={sizesPlan} class="rp-img" />
                       <svg class="rp-ov" viewBox={`0 0 ${RW} ${RH}`} aria-hidden="true">
                         {q.map((it, i) => (
                           <g class="q-tag" style={`--i:${i}`}>
