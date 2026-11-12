@@ -1,10 +1,10 @@
 /**
  * Datos de contacto del estudio: un solo lugar para la página de contacto, el pie, la política y el schema.
- * Provisionales hasta que Ulises tenga el correo corporativo y el WhatsApp Business (tareas pendientes).
+ * WhatsApp Business confirmado (2026-11-12). El correo es provisional hasta que Ulises tenga el corporativo.
  */
 export const contacto = {
-  whatsapp: '+573043395726',
-  whatsappLabel: '+57 304 339 5726',
+  whatsapp: '+573001408059',
+  whatsappLabel: '+57 300 140 8059',
   email: 'galezostudio@gmail.com',
   instagram: 'galezostudio',
   ciudad: 'Valledupar, Cesar',

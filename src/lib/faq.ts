@@ -2,7 +2,7 @@
 export const faq = [
   { q: '¿Cuánto cuesta el diseño?', a: 'Depende del área y del tipo de proyecto. Cuéntanos de tu proyecto y te enviamos la cotización por WhatsApp.' },
   { q: '¿Cómo se paga?', a: 'Arrancamos con un anticipo y avanzamos por etapas: cada una la revisas y la apruebas antes de seguir.' },
-  { q: '¿Ustedes construyen?', a: 'No, nos dedicamos al diseño. Te entregamos todo para que tu constructor lo levante tal como lo diseñamos.' },
+  { q: '¿Ustedes construyen?', a: 'Depende de dónde esté ubicado el proyecto y de su tamaño. Cuéntanos de tu proyecto y te confirmamos si también lo construimos.' },
   { q: '¿Trabajan en mi ciudad?', a: 'Sí. Diseñamos internacionalmente: en cualquier ciudad de Colombia y fuera del país.' },
   { q: '¿Qué recibo al final?', a: 'Planos completos, modelo BIM de arquitectura en Revit, renders, recorrido virtual y cantidades de obra.' },
   { q: '¿Diseñan locales?', a: 'Sí, también diseñamos locales y proyectos comerciales.' },
