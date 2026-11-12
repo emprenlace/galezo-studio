@@ -524,3 +524,8 @@ Por hacer cuando respondan: proceso en 9 etapas (inicio), fachada frontal en viv
 
 ## Contenedor de GTM nuevo (2026-11-12)
 - GTM-N8K337XF (creado por el usuario) reemplaza a GTM-PJGGMMKH. El sitio no usa el fragmento que entrega GTM: lo carga Base.astro 2 s después de `load` o al primer toque.
+
+## Lanzamiento: el sitio se indexa (2026-11-12)
+- Se quita el noindex general (PUBLIC_PREVIEW deja de usarse). Indexables: inicio, Vivienda, Remodelación, Comercial, Ejecutivos y El arquitecto (las del sitemap). Siguen con noindex propio: Proyectos (falta el estado del CCMV), Contacto (falta el correo corporativo), Blog (vacío), Privacidad y 404.
+- *.vercel.app lleva X-Robots-Tag: noindex (vercel.json).
+- Títulos y descripciones dentro de 60 y 160 caracteres. Título del inicio: "Galezo Studio · Diseño arquitectónico en Valledupar".

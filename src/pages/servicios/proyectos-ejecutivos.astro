@@ -22,11 +22,11 @@ import { breadcrumb, servicio } from '../../lib/seo';
 
 const s = servicios.find((x) => x.id === 'ejecutivo')!;
 const path = `/servicios/${s.slug}`;
-const description = 'Proyecto ejecutivo completo: arquitectura e ingenierías estructural, hidrosanitaria y eléctrica coordinadas en un solo paquete, listo para radicar la licencia y construir.';
+const description = 'Arquitectura e ingenierías estructural, hidrosanitaria y eléctrica coordinadas en un solo paquete, listo para radicar la licencia y construir.';
 ---
 
 <Base
-  title="Proyecto ejecutivo de arquitectura e ingenierías · Galezo Studio"
+  title="Proyecto ejecutivo con ingenierías · Galezo Studio"
   description={description}
   noindex={!s.ready}
   pageType="service"

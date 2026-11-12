@@ -22,8 +22,9 @@ const origin = import.meta.env.PUBLIC_URL || Astro.site!.href;
 const path = Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '') || '/';
 const canonical = new URL(path, Astro.site).href;
 const ogImage = new URL(image, origin).href;
-const preview = import.meta.env.PUBLIC_PREVIEW === 'true';
-const robots = noindex || preview ? 'noindex, follow' : '';
+// Lanzamiento (2026-11-12): el sitio se indexa. Solo llevan noindex las páginas que lo piden (proyectos, contacto, blog,
+// privacidad, 404). El dominio técnico de Vercel (*.vercel.app) lleva X-Robots-Tag: noindex desde vercel.json.
+const robots = noindex ? 'noindex, follow' : '';
 // GTM de Galezo (el ID es público: aparece en el código de cualquier página). Solo en producción, para que las
 // pruebas en local no ensucien los datos; en local se enciende con PUBLIC_GTM_DEV=true.
 const gtmOn = import.meta.env.PROD || import.meta.env.PUBLIC_GTM_DEV === 'true';
