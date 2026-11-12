@@ -22,13 +22,11 @@ import elbanco from '../assets/clientes/alcaldia-el-banco.png';
 import corpocesar from '../assets/clientes/corpocesar.png';
 
 import instpecam from '../assets/obras/ln/instpecam.jpg';
-import instpecamR from '../assets/obras/ln/instpecam-render.jpg';
 import mirador from '../assets/obras/ln/mirador.jpg';
 import miradorR from '../assets/obras/ln/mirador-render.jpg';
 import casd from '../assets/obras/ln/casd.jpg';
 import casdL from '../assets/obras/ln/casd-dibujo.jpg';
 import alfonso from '../assets/obras/ln/alfonso-lopez.jpg';
-import alfonsoR from '../assets/obras/ln/alfonso-lopez-render.jpg';
 import jose from '../assets/obras/ln/jose-eugenio.jpg';
 import joseR from '../assets/obras/ln/jose-eugenio-render.jpg';
 import coliseo from '../assets/obras/ln/coliseo-obra.jpg';
@@ -46,17 +44,20 @@ const colegio = 'Colegio en claustro de tres pisos: rediseñamos espacios interi
 // suelto: el render está tomado desde otro ángulo que la foto. La línea hace de transición (render → obra completa) y no se
 // queda a la mitad, para no pegar dos vistas distintas. bpos: encuadre propio del render.
 // city, year y m2 solo cuando están confirmados (portafolio); los proyectos sin datos muestran lo que se ve en la obra.
+// what: la descripción del portafolio, recortada para que quepa sobre la imagen (la completa está en /proyectos).
 type Obra = { id: string; name: string; short: string; city?: string; year?: number; m2?: string; st: Estado; what: string; photo: ImageMetadata; before: ImageMetadata; kind: 'render' | 'dibujo'; pos?: string; bpos?: string; suelto?: boolean };
 const obras: Obra[] = [
-  { id: 'corales', name: 'Pórtico Los Corales', short: 'Pórtico Los Corales', st: 'c', what: 'Cambiamos la entrada del conjunto: de los arcos de antes a un pórtico de ladrillo y concreto, con reja e iluminación nuevas.', photo: corales, before: coralesR, kind: 'render' },
-  { id: 'multicampus', name: 'Multicampus Universitario Codazzi', short: 'Multicampus Codazzi', city: 'Agustín Codazzi', st: 'c', what: 'Sede universitaria con acceso cubierto, bloque de aulas y una fachada de paneles en tonos de azul.', photo: multicampus, before: multicampusR, kind: 'render' },
-  { id: 'coliseo', name: 'Coliseo de Tenis de Mesa', short: 'Coliseo de tenis de mesa', city: 'Valledupar', year: 2025, m2: '8.959', st: 'o', what: 'Una caja de cristal para entrenar y competir con las reglas nacionales e internacionales.', photo: coliseo, before: coliseoR, kind: 'render', pos: '40% 50%' },
-  { id: 'instpecam', name: 'I.E. Instpecam', short: 'Instpecam', city: 'Valledupar', year: 2022, m2: '15.097', st: 'c', what: colegio, photo: instpecam, before: instpecamR, kind: 'render', suelto: true },
-  { id: 'mirador', name: 'Mirador al Santo Ecce Homo', short: 'Mirador Ecce Homo', city: 'Valledupar', year: 2023, m2: '1.988', st: 'c', what: 'Terminamos una obra abandonada en obra gris desde 2008: diseño arquitectónico y ornamental del mirador.', photo: mirador, before: miradorR, kind: 'render', suelto: true, pos: '62% 30%', bpos: '50% 40%' },
+  { id: 'corales', name: 'Pórtico Los Corales', short: 'Pórtico Los Corales', city: 'Valledupar', year: 2023, m2: '64', st: 'c', what: 'Demolición y construcción de un nuevo pórtico de acceso vehicular y peatonal para el Conjunto Residencial Cerrado Los Corales. Construido por nuestra empresa.', photo: corales, before: coralesR, kind: 'render' },
+  { id: 'multicampus', name: 'Multicampus Universitario', short: 'Multicampus Codazzi', city: 'Codazzi', year: 2025, m2: '4.050', st: 'c', what: 'Diseño arquitectónico de un campus universitario de 1 piso con 11 aulas de clase, auditorio, aulas de informática, biblioteca, zona administrativa y de servicios.', photo: multicampus, before: multicampusR, kind: 'render' },
+  { id: 'coliseo', name: 'Coliseo de Tenis de Mesa', short: 'Coliseo de tenis de mesa', city: 'Valledupar', year: 2025, m2: '8.959', st: 'o', what: 'Diseño arquitectónico y formulación de una infraestructura deportiva tipo caja de cristal para tenis de mesa, que cumple con los requisitos técnicos y reglamentarios nacionales e internacionales.', photo: coliseo, before: coliseoR, kind: 'render', pos: '40% 50%' },
+  // Instpecam y Alfonso López apagados (2026-11-09): sus renders venían de la carpeta vieja y Ulises los quitó;
+  // vuelven cuando haya render en la carpeta (misma regla que CASD)
+  // { id: 'instpecam', name: 'I.E. Instpecam', short: 'Instpecam', city: 'Valledupar', year: 2022, m2: '15.097', st: 'c', what: colegio, photo: instpecam, before: instpecamR, kind: 'render', suelto: true },
+  { id: 'mirador', name: 'Mirador al Santo Ecce Homo', short: 'Mirador Ecce Homo', city: 'Valledupar', year: 2023, m2: '1.988', st: 'c', what: 'Diseño arquitectónico y ornamental para terminar la obra del mirador al monumento Santo Eccehomo, abandonado en etapa de obra gris desde el año 2008.', photo: mirador, before: miradorR, kind: 'render', suelto: true, pos: '62% 30%', bpos: '50% 40%' },
   // CASD apagado por ahora (pedido de Ulises, 2026-11-09): sin render
   // { id: 'casd', name: 'I.E. CASD', short: 'CASD', city: 'Valledupar', year: 2022, m2: '15.097', st: 'c', what: colegio, photo: casd, before: casdL, kind: 'dibujo' },
-  { id: 'alfonso', name: 'I.E. Alfonso López Pumarejo', short: 'Alfonso López Pumarejo', city: 'Valledupar', year: 2022, m2: '15.097', st: 'c', what: colegio, photo: alfonso, before: alfonsoR, kind: 'render', suelto: true },
-  { id: 'jose', name: 'I.E. José Eugenio Martínez', short: 'José Eugenio Martínez', city: 'Valledupar', year: 2024, m2: '15.097', st: 'o', what: colegio, photo: jose, before: joseR, kind: 'render', suelto: true, bpos: '50% 60%' },
+  // { id: 'alfonso', name: 'I.E. Alfonso López Pumarejo', short: 'Alfonso López Pumarejo', city: 'Valledupar', year: 2022, m2: '15.097', st: 'c', what: colegio, photo: alfonso, before: alfonsoR, kind: 'render', suelto: true },
+  { id: 'jose', name: 'I.E. José Eugenio Martínez', short: 'José Eugenio Martínez', city: 'Valledupar', year: 2024, m2: '15.097', st: 'c', what: 'Diseño arquitectónico y formulación de una nueva infraestructura para la institución educativa José Eugenio Martínez. La edificación es tipo claustro de 3 pisos.', photo: jose, before: joseR, kind: 'render', suelto: true, bpos: '50% 60%' },
 ];
 const built = obras.filter((o) => o.st === 'c').length;
 const inWork = obras.filter((o) => o.st === 'o').length;

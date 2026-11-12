@@ -12,8 +12,8 @@ import mirador from '../../assets/obras/ln/mirador.jpg';
 import miradorR from '../../assets/obras/ln/mirador-render.jpg';
 import coliseo from '../../assets/obras/ln/coliseo-obra.jpg';
 import coliseoR from '../../assets/obras/ln/coliseo-render.jpg';
-import instpecam from '../../assets/obras/ln/instpecam.jpg';
-import instpecamR from '../../assets/obras/ln/instpecam-render.jpg';
+import jose from '../../assets/obras/ln/jose-eugenio.jpg';
+import joseR from '../../assets/obras/ln/jose-eugenio-render.jpg';
 
 const { n = '02' } = Astro.props as { n?: string };
 const casos = [
@@ -39,8 +39,9 @@ const casos = [
     hicimos: 'Rediseñamos interiores y fachadas de cada una, con sus plazoletas, canchas y cafetería.',
     datos: ['Valledupar · 2022 – 2024', 'Gobernación del Cesar'],
     extra: 'Instpecam, CASD, José Eugenio Martínez y Alfonso López',
-    estado: 'Tres construidos, uno en obra',
-    photo: instpecam, line: instpecamR,
+    estado: 'Los cuatro construidos',
+    // José Eugenio: de los cuatro, el que tiene render en la carpeta de Ulises
+    photo: jose, line: joseR, lpos: '50% 55%',
   },
 ];
 const opts = { widths: [640, 960, 1400], format: 'webp' as const };

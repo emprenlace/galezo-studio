@@ -36,7 +36,7 @@ Google Sheets mediante Apps Script: `docs/leads-apps-script.gs` + guía `docs/le
 | `contact_whatsapp` | Toca un WhatsApp directo (botón flotante, /contacto) | link_type, cta_id (flotante, contacto) | No (contacto sin calificar: se mide en GA4, nunca como conversión de pauta) |
 | `contact_email` | Toca un correo (/contacto, política) | link_type, cta_id (contacto, privacidad) | No |
 | `contact_instagram` | Toca un Instagram (/contacto, pie) | link_type, cta_id (contacto, cierre) | No |
-| `project_filter` | En /proyectos, toca un filtro de categoría | filter (todos, construido, en-obra, disenado, modelado) | No |
+| `project_filter` | En /proyectos, toca un filtro de categoría | filter (todos, destacados, construido, en-obra, disenado, modelado) | No |
 | `project_open` | En /proyectos, abre la ficha de un proyecto | project_id (slug del proyecto) | No |
 
 Valores de `cta_id` (chat): hero, header, menu, proyectos (ficha de /proyectos), entregable, servicios, obras, proceso, bim, estudio, preguntas, cierre, clientes, vivienda-hero, comercial-hero, ejecutivo-hero, remodelacion-hero, servicio, contacto, arquitecto, blog, 404, 404_inicio, url.

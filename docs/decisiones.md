@@ -455,3 +455,39 @@ Por hacer cuando respondan: proceso en 9 etapas (inicio), fachada frontal en viv
 - Datos en src/lib/proyectos.ts e imágenes en src/assets/proyectos/<slug>/NN-obra|render|antes.jpg (la primera es la portada). Solo entran proyectos con categoría confirmada: hoy 8 (construidos: Ecce Homo, Instpecam, Alfonso López Valledupar, CASD, Los Corales, Multicampus; en construcción: Coliseo, José Eugenio). PENDIENTE: la clasificación de los ~37 restantes de la carpeta PROYECTOS (Ulises) — el portafolio completo no llegó.
 - Tarjetas: portada; con el mouse asoma la otra cara (render u obra). Ficha en <dialog>: todas las imágenes con su rótulo (obra/render/antes), flechas, deslizar, miniaturas, datos confirmados y "Cotiza un proyecto así" (data-cta="proyectos"; la ficha se cierra para que el cotizador quede encima). Enlazable con #slug. Eventos project_filter y project_open (docs/medicion.md). noindex.
 - (mismo día) Cabecera con cinco enlaces: "El arquitecto" se partía en dos líneas y Blog chocaba con el botón. Causa: la barra va centrada con posición absoluta y el navegador solo le daba la mitad del ancho; ahora width: max-content y white-space: nowrap. La cápsula recogida (al bajar) pasa de 760 a 880 px. Barrido de 1024 a 1920 px, arriba y recogida, inicio y /proyectos: ningún enlace se parte ni toca el logo o el botón.
+
+## Recursos de la carpeta vieja (2026-11-09, Ulises borró PROYECTOS)
+- Se compararon todas las imágenes de la web con PROYECTOS 2 y el portafolio (huella visual, no por nombre). Venían de la carpeta vieja: los renders de Instpecam (dos) y de Alfonso López (uno). Se borraron.
+- Proyectos del inicio y de ejecutivos: Instpecam y Alfonso López salen del deslizador (sin render, misma regla que CASD); quedan cinco: Los Corales, Multicampus, Coliseo, Ecce Homo y José Eugenio.
+- Comercial · Retos, caso de los cuatro colegios: la imagen pasa de Instpecam (render viejo) a José Eugenio (render y obra de la carpeta). El texto sigue nombrando los cuatro colegios.
+- /proyectos: Instpecam y Alfonso López siguen como construidos, solo con sus fotos de obra.
+- Lo demás coincide con PROYECTOS 2 o con el portafolio.
+
+## Proyectos con los datos del portafolio (2026-11-09, pedido de Ulises)
+- Carpeta: se trabaja con PROYECTOS 2 (la última de Ulises; la anterior ya no existe). No hay descargas más nuevas.
+- Instpecam y Alfonso López: sin renders, solo fotos de obra (en /proyectos, Proyectos del inicio y Retos).
+- Cada proyecto del portafolio lleva sus datos y su descripción tal cual (solo tildes y comas corregidas), con los rótulos de la ficha del portafolio: Ubicación, Contratación, Año, Área de intervención y Estado (Diseñado / Construido, Diseñado / En construcción, Diseñado). En Proyectos del inicio va la primera parte del mismo texto (el completo no cabe sobre la foto).
+- Nuevo: I.E. Alfonso López Pumarejo de Río de Oro (proyecto 03 del portafolio): diseñado, 2026, 8.464 m², Gobernación del Cesar; renders sacados del portafolio (venían pegados en una sola imagen y se separaron). Con él aparece el filtro "Diseñados". Total: 9 proyectos.
+- Erratas del portafolio: el proyecto 06 (Alfonso López Valledupar) dice "en Rio de Oro" en su descripción; en la web se puso Valledupar, como su ubicación. Confirmar con Ulises.
+- Los Corales y Multicampus no están en el portafolio: siguen con descripción propia y sin año, área ni cliente. PENDIENTE de Ulises.
+- /proyectos: la ficha también se abre al cambiar el enlace (#slug) sin recargar.
+
+## Proyectos según el "portafolio final" (2026-11-09)
+- Fuente: GALEZO STUDIO - MARCA/portafolio final.pdf (54 páginas, 37 proyectos). Reemplaza al portafolio del 29 de octubre.
+- /proyectos tiene los 37, en el orden, número y sección del portafolio: diseñados y construidos (01–11), diseñados y en construcción (12–16), diseñados (17–30), modelados y renderizados (31–37). Con todos visibles, un título por sección. Ficha con los rótulos del portafolio (Ubicación, Contratación, Año, Área de intervención, Estado) y la descripción tal cual (tildes y erratas corregidas: "Alfondo", "César", "4,780"). Las imágenes son las de cada página del portafolio (src/assets/proyectos/<slug>/); los que ya estaban conservan las de PROYECTOS 2. Se dejó fuera el render del bar del pádel (marca de cerveza).
+- Cambios frente al portafolio anterior: sale el Alfonso López de Río de Oro (ya no está); José Eugenio pasa a construido; Los Corales y Multicampus ya tienen ficha (Los Corales 2023, 64 m², Unidad Inmobiliaria Los Corales, "construido por mi empresa"; Multicampus Codazzi, 2025, 4.050 m², Gobernación); el CCMV está diseñado y construido (A Construir, 2025).
+- Aplicado también en: Proyectos del inicio (José Eugenio construido; datos de Los Corales y Multicampus: "Cinco proyectos… cuatro ya construidos y uno en obra"), Retos de comercial (los cuatro colegios construidos) y remodelación (CCMV "Diseñado y construido").
+- Entrada de las tarjetas: por tarjeta (con 37, la sección es tan alta que nunca se veía el 5 % y en celular no aparecían).
+- PENDIENTE (Ulises) — contradicciones del portafolio entre la sección y el estado de la ficha: Multicampus (13) y los dos del CCMV (14, 15) están en "en construcción" pero su ficha dice "Diseñado / Construido"; CAC El Banco (35) y Bomberos Bosconia (37) están en "modelados" pero su ficha dice "Diseñado"; Corpocesar (11, "Levantado") está en "construidos" y repite 15.097 m² de los colegios. En la web: la categoría sigue la sección y el estado sigue la ficha.
+
+## El arquitecto: texto de presentación nuevo (2026-11-12, pedido de Ulises)
+- /arquitecto · 01 Presentación: se reemplaza el texto del portafolio viejo por el que envió Ulises, tal cual, en cuatro párrafos (formación y 6 años · viabilización y Fase III · enfoque y BIM · planimetría y entidades). El título "La arquitectura es para las personas" se mantiene; ya no recoge el texto nuevo (más técnico): proponer otro a Ulises.
+- En celular el texto se pasaba de la pantalla (hasta 115 px en iPhone 13): va más compacto (0,86 rem, sin la firma a mano). Verificado en cinco tamaños.
+
+## Cómo trabajamos: 8 etapas (2026-11-12, pedido de Ulises)
+- Reemplaza las 9 del 2026-11-09: Concepción de la idea (Anticipo) · Esquema básico y distribución de espacios · Definición de plantas finales · Diseño 3D y de fachadas · Renderizado del proyecto · Elaboración de planimetrías detalladas · Cantidades de obra · Entrega final (Entrega). Nombres cortos en el cronograma: La idea, Esquema, Plantas, 3D y fachadas, Renders, Planimetrías, Cantidades, Entrega final.
+- Láminas: 1 lote · 2 burbujas de zonas · 3 planta en línea · 4 fachadas + modelo 3D sujeto · 5 render · 6 planta a color con cotas · 7 la misma tenue con cantidades · 8 abanico de láminas. Sale la lámina de detalle (corte de la escalera). Recorrido 560svh → 500svh; cronograma de 8 tramos. Aplica en inicio, vivienda y remodelación. Verificado en cinco tamaños.
+
+## Proyectos destacados (2026-11-12)
+- Estrella dorada en la tarjeta (placa blanca con corte a 45°), filtro "★ Destacados" y "★ Destacado" en la ficha. Lista en src/lib/proyectos.ts (DESTACADOS): Parque de la Vida, Mirador Ecce Homo, los cuatro colegios (Instpecam, Alfonso López, CASD, José Eugenio), Coliseo de Tenis de Mesa, Complejo Tamalameque y UMNG Becerril. Criterio: los más grandes o emblemáticos diseñados por Ulises; sin modelados. El portafolio final habla de "destacados y reconocidos": si Ulises tiene su lista, se cambia en esa línea. Evento project_filter con filter = destacados.
+- Carpeta del proyecto: ~/Desktop/sitio webs/galezo-studio. En el Escritorio quedó una carpeta-ancla "galezo-studio" con un LEEME.txt (solo para la sesión vieja de Claude); se puede borrar.

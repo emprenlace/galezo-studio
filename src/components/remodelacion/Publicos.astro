@@ -1,8 +1,8 @@
 ---
 /**
  * Remodelación · 03 "También para locales y espacios públicos": interiores que reciben gente, con renders reales de
- * Ulises (baños y Hall de la Fama del CCMV, sala del Museo de Juglares). Se presentan como "Diseñado": no hay
- * confirmación de que estén construidos.
+ * Ulises (baños y Hall de la Fama del CCMV, sala del Museo de Juglares). Estado según el portafolio final: CCMV
+ * diseñado y construido (A Construir, 2025); Museo de Juglares diseñado (Urumita, 2021).
  * Recurso propio: un mosaico editorial (una imagen grande y cuatro chicas) con el rótulo de cada espacio.
  * Celular: una fila que se desliza con el dedo, con la siguiente asomando, y el contador de imágenes.
  */
@@ -44,7 +44,7 @@ const piezas = [
                 <span class="tile-p">{x.p}</span>
                 <span class="tile-e">{x.e}</span>
               </figcaption>
-              <span class="tile-st">Diseñado</span>
+              <span class="tile-st">{x.p === 'CCMV' ? 'Diseñado y construido' : 'Diseñado'}</span>
             </figure>
           </li>
         ))

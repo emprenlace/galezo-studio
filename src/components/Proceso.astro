@@ -1,8 +1,9 @@
 ---
 /**
- * Sección 5 · "Cómo trabajamos": la casa que evoluciona, en las 9 etapas de Ulises (aplican a todos los servicios):
- * tu espacio · anticipo → la idea y el concepto → plantas y modelo 3D → fachadas → imágenes y video render →
- * detalles arquitectónicos → planimetría detallada → cantidades de obra → entrega final.
+ * Sección 5 · "Cómo trabajamos": la casa que evoluciona, en las 8 etapas de Ulises (2026-11-12; aplican a todos los
+ * servicios): concepción de la idea → esquema básico y distribución de espacios → definición de plantas finales →
+ * diseño 3D y de fachadas → renderizado del proyecto → elaboración de planimetrías detalladas → cantidades de obra →
+ * entrega final.
  * Una sola lámina donde la misma casa avanza con material real (plano, modelo, fachada, render, corte de la casa en
  * ladera). Al lado, el cronograma (barras tipo Gantt): cada barra es una etapa que se llena, se aprueba y da paso a la
  * siguiente. Todo avanza con el scroll (la sección queda fija mientras tanto). Un solo botón.
@@ -17,18 +18,16 @@ import plantaLinea from '../assets/planos/planta1-linea.jpg';
 import fachada from '../assets/planos/fachada.jpg';
 import modelo from '../assets/planos/modelo-3d.jpg';
 import corte from '../assets/planos/corte.jpg';
-import detalle from '../assets/planos/corte-detalle.jpg';
 
 const P = buildProceso();
 // t: nombre corto (cronograma y rótulo) · full: nombre completo de la etapa (lista de Ulises) · a: qué pasa en ella
 const pasos = [
-  { t: 'Tu espacio', full: 'Tu espacio y el anticipo', a: 'Nos cuentas de tu espacio y de cómo vives. Con el anticipo, arrancamos.', tag: 'Anticipo' },
-  { t: 'La idea', full: 'La idea y el concepto', a: 'Organizamos el proyecto sobre el terreno: dónde va lo social, lo privado, la luz y la brisa.' },
-  { t: 'Plantas y 3D', full: 'Diseño en plantas y modelo 3D', a: 'Distribuimos cada espacio en planta y lo levantamos en 3D para ajustarlo contigo.' },
-  { t: 'Fachadas', full: 'Diseño de fachadas', a: 'Definimos el volumen, los materiales y la cara que tu proyecto le muestra a la calle.' },
-  { t: 'Renders', full: 'Imágenes y video render', a: 'Imágenes y video realistas: así se verá por dentro y por fuera antes de poner un ladrillo.' },
-  { t: 'Detalles', full: 'Detalles arquitectónicos', a: 'Dibujamos escaleras, barandas, cielos rasos y encuentros para que en obra no se improvise.' },
-  { t: 'Planimetría', full: 'Planimetría detallada', a: 'Plantas, cortes y fachadas con cotas, niveles y especificaciones, listos para tu constructor.' },
+  { t: 'La idea', full: 'Concepción de la idea', a: 'Nos cuentas de tu espacio y de cómo vives, y concebimos la idea del proyecto. Con el anticipo, arrancamos.', tag: 'Anticipo' },
+  { t: 'Esquema', full: 'Esquema básico y distribución de espacios', a: 'Organizamos el proyecto sobre el terreno: dónde va lo social, lo privado, la luz y la brisa.' },
+  { t: 'Plantas', full: 'Definición de plantas finales', a: 'Cerramos contigo la distribución de cada espacio, con sus medidas.' },
+  { t: '3D y fachadas', full: 'Diseño 3D y de fachadas', a: 'Levantamos el proyecto en 3D y definimos el volumen, los materiales y las fachadas.' },
+  { t: 'Renders', full: 'Renderizado del proyecto', a: 'Imágenes realistas: así se verá por dentro y por fuera antes de poner un ladrillo.' },
+  { t: 'Planimetrías', full: 'Elaboración de planimetrías detalladas', a: 'Plantas, cortes, fachadas y detalles con cotas, niveles y especificaciones, listos para tu constructor.' },
   { t: 'Cantidades', full: 'Cantidades de obra', a: 'Medimos en el modelo el concreto, los muros, los pisos y la cubierta para presupuestar sin sorpresas.' },
   { t: 'Entrega final', full: 'Entrega final', a: 'Te entregamos el proyecto completo: planos, modelo, renders y cantidades de obra.', tag: 'Entrega' },
 ];
@@ -120,7 +119,7 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
           <Image src={fachada} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" loading="lazy" />
         </div>
 
-        <!-- 3. Modelo 3D real, sujeto a la lámina junto a la planta -->
+        <!-- 4. Modelo 3D real, sujeto a la lámina junto a las fachadas -->
         <div class="lam-render" aria-hidden="true">
           <Image src={modelo} alt="" widths={[260, 420]} sizes="(min-width: 1024px) 210px, 120px" loading="lazy" />
           <span>modelo 3D</span>
@@ -132,13 +131,7 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
           <span class="rd-tag">render</span>
         </div>
 
-        <!-- 6. Detalle: la escalera del corte, dibujada en grande, con su llamada -->
-        <div class="ly g g-detalle real" aria-hidden="true">
-          <Image src={detalle} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" loading="lazy" />
-          <span class="det-call"><b>1</b><span>detalle escalera</span></span>
-        </div>
-
-        <!-- 9. Entrega: el juego de láminas del proyecto -->
+        <!-- 8. Entrega: el juego de láminas del proyecto -->
         <div class="ly g g-entrega" aria-hidden="true">
           {
             [planoColor, fachada, corte, modelo].map((im, k) => (
@@ -233,8 +226,8 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
     --pad: 20px;
     position: relative;
     background: var(--color-bone);
-    /* recorrido de scroll: la lámina queda fija y cada tramo avanza una etapa (9 etapas) */
-    height: 560svh;
+    /* recorrido de scroll: la lámina queda fija y cada tramo avanza una etapa (8 etapas) */
+    height: 500svh;
   }
   .pr-pin {
     position: sticky;
@@ -334,27 +327,27 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   .e-note text { font-size: 30px; }
 
   /* ---------- Estados por etapa (data-step = 1 … 9) ---------- */
-  /* 1 · lote: se traza una vez; en la idea queda de fondo */
+  /* 1 · concepción de la idea: el lote; en el esquema queda de fondo */
   .lam[data-step='1'] .g-lote { opacity: 1; }
   .lam[data-step='2'] .g-lote { opacity: 0.55; }
   .lam:not([data-step='0']) .g-lote .dr { stroke-dashoffset: 0; }
   .g-lote .hand.big { transition: opacity 0.4s; }
   .lam:not([data-step='1']) .g-lote .hand.big { opacity: 0; }
 
-  /* 2 · zonas: las burbujas crecen */
+  /* 2 · esquema básico: las burbujas de zonas crecen */
   .lam[data-step='2'] .g-zonas { opacity: 1; }
   .lam[data-step='2'] .g-zonas .dr { stroke-dashoffset: 0; transition-delay: 0.4s; }
   .lam[data-step='2'] .bub { transform: none; opacity: 1; }
   .z-x { transition: opacity 0.4s; }
 
-  /* 3 · planta en línea (con el modelo 3D sujeto al lado); en 7 y 8 queda debajo de la planimetría */
+  /* 3 · plantas finales en línea; en 6 y 7 queda debajo de la planimetría */
   .g-plano { transform: scale(0.97); }
-  .lam:is([data-step='3'], [data-step='7'], [data-step='8']) .g-plano { opacity: 1; transform: none; }
-  /* 7 · planimetría a color; 8 · la misma, más tenue, con el cuadro de cantidades encima */
-  .lam[data-step='7'] .g-tecnico { opacity: 1; }
-  .lam[data-step='8'] .g-tecnico { opacity: 0.45; }
+  .lam:is([data-step='3'], [data-step='6'], [data-step='7']) .g-plano { opacity: 1; transform: none; }
+  /* 6 · planimetría a color; 7 · la misma, más tenue, con el cuadro de cantidades encima */
+  .lam[data-step='6'] .g-tecnico { opacity: 1; }
+  .lam[data-step='7'] .g-tecnico { opacity: 0.45; }
 
-  /* 4 · fachada: sube desde el piso */
+  /* 4 · 3D y fachadas: las fachadas suben desde el piso y el modelo 3D queda sujeto encima */
   .g-fachada { transform: translateY(16px); }
   .lam[data-step='4'] .g-fachada { opacity: 1; transform: none; }
 
@@ -364,23 +357,18 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   .lam[data-step='5'] .g-render :global(img) { transform: none; }
   .rd-tag { position: absolute; right: 14px; bottom: 12px; padding: 3px 9px 4px; background: rgb(255 255 255 / 0.9); font-family: 'Architects Daughter', var(--font-sans); font-size: 13px; color: var(--color-brand-ink); }
 
-  /* 6 · detalle: la escalera del corte en grande, con la llamada de detalle */
-  .g-detalle { transform: scale(0.97); }
-  .lam[data-step='6'] .g-detalle { opacity: 1; transform: none; }
-  .det-call { position: absolute; right: 6%; top: 9%; display: flex; align-items: center; gap: 8px; font-family: 'Architects Daughter', var(--font-sans); font-size: 14px; color: var(--color-brand-ink); background: rgb(255 255 255 / 0.92); padding: 4px 10px 4px 4px; }
-  .det-call b { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--color-brand-ink); font-family: var(--font-sans); font-size: 13px; font-weight: 700; }
 
-  /* 9 · entrega: el juego de láminas se abre en abanico */
+  /* 8 · entrega: el juego de láminas se abre en abanico */
   .g-entrega { display: grid; place-items: center; }
   .sh { position: absolute; left: 50%; top: 50%; width: 46%; aspect-ratio: 3 / 2; translate: -50% -50%; padding: 6px; background: #fff; box-shadow: 0 0 0 1px rgb(20 26 34 / 0.08), 0 14px 26px -16px rgb(20 26 34 / 0.5); transition: transform 0.9s var(--ease-out-expo); transform: none; }
   .sh :global(img) { width: 100%; height: 100%; object-fit: contain; display: block; background: #fff; }
-  .lam[data-step='9'] .g-entrega { opacity: 1; }
-  .lam[data-step='9'] .sh-0 { transform: translate(-46%, -14%) rotate(-7deg); }
-  .lam[data-step='9'] .sh-1 { transform: translate(-15%, -20%) rotate(-2deg); transition-delay: 0.06s; }
-  .lam[data-step='9'] .sh-2 { transform: translate(16%, -12%) rotate(3deg); transition-delay: 0.12s; }
-  .lam[data-step='9'] .sh-3 { transform: translate(40%, 10%) rotate(7deg); transition-delay: 0.18s; }
+  .lam[data-step='8'] .g-entrega { opacity: 1; }
+  .lam[data-step='8'] .sh-0 { transform: translate(-46%, -14%) rotate(-7deg); }
+  .lam[data-step='8'] .sh-1 { transform: translate(-15%, -20%) rotate(-2deg); transition-delay: 0.06s; }
+  .lam[data-step='8'] .sh-2 { transform: translate(16%, -12%) rotate(3deg); transition-delay: 0.12s; }
+  .lam[data-step='8'] .sh-3 { transform: translate(40%, 10%) rotate(7deg); transition-delay: 0.18s; }
 
-  /* modelo 3D sujeto con cinta (etapa 3) */
+  /* modelo 3D sujeto con cinta (etapa 4) */
   .lam-render {
     position: absolute;
     z-index: 3;
@@ -398,9 +386,9 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   .lam-render :global(img) { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; }
   .lam-render span { position: absolute; left: 8px; bottom: 2px; font-family: 'Architects Daughter', var(--font-sans); font-size: 12px; color: var(--color-brand-ink); }
   .lam-render::before { content: ''; position: absolute; left: 50%; top: -8px; width: 46px; height: 16px; translate: -50% 0; rotate: -4deg; background: rgb(54 114 124 / 0.2); }
-  .lam[data-step='3'] .lam-render { opacity: 1; transform: none; transition-delay: 0.7s; }
+  .lam[data-step='4'] .lam-render { opacity: 1; transform: none; transition-delay: 0.7s; }
 
-  /* cuadro de cantidades (etapa 8) */
+  /* cuadro de cantidades (etapa 7) */
   .lam-qty {
     position: absolute;
     z-index: 3;
@@ -420,8 +408,8 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   .lam-qty li { display: grid; grid-template-columns: 1fr 44%; align-items: center; gap: 8px; font-size: 11px; color: var(--color-ink-soft); }
   .lam-qty i { display: block; height: 5px; background: var(--color-brand-soft); position: relative; overflow: hidden; }
   .lam-qty i::after { content: ''; position: absolute; inset: 0; background: var(--color-brand); transform-origin: 0 50%; transform: scaleX(0); transition: transform 0.9s var(--ease-out-expo); transition-delay: calc(0.8s + var(--i) * 0.1s); }
-  .lam[data-step='8'] .lam-qty { opacity: 1; transform: none; transition-delay: 0.5s; }
-  .lam[data-step='8'] .lam-qty i::after { transform: scaleX(var(--v)); }
+  .lam[data-step='7'] .lam-qty { opacity: 1; transform: none; transition-delay: 0.5s; }
+  .lam[data-step='7'] .lam-qty i::after { transform: scaleX(var(--v)); }
 
   /* rótulo */
   .lam-cap { position: absolute; z-index: 4; left: 14px; top: 12px; display: grid; }
@@ -453,8 +441,8 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   .r-t { font-size: 13.5px; font-weight: 560; letter-spacing: -0.01em; color: var(--color-ink-soft); white-space: nowrap; transition: color 0.3s; }
   .row.is-on .r-n { color: var(--color-brand); }
   .row.is-on .r-t { color: var(--color-ink); }
-  /* pista del tiempo: 9 tramos; cada etapa ocupa el suyo y se monta un poco sobre la siguiente */
-  .r-track { --step: calc((100% - 16%) / 8); position: relative; height: 100%; background: repeating-linear-gradient(90deg, rgb(40 34 26 / 0.07) 0 1px, transparent 1px 11.111%); }
+  /* pista del tiempo: 8 tramos; cada etapa ocupa el suyo y se monta un poco sobre la siguiente */
+  .r-track { --step: calc((100% - 16%) / 7); position: relative; height: 100%; background: repeating-linear-gradient(90deg, rgb(40 34 26 / 0.07) 0 1px, transparent 1px 12.5%); }
   .r-bar {
     --cut: 4px;
     position: absolute;
@@ -474,7 +462,7 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   .r-ok { position: absolute; right: 3px; top: 50%; width: 10px; height: 10px; translate: 0 -50%; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity 0.3s; }
   .row.is-done .r-ok { opacity: 1; }
   .r-tag { position: absolute; top: 50%; translate: 0 -50%; left: calc(var(--i) * var(--step) + 17%); font-family: 'Architects Daughter', var(--font-sans); font-size: 12px; color: var(--color-brand-ink); white-space: nowrap; }
-  .row[data-pr-step='8'] .r-tag { left: auto; right: calc(16% + 4px); }
+  .row[data-pr-step='7'] .r-tag { left: auto; right: calc(16% + 4px); }
   .row:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
   .row:hover .r-t { color: var(--color-ink); }
 
@@ -512,9 +500,9 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   @media (max-width: 360px) {
     .lam { aspect-ratio: 16 / 9; max-height: calc(100svh - 456px); }
     .pr :global(.trz) { display: none; }
-    .lam { aspect-ratio: 16 / 7.4; min-height: 146px; }
-    .pr-h2 { font-size: 1.5rem; }
-    .pr-h2 { font-size: 1.7rem; }
+    .lam { aspect-ratio: 16 / 7.4; min-height: 134px; }
+    .pr-h2 { font-size: 1.55rem; }
+    .d-a { font-size: 0.84rem; line-height: 1.36; }
     .pr-in, .pr-body, .side { gap: 8px; }
     .pr-sub { font-size: 0.88rem; }
     .row { grid-template-columns: 20px 84px 1fr; }
@@ -529,8 +517,8 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
     .hand.big { font-size: 110px; }
     .e-note text { font-size: 50px; }
     .dim-t, .pl-labels text, .pl-dims text { display: none; }
-    /* cronograma en una sola línea: nueve tramos */
-    .gantt { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 4px; }
+    /* cronograma en una sola línea: ocho tramos */
+    .gantt { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; }
     .row { grid-template-columns: 1fr; grid-template-rows: auto 7px; height: auto; gap: 4px; border: 0; }
     .r-t, .r-tag { display: none; }
     .r-n { font-size: 13px; line-height: 1; }
@@ -551,9 +539,9 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
   }
   /* celular: la nota quedaba bajo el botón de WhatsApp; el botón ya dice lo que hay que hacer */
   @media (max-width: 639px) { .pr-note { display: none; } }
-  /* tableta vertical: con nueve etapas el cronograma va en una sola línea, como en celular */
+  /* tableta vertical: con ocho etapas el cronograma va en una sola línea, como en celular */
   @media (min-width: 640px) and (max-width: 1023px) {
-    .gantt { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 6px; }
+    .gantt { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; }
     .row { grid-template-columns: 1fr; grid-template-rows: auto 8px; height: auto; gap: 5px; border: 0; }
     .r-t, .r-tag, .r-ok { display: none; }
     .r-n { font-size: 14px; line-height: 1; }

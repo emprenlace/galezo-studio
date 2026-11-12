@@ -2,7 +2,7 @@
 /**
  * El arquitecto: página propia de Ulises (pedido suyo: su presentación del portafolio y la foto profesional en grande).
  * 01 Héroe: la foto grande se descubre como una lámina que se levanta; su nombre y su rol.
- * 02 Presentación: su texto del portafolio, en primera persona.
+ * 02 Presentación: su texto de presentación, tal cual lo envió (2026-11-12).
  * 03 Ficha: trayectoria (sin fechas mientras se confirma el dato de años) y programas. La formación ya va en 02.
  * noindex hasta que se apruebe.
  */
@@ -55,9 +55,11 @@ const programas = ['Revit', 'AutoCAD', 'SketchUp', 'D5 Render', 'Lumion', 'Photo
         <Plomada n="01" label="Presentación" variant="firma" />
         <h2 id="pt-title" class="pt-h2 rv">La arquitectura es para <span class="accent">las personas</span></h2>
         <div class="pt-tx rv">
-          <p class="pt-lead">Soy arquitecto diseñador, con experiencia en el sector público y en el privado. Me formé en la Universidad del Atlántico.</p>
-          <p>La experiencia me dio el conocimiento para convertir ideas en arquitectura, con los principios de composición y percepción visual y espacial, y para desarrollar proyectos sostenibles en lo ambiental, lo social, lo cultural y lo económico.</p>
-          <p>Soy consciente de la función social que tiene la arquitectura: aportar ideas que mejoren el hábitat de una comunidad. Por eso mi compromiso está con las personas: mejorar su calidad de vida con cada proyecto.</p>
+          <!-- texto de Ulises (2026-11-12), tal cual; solo se separó en párrafos -->
+          <p class="pt-lead">Arquitecto egresado de la Universidad del Atlántico con 6 años de trayectoria sólida en la conceptualización, diseño y formulación técnica de proyectos de infraestructura pública y privada.</p>
+          <p>Experiencia en la viabilización y evaluación técnica de obras de gran escala (cultura, deporte, educación, saneamiento y espacio público), asegurando el cumplimiento normativo en proyectos de Fase III.</p>
+          <p>Mi enfoque se centra en la optimización de la calidad del diseño y la eficiencia en la ejecución, traduciendo requerimientos funcionales en soluciones arquitectónicas de alto valor mediante tecnología BIM.</p>
+          <p>Capaz de liderar la planimetría integral y la presentación de proyectos ante entidades gubernamentales, con un enfoque orientado al éxito de la obra y la satisfacción del cliente.</p>
           <p class="pt-sign" aria-hidden="true">Ulises Galezo</p>
         </div>
       </div>
@@ -150,6 +152,14 @@ const programas = ['Revit', 'AutoCAD', 'SketchUp', 'D5 Render', 'Lumion', 'Photo
   :global(html.js) [data-rv].is-in .rv + .rv { transition-delay: 0.15s; }
   :global(html.rm) [data-rv] .rv { opacity: 1 !important; transform: none !important; }
 
+  /* celular: el texto de presentación de Ulises es largo; va más compacto y sin la firma para que quepa en una pantalla */
+  @media (max-width: 639px) {
+    .pt { padding-bottom: 18px; }
+    .pt-in { gap: 12px; }
+    .pt-tx { gap: 8px; font-size: 0.86rem; line-height: 1.42; }
+    .pt-lead { font-size: 1.06em; line-height: 1.36; }
+    .pt-sign { display: none; }
+  }
   @media (max-width: 639px) and (max-height: 700px) {
     .aq-photo { height: 46svh; }
     .aq-sub { display: none; }
@@ -160,7 +170,8 @@ const programas = ['Revit', 'AutoCAD', 'SketchUp', 'D5 Render', 'Lumion', 'Photo
   }
   @media (max-width: 639px) and (max-height: 600px) {
     .aq-photo { height: 42svh; }
-    .pt-tx { font-size: 0.84rem; line-height: 1.4; gap: 7px; }
+    .pt-tx { font-size: 0.78rem; line-height: 1.36; gap: 6px; }
+    .pt-h2 { font-size: 1.45rem; }
     .pt-lead { font-size: 1em; }
     .pt-sign { display: none; }
     .fi-list span { display: none; }
