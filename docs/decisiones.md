@@ -518,3 +518,6 @@ Por hacer cuando respondan: proceso en 9 etapas (inicio), fachada frontal en viv
 ## WhatsApp Business y construcción (2026-11-12, Ulises)
 - WhatsApp Business: +57 300 140 8059 (reemplaza el +57 304 339 5726 en contacto, botón flotante, cotizador y schema: todo sale de lib/contacto.ts).
 - "¿Ustedes construyen?": construyen según dónde esté ubicado el proyecto y su tamaño. Nueva respuesta en lib/faq.ts (chat, lista y FAQPage).
+
+## Proyectos ejecutivos aprobada (2026-11-12)
+- Entra al lanzamiento tal como está, sin planos de ingenierías (no hay recursos). ready: true, entra al sitemap.
