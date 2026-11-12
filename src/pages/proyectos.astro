@@ -284,7 +284,9 @@ const description = 'Proyectos de Galezo Studio: colegios, espacios públicos, e
     }),
     { rootMargin: '100% 0px' },
   );
-  sec.querySelectorAll<HTMLImageElement>('img[data-cover]').forEach((im) => pio.observe(im));
+  const vigilar = () => sec.querySelectorAll<HTMLImageElement>('img[data-cover]').forEach((im) => pio.observe(im));
+  if (document.readyState === 'complete') vigilar();
+  else addEventListener('load', vigilar, { once: true });
   // la otra cara de las tarjetas: solo con mouse y cuando la página terminó de cargar (carga diferida del navegador)
   if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
     const caras = () => sec.querySelectorAll<HTMLImageElement>('img[data-hover]').forEach((im) => { im.srcset = im.dataset.hover!; im.removeAttribute('data-hover'); });

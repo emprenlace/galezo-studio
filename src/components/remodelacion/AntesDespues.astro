@@ -38,7 +38,7 @@ const pad = (i: number) => String(i + 1).padStart(2, '0');
           fotos.map((f, i) => (
             <figure class="card" data-card={i} data-pos={i} aria-hidden={i === 0 ? 'false' : 'true'}>
               <div class="card-ph">
-                <LazyImg src={f.src} alt={f.alt} widths={[480, 760, 1100]} sizes="(min-width: 1024px) 620px, 92vw" class="card-img" style={f.pos && `object-position:${f.pos}`} later={i > 0} />
+                <LazyImg src={f.src} alt={f.alt} widths={[480, 760, 1100]} sizes="(min-width: 1024px) 620px, 92vw" class="card-img" style={f.pos && `object-position:${f.pos}`} later={i > 2} />
               </div>
               <figcaption class="card-l"><span class="card-n">{pad(i)}</span> {f.m}</figcaption>
             </figure>

@@ -74,9 +74,10 @@ const pageContext = { event: 'page_context', page_type: pageType, content_group:
           s.src = 'https://www.googletagmanager.com/gtm.js?id=' + gtm;
           document.head.appendChild(s);
         };
-        // nunca bloquea el primer pintado ni se dispara con el scroll: tras cargar y en un momento libre
+        // nunca bloquea el primer pintado ni se dispara con el scroll: 2 s después de cargar y en un momento libre
+        // (así no compite con la entrada del héroe); un toque o una tecla lo cargan antes
         addEventListener('load', function () {
-          (window.requestIdleCallback || setTimeout)(load, { timeout: 2500 });
+          setTimeout(function () { (window.requestIdleCallback || setTimeout)(load, { timeout: 1500 }); }, 2000);
         });
         ['pointerdown', 'keydown'].forEach(function (ev) { addEventListener(ev, load, { once: true, passive: true }); });
       }

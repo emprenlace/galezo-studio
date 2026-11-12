@@ -48,7 +48,7 @@ Regla: todo botón o enlace nuevo lleva `data-cta` (y `data-service` si aplica).
 Sin aviso de cookies (decisión del usuario: público en Colombia, la Ley 1581 no lo exige; sí se publicará la política de privacidad). Consent Mode v2 queda concedido por defecto en `Base.astro`, listo para cambiarse si se pauta en Europa.
 
 ## GTM (cuando exista el contenedor)
-- Variable de entorno `PUBLIC_GTM_ID`. GTM carga después del primer pintado (`load` + momento libre) o al primer toque; nunca con el scroll.
+- Variable de entorno `PUBLIC_GTM_ID`. GTM carga 2 s después de `load` y en un momento libre (o al primer toque o tecla); nunca con el scroll. Los eventos anteriores esperan en el dataLayer y GTM los procesa al cargar.
 - Variables: `DLV - <parámetro>` para cada parámetro de la tabla + la integrada **Event**.
 - Activadores: `CE - generate_lead` (exacto), `CE - chat` (regex: `cta_click|service_dialog_open|service_select|lead_step|lead_unqualified|lead_partial|service_dialog_close`) y `CE - contacto` (regex: `contact_(whatsapp|email|instagram)`).
 - Etiquetas: `GA4 - Chat` ({{Event}} + parámetros) en `CE - chat`; `GA4 - Contacto directo` ({{Event}} + link_type y cta_id) en `CE - contacto`; `GA4 - generate_lead`; Meta evento personalizado `LeadCalificado` con `eventID = {{DLV - event_id}}`; Google Ads conversión con ID de transacción `{{DLV - lead_ref}}`. Ninguna etiqueta de pauta en "Clic en enlace".

@@ -8,7 +8,7 @@
  * ladera). Al lado, el cronograma (barras tipo Gantt): cada barra es una etapa que se llena, se aprueba y da paso a la
  * siguiente. Todo avanza con el scroll (la sección queda fija mientras tanto). Un solo botón.
  */
-import { Image } from 'astro:assets';
+import LazyImg from './LazyImg.astro';
 import Plomada from './Plomada.astro';
 import Trazos from './Trazos.astro';
 import { buildProceso } from '../lib/proceso';
@@ -106,28 +106,28 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
 
         <!-- 3, 7 y 8. Plano real de Ulises (planta del primer nivel), en línea -->
         <div class="ly g g-plano real" aria-hidden="true">
-          <Image src={plano} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" loading="lazy" />
+          <LazyImg src={plano} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" />
         </div>
 
         <!-- 7 y 8. Planimetría: el mismo plano, ya completo a color con cotas y áreas -->
         <div class="ly g g-tecnico real" aria-hidden="true">
-          <Image src={planoColor} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" loading="lazy" />
+          <LazyImg src={planoColor} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" />
         </div>
 
         <!-- 4. Fachadas reales de frente (este y oeste, lámina P4) -->
         <div class="ly g g-fachada real" aria-hidden="true">
-          <Image src={fachada} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" loading="lazy" />
+          <LazyImg src={fachada} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 720px, 92vw" />
         </div>
 
         <!-- 4. Modelo 3D real, sujeto a la lámina junto a las fachadas -->
         <div class="lam-render" aria-hidden="true">
-          <Image src={modelo} alt="" widths={[260, 420]} sizes="(min-width: 1024px) 210px, 120px" loading="lazy" />
+          <LazyImg src={modelo} alt="" widths={[260, 420]} sizes="(min-width: 1024px) 210px, 120px" />
           <span>modelo 3D</span>
         </div>
 
         <!-- 5. Render real a toda la lámina -->
         <div class="ly g g-render" aria-hidden="true">
-          <Image src={render} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 760px, 96vw" loading="lazy" />
+          <LazyImg src={render} alt="" widths={[600, 1000, 1400]} sizes="(min-width: 1024px) 760px, 96vw" />
           <span class="rd-tag">render</span>
         </div>
 
@@ -136,7 +136,7 @@ const { n = '05', cta = true, plano = plantaLinea, planoColor = plantaColor } = 
           {
             [planoColor, fachada, corte, modelo].map((im, k) => (
               <div class={`sh sh-${k}`}>
-                <Image src={im} alt="" widths={[300, 520]} sizes="(min-width: 1024px) 300px, 40vw" loading="lazy" />
+                <LazyImg src={im} alt="" widths={[300, 520]} sizes="(min-width: 1024px) 300px, 40vw" />
               </div>
             ))
           }
