@@ -85,6 +85,11 @@ const ar = render.width / render.height;
     </div>
   </div>
 </section>
+<script is:inline>
+  // La entrada del héroe empieza con el primer pintado, sin esperar al JS del módulo (que la repite sin efecto):
+  // el texto y la imagen principal aparecen ~1 s antes en celular.
+  (function (s) { if (s && document.documentElement.classList.contains('js')) requestAnimationFrame(function () { requestAnimationFrame(function () { s.classList.add('is-in'); }); }); })(document.currentScript.previousElementSibling);
+</script>
 
 <style>
   .vh {
