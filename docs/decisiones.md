@@ -521,3 +521,6 @@ Por hacer cuando respondan: proceso en 9 etapas (inicio), fachada frontal en viv
 
 ## Proyectos ejecutivos aprobada (2026-11-12)
 - Entra al lanzamiento tal como está, sin planos de ingenierías (no hay recursos). ready: true, entra al sitemap.
+
+## Contenedor de GTM nuevo (2026-11-12)
+- GTM-N8K337XF (creado por el usuario) reemplaza a GTM-PJGGMMKH. El sitio no usa el fragmento que entrega GTM: lo carga Base.astro 2 s después de `load` o al primer toque.

@@ -27,7 +27,7 @@ const robots = noindex || preview ? 'noindex, follow' : '';
 // GTM de Galezo (el ID es público: aparece en el código de cualquier página). Solo en producción, para que las
 // pruebas en local no ensucien los datos; en local se enciende con PUBLIC_GTM_DEV=true.
 const gtmOn = import.meta.env.PROD || import.meta.env.PUBLIC_GTM_DEV === 'true';
-const gtm = gtmOn ? import.meta.env.PUBLIC_GTM_ID || 'GTM-PJGGMMKH' : '';
+const gtm = gtmOn ? import.meta.env.PUBLIC_GTM_ID || 'GTM-N8K337XF' : '';
 // saludo del WhatsApp flotante: por servicio, o por tipo de página
 const saludo = serviceId || pageType;
 const pageContext = { event: 'page_context', page_type: pageType, content_group: pageType, service_id: serviceId };
